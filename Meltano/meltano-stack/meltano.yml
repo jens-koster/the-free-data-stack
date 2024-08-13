@@ -12,7 +12,8 @@ plugins:
     pip_url: git+https://github.com/MeltanoLabs/tap-github.git
     config:
       repositories:
-      - https://github.com/jwills/target-duckdb.git
+      - jwills/target-duckdb
+      - jens-koster/the-free-data-stack
     select:
     - commits.url
     - commits.sha

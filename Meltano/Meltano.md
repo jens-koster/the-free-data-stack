@@ -17,3 +17,4 @@ https://hub.meltano.com/loaders/target-duckdb--jwills/
 
     meltano add loader target-duckdb
     meltano config target-duckdb set path "${DATASTACK_DUCKDB}"
+    meltano config tap-github set --interactive
