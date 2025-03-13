@@ -163,3 +163,5 @@ cython_debug/
 
 
 DuckDB/data
+.DS_store
+airflow/logs/

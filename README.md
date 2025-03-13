@@ -1,6 +1,20 @@
 # The Free Datastack (fds)
-For a given value of "free" of course. fds is all about trying out tools available at no cost, I have no ideological issues with using free versions of commercial tools. As the Swedish (food related) saying goes: "_free is delicious_"
+My various tinkering with open source data tools.
+I'm trying to work and keep each product folder separately runnable. You'll initially find a lot of code copied from the local docker compose to the "stack" ones.
 
+# port allocations
+8001 - airflow web ui
+5432 - postgres, let's assume we'll only ever have to fire up one postgres instance and all can share that
+
+# directory mapping
+Directories used by more than one tool or stack should be symlinked and referred in /tmp. Relative always mess things up.
+
+# Data sets
+Small datasets should be comitted in git, bigger ones documented here:
+
+All data shoule be referred under /tmp/data, for portability.
+
+    ln -s "$(pwd)/_data" /tmp/data
 
 
 ### Prerequisite software
