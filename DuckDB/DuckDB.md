@@ -3,6 +3,5 @@ gotcha: if you use dbeaver to access duckDB it will take an exclusive read/write
 
 ## Databases
 
-We put database files in DuckDB/data
-We're using the "warehouse" databse for most labs and the filename is expected to be in the env-variable DATASTACK_DUCKDB.
-
+We put database files in /tmp/data
+We're using the "warehouse" database for most labs and the filename is expected to be in the env-variable DATASTACK_DUCKDB.

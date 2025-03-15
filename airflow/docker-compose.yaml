@@ -43,7 +43,7 @@
 #                                Default: ''
 #
 # Feel free to modify this file to suit your needs.
----
+
 x-airflow-common:
   &airflow-common
   # In order to add custom dependencies or upgrade provider packages you can use your extended image.
@@ -74,11 +74,16 @@ x-airflow-common:
     # If you want to use it, outcomment it and replace airflow.cfg with the name of your config file
     # AIRFLOW_CONFIG: '/opt/airflow/config/airflow.cfg'
   volumes:
-    - ${AIRFLOW_PROJ_DIR:-.}/dags:/opt/airflow/dags
-    - ${AIRFLOW_PROJ_DIR:-.}/logs:/opt/airflow/logs
-    - ${AIRFLOW_PROJ_DIR:-.}/config:/opt/airflow/config
-    - ${AIRFLOW_PROJ_DIR:-.}/plugins:/opt/airflow/plugins
+    - ${AIRFLOW_PROJ_DIR:-/tmp/airflow}/dags:/opt/airflow/dags
+    - ${AIRFLOW_PROJ_DIR:-/tmp/airflow}/logs:/opt/airflow/logs
+    - ${AIRFLOW_PROJ_DIR:-/tmp/airflow}/config:/opt/airflow/config
+    - ${AIRFLOW_PROJ_DIR:-/tmp/airflow}/plugins:/opt/airflow/plugins
   user: "${AIRFLOW_UID:-50000}:0"
+
+  networks:
+    &airflow-common-networks
+    - tfds-network
+
   depends_on:
     &airflow-common-depends-on
     redis:
@@ -97,6 +102,8 @@ services:
       POSTGRES_DB: airflow
     volumes:
       - postgres-db-volume:/var/lib/postgresql/data
+    networks:
+      *airflow-common-networks
     healthcheck:
       test: ["CMD", "pg_isready", "-U", "airflow"]
       interval: 10s
@@ -118,11 +125,12 @@ services:
       start_period: 30s
     restart: always
 
+
   airflow-webserver:
     <<: *airflow-common
     command: webserver
     ports:
-      - "8080:8080"
+      - "8001:8080"
     healthcheck:
       test: ["CMD", "curl", "--fail", "http://localhost:8080/health"]
       interval: 30s
@@ -250,7 +258,7 @@ services:
       _PIP_ADDITIONAL_REQUIREMENTS: ''
     user: "0:0"
     volumes:
-      - ${AIRFLOW_PROJ_DIR:-.}:/sources
+      - ${AIRFLOW_PROJ_DIR:-/tmp/airflow}:/sources
 
   airflow-cli:
     <<: *airflow-common
@@ -289,3 +297,7 @@ services:
 
 volumes:
   postgres-db-volume:
+
+ networks:
+  tfds-network:
+    external: true
