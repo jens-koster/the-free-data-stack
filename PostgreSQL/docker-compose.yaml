@@ -1,0 +1,30 @@
+---
+
+services:
+  postgres:
+    image: postgres:13
+    container_name: postgres
+    ports:
+      - "127.0.0.1:5432:5432"
+    environment:
+      POSTGRES_USER: airflow
+      POSTGRES_PASSWORD: airflow
+      POSTGRES_DB: airflow
+    volumes:
+      - postgres-db-volume:/var/lib/postgresql/data
+    networks:
+      - tfds-network
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "airflow"]
+      interval: 10s
+      retries: 5
+      start_period: 5s
+    restart: always
+
+volumes:
+  postgres-db-volume:
+
+networks:
+  tfds-network:
+    name: tfds-network
+    external: true

@@ -13,8 +13,11 @@ This is the global list of who gets what port:
     8001 - airflow web ui
     8002 - postgres web ui
     8003 - jupyter web ui
-
+    8010 - spark master
+    8011 - spark worker 1
+    8012 - spark worker 2
     5432 - postgres, let's assume we'll only ever have to fire up one postgres instance and all can share that
+    5555 - Celery flower(airflow thing, not tested )
     7077 - spark master
 
 # Storage
