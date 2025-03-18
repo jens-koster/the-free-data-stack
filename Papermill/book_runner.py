@@ -1,10 +1,8 @@
 """
 Run a notebook in papermill.
 Intended as entrypoint to a docker container
-test as:
-python3 book_runner.py --notebook test/helloworld --parameters '{"p1":"hello", "p2":"world"}'
-docker run papermill-book-runner --notebook 'test/helloworld' --parameters '{"p1":"hello", "p2":"world"}'
-
+some useful commands, full documentation in the readme.
+python3 book_runner.py --notebook helloworld --parameters '{"p1":"hello", "p2":"world"}'
 docker compose run book-runner --notebook 'helloworld' --parameters '{"p1":"hello", "p2":"world"}'
 docker compose run --remove-orphans --rm -it --entrypoint /bin/bash book-runner
 
