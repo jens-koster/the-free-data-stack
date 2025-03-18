@@ -1,0 +1,3 @@
+papermill==2.6.0
+requests==2.32.3
+cowsay==6.1.0

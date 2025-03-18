@@ -74,15 +74,15 @@ x-airflow-common:
     # If you want to use it, outcomment it and replace airflow.cfg with the name of your config file
     # AIRFLOW_CONFIG: '/opt/airflow/config/airflow.cfg'
   volumes:
-    - ./dags:/opt/airflow/dags
-    - ./logs:/opt/airflow/logs
-    - ./config:/opt/airflow/config
-    - ./plugins:/opt/airflow/plugins
+    #- ./dags:/opt/airflow/dags
+    #- ./logs:/opt/airflow/logs
+    #- ./config:/opt/airflow/config
+    #- ./plugins:/opt/airflow/plugins
 
-    #- /tmp/airflow/dags:/opt/airflow/dags
-    #- /tmp/airflow/logs:/opt/airflow/logs
-    #- /tmp/airflow/config:/opt/airflow/config
-    #- /tmp/airflow/plugins:/opt/airflow/plugins
+    - /tmp/logs/airflow:/opt/airflow/logs
+    - /tmp/airflow/dags:/opt/airflow/dags
+    - /tmp/airflow/config:/opt/airflow/config
+    - /tmp/airflow/plugins:/opt/airflow/plugins
   user: "${AIRFLOW_UID:-50000}:0"
 
   networks:
@@ -95,7 +95,6 @@ x-airflow-common:
       condition: service_healthy
 
 services:
-
   redis:
     # Redis is limited to 7.2-bookworm due to licencing change
     # https://redis.io/blog/redis-adopts-dual-source-available-licensing/
