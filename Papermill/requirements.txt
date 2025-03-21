@@ -1,3 +1,9 @@
-papermill==2.6.0
 requests==2.32.3
 cowsay==6.1.0
+jupyter==1.1.1
+papermill==2.6.0
+papermill[all]==2.6.0
+dlt[postgres]==1.8.1
+dlt[duckdb]==1.8.1
+boto3==1.37.1
+beautifulsoup4==4.13.3

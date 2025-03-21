@@ -1,0 +1,16 @@
+---
+services:
+  dlt-runner:
+    container_name: dlt-runner
+    hostname: dlt-runner
+    build: .
+    volumes:
+      - /tmp/logs/dlt:/tmp/logs
+      - /tmp/data:/tmp/data
+    networks:
+      - tfds-network
+
+networks:
+  tfds-network:
+    name: tfds-network
+    external: true

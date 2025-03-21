@@ -166,3 +166,5 @@ DuckDB/data
 .DS_store
 airflow/logs/
 _data/big/
+pmenv/
+tfds.code-workspace

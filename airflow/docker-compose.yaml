@@ -83,6 +83,8 @@ x-airflow-common:
     - /tmp/airflow/dags:/opt/airflow/dags
     - /tmp/airflow/config:/opt/airflow/config
     - /tmp/airflow/plugins:/opt/airflow/plugins
+    - /var/run/docker.sock:/var/run/docker.sock
+
   user: "${AIRFLOW_UID:-50000}:0"
 
   networks:
@@ -132,7 +134,7 @@ services:
 
   airflow-scheduler:
     <<: *airflow-common
-    command: airflow-scheduler
+    command: scheduler
     container_name: airflow-scheduler
     healthcheck:
       test: ["CMD", "curl", "--fail", "http://localhost:8974/health"]

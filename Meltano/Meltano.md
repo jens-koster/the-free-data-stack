@@ -15,7 +15,7 @@
 # Setup
 Use the [step by step guide by Meltano](https://docs.meltano.com/getting-started/)
 
-If this is not your first rodeo, the commands needed are all in this guide
+If this is not your first rodeo, the commands needed are all here
 
     pipx install "meltano"
 
@@ -33,6 +33,3 @@ https://hub.meltano.com/loaders/target-duckdb--jwills/
 
     meltano add loader target-duckdb
     meltano config target-duckdb set path "${DATASTACK_DUCKDB}"
-
-
-

@@ -1,0 +1,23 @@
+---
+services:
+  s3-ninja:
+    #8.4.0 has no code changes only updates,
+    # and does not come in arm64 version. let's stay on 8.3.3
+    image: scireum/s3-ninja:8.3.3
+    container_name: s3-ninja
+    networks:
+      - tfds-network
+    expose:
+      - 9000
+    ports:
+      - "127.0.0.1:8004:9000"
+    volumes:
+      - s3-ninja-data:/home/sirius/data
+
+volumes:
+  s3-ninja-data:
+
+networks:
+  tfds-network:
+    name: tfds-network
+    external: true

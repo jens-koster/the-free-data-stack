@@ -3,45 +3,45 @@
 # """
 
 from urllib import request
-import requests
 
-import pendulum
 import airflow.utils.dates
+import pendulum
+import requests
 from airflow import DAG
+from airflow.exceptions import AirflowNotFoundException
 from airflow.operators.bash import BashOperator
 from airflow.operators.python import PythonOperator
-from airflow.sensors.python import PythonSensor
 from airflow.providers.common.sql.operators.sql import SQLExecuteQueryOperator
-from airflow.exceptions import AirflowNotFoundException
+from airflow.sensors.python import PythonSensor
 
 dag = DAG(
     dag_id="listing_4_20",
-    start_date=pendulum.today('UTC').add(days=-1),
+    start_date=pendulum.today("UTC").add(days=-1),
     schedule="3 * * * *",
     template_searchpath="/tmp",
     max_active_runs=1,
 )
 
 
-def make_url(execution_date)->str:
+def make_url(execution_date) -> str:
     retrieve_date = execution_date.add(hours=-1)
     return (
         "https://dumps.wikimedia.org/other/pageviews/"
         f"{retrieve_date.year}/{retrieve_date.year}-{retrieve_date.month:0>2}/pageviews-{retrieve_date.year}{retrieve_date.month:0>2}{retrieve_date.day:0>2}-{retrieve_date.hour:0>2}0000.gz"
     )
 
-def check_file_exists(execution_date)->bool:
+
+def check_file_exists(execution_date) -> bool:
     url = make_url(execution_date)
     response = requests.head(url)
     return response.status_code == 200
 
 
-
 wait_for_pageview_file = PythonSensor(
-   task_id="wait_for_pageview_file",
-   python_callable= check_file_exists,
-   timeout=20*60,
-   dag=dag,
+    task_id="wait_for_pageview_file",
+    python_callable=check_file_exists,
+    timeout=20 * 60,
+    dag=dag,
 )
 
 
@@ -58,16 +58,18 @@ create_table = SQLExecuteQueryOperator(
     dag=dag,
 )
 
+
 def _get_data(execution_date, output_path):
     url = make_url(execution_date)
     if not check_file_exists(execution_date=execution_date):
         raise AirflowNotFoundException(url)
 
-    print('-'*50)
+    print("-" * 50)
     print(execution_date)
     print(url)
     request.urlretrieve(url, output_path)
-    print('-'*50)
+    print("-" * 50)
+
 
 get_data = PythonOperator(
     task_id="get_data",

@@ -1,17 +1,9 @@
 ---
 services:
-  book-runner:
-    container_name: book-runner
-    hostname: book-runner
-    build: .
+  book_runner:
+    image: tfds/papermill-base:${TFDS_VERSION}
+    container_name: papermill-base
     volumes:
       - /tmp/logs/book-runner:/tmp/logs
       - /tmp/notebooks:/tmp/notebooks
       - /tmp/output_notebooks:/tmp/output_notebooks
-    networks:
-      - tfds-network
-
-networks:
-  tfds-network:
-    name: tfds-network
-    external: true

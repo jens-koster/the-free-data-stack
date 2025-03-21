@@ -4,7 +4,7 @@
 services:
 
   spark-master:
-    image: bitnami/spark:3.5.0
+    image: "tfds/spark-base:${TFDS_VERSION}"
     container_name: spark-master
     hostname: spark-master
     networks:
@@ -15,12 +15,13 @@ services:
     environment:
       - SPARK_MODE=master
       - SPARK_MASTER_HOST=spark-master
+      - SPARK_MASTER_URL=spark://spark-master:7077
     ports:
       - "127.0.0.1:7077:7077"
       - "127.0.0.1:8010:8080"
 
   spark-worker-1:
-    image: bitnami/spark:3.5.0
+    image: "tfds/spark-base:${TFDS_VERSION}"
     container_name: spark-worker-1
     hostname: spark-worker-1
     networks:
@@ -39,7 +40,7 @@ services:
       - "127.0.0.1:8011:8081"
 
   spark-worker-2:
-    image: bitnami/spark:3.5.0
+    image: "tfds/spark-base:${TFDS_VERSION}"
     container_name: spark-worker-2
     hostname: spark-worker-2
     networks:
@@ -55,26 +56,6 @@ services:
       - "8081"
     ports:
       - "127.0.0.1:8012:8081"
-
-  jupyter:
-    #image: quay.io/jupyter/pyspark-notebook:latest
-    image: jupyter/pyspark-notebook:latest
-    container_name: jupyter-notebook
-    hostname: jupyter
-    networks:
-      - tfds-network
-    volumes:
-      - ./notebooks:/home/jovyan/work
-      - ./data:/tmp/data
-
-    ports:
-      - "8003:8888"
-    environment:
-      - SPARK_MASTER=spark://spark-master:7077
-      - SPARK_MASTER_URL=spark://spark-master:7077
-      - SPARK_MASTER_HOST=spark-master
-    depends_on:
-      - spark-master
 
 networks:
   tfds-network:
