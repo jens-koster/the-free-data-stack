@@ -1,6 +1,7 @@
 import requests
 from bs4 import BeautifulSoup
 
+
 def scrape_keys(url):
     """
     Scrapes the given URL to extract 'Access Key' and 'Secret Key' fields.
@@ -17,7 +18,7 @@ def scrape_keys(url):
         response.raise_for_status()  # Raise an error for HTTP errors
 
         # Parse the HTML content
-        soup = BeautifulSoup(response.text, 'html.parser')
+        soup = BeautifulSoup(response.text, "html.parser")
 
         # Extract the keys
         access_key = None
@@ -38,10 +39,7 @@ def scrape_keys(url):
                     secret_key = value
 
         # Return the extracted keys
-        return {
-            "access_key": access_key,
-            "secret_key": secret_key
-        }
+        return {"access_key": access_key, "secret_key": secret_key}
 
     except requests.exceptions.RequestException as e:
         print(f"Error fetching the URL: {e}")

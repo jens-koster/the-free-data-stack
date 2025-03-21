@@ -38,7 +38,6 @@ with DAG(
         # docker_url='tcp://host.docker.internal:2375','
         docker_url="unix://var/run/docker.sock",
         network_mode="bridge",
-
         mounts=[
             Mount(source="/tmp/notebooks", target="/tmp/notebooks", type="bind"),
             Mount(

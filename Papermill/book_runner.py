@@ -10,15 +10,16 @@ docker compose run --remove-orphans --rm -it --entrypoint /bin/bash book-runner
 
 import argparse
 import datetime as dt
-import os
 import json
-import papermill as pm
-import papermill as pm
+import os
+
 import boto3
+import papermill as pm
 import requests
 from bs4 import BeautifulSoup
 
 # we temorarily use the scrape keys function to get the keys for s3 ninja
+
 
 def scrape_keys(url):
     """
@@ -37,7 +38,7 @@ def scrape_keys(url):
         response.raise_for_status()  # Raise an error for HTTP errors
 
         # Parse the HTML content
-        soup = BeautifulSoup(response.text, 'html.parser')
+        soup = BeautifulSoup(response.text, "html.parser")
 
         # Extract the keys
         access_key = None
@@ -58,10 +59,7 @@ def scrape_keys(url):
                     secret_key = value
 
         # Return the extracted keys
-        return {
-            "access_key": access_key,
-            "secret_key": secret_key
-        }
+        return {"access_key": access_key, "secret_key": secret_key}
 
     except requests.exceptions.RequestException as e:
         print(f"Error fetching the URL: {e}")
@@ -71,30 +69,33 @@ def scrape_keys(url):
         return None
 
 
-
 def execute_notebook(notebook, parameters):
     endpoint = get_endpoint()
-    endpoint_url = f'{endpoint}/s3'
-    keys = scrape_keys(f'{endpoint}/ui')
+    endpoint_url = f"{endpoint}/s3"
+    keys = scrape_keys(f"{endpoint}/ui")
 
     s3_client = boto3.client(
-        service_name='s3',
-        aws_access_key_id=keys['access_key'],
-        aws_secret_access_key=keys['secret_key'],
+        service_name="s3",
+        aws_access_key_id=keys["access_key"],
+        aws_secret_access_key=keys["secret_key"],
         endpoint_url=endpoint_url,
     )
 
-    tmp_dir = f'/tmp/book_runner/{notebook}'
+    tmp_dir = f"/tmp/book_runner/{notebook}"
     os.makedirs(tmp_dir, exist_ok=True)
 
-    input_bucket = 'notebooks'
+    input_bucket = "notebooks"
     input_object_name = f"{notebook}.ipynb"
-    input_local_file=f"{tmp_dir}/{notebook}.ipynb"
+    input_local_file = f"{tmp_dir}/{notebook}.ipynb"
 
-    output_bucket = 'output-notebooks'
-    output_local_file=f"{tmp_dir}/{notebook}_{dt.datetime.now().strftime('%Y%m%d_%H%M%S')}.ipynb"
+    output_bucket = "output-notebooks"
+    output_local_file = (
+        f"{tmp_dir}/{notebook}_{dt.datetime.now().strftime('%Y%m%d_%H%M%S')}.ipynb"
+    )
     output_prefix = f"{notebook}/"
-    output_object_name = f"{notebook}_{dt.datetime.now().strftime('%Y%m%d_%H%M%S')}.ipynb"
+    output_object_name = (
+        f"{notebook}_{dt.datetime.now().strftime('%Y%m%d_%H%M%S')}.ipynb"
+    )
 
     print(f"Downloading {input_bucket}, {input_object_name} to {input_local_file}")
     s3_client.download_file(input_bucket, input_object_name, input_local_file)
@@ -103,20 +104,26 @@ def execute_notebook(notebook, parameters):
     pm.execute_notebook(
         input_path=input_local_file,
         output_path=output_local_file,
-        parameters=parameters
+        parameters=parameters,
     )
 
-    print(f"Uploading {output_local_file} to bucket {output_bucket} as {output_prefix}{output_object_name}")
+    print(
+        f"Uploading {output_local_file} to bucket {output_bucket} as {output_prefix}{output_object_name}"
+    )
     with open(output_local_file, "rb") as f:
-        s3_client.upload_fileobj(f, output_bucket, f"{output_prefix}{output_object_name}")
+        s3_client.upload_fileobj(
+            f, output_bucket, f"{output_prefix}{output_object_name}"
+        )
 
-    print('Notebook executed')
+    print("Notebook executed")
+
 
 def get_endpoint():
     endpoint = os.environ.get("S3NINJA_ENDPOINT")
     if endpoint is None:
         endpoint = "http://127.0.0.1:8004"
     return endpoint
+
 
 def main():
 
@@ -159,4 +166,4 @@ def main():
 if __name__ == "__main__":
     # endpoint = "https://s3-ninja:9000"
 
-    execute_notebook(notebook='helloworld', parameters={"p1":"hello", "p2":"world"})
+    execute_notebook(notebook="helloworld", parameters={"p1": "hello", "p2": "world"})
