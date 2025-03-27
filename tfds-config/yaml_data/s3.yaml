@@ -5,7 +5,7 @@ items:
   # value: http://s3-ninja:9000
 - description: Access key of the S3 server
   name: access_key
-  value: AKIAIOSFODNN7EXAMPLE
+  value:
 - description: Secret key of the S3 server
   name: secret_key
-  value: wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
+  value:
