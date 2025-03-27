@@ -1,7 +1,0 @@
-root:
-  lst:
-    - list1
-    - list2
-  str: hello
-  int: 10
-  float: 3.14
