@@ -54,6 +54,8 @@ x-airflow-common:
   build: .
   environment:
     &airflow-common-env
+    TFDS_CONFIG_URL: http://tfds-config:8005/api/configs
+
     AIRFLOW__CORE__EXECUTOR: CeleryExecutor
     AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres/airflow
     AIRFLOW__CELERY__RESULT_BACKEND: db+postgresql://airflow:airflow@postgres/airflow

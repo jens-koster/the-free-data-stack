@@ -16,69 +16,42 @@ import os
 import boto3
 import papermill as pm
 import requests
-from bs4 import BeautifulSoup
 
 # we temorarily use the scrape keys function to get the keys for s3 ninja
 
 
-def scrape_keys(url):
-    """
-    Scrapes the given URL to extract 'Access Key' and 'Secret Key' fields.
 
-    Args:
-        url (str): The URL of the website to scrape.
+print("book_runner.py is running...")
 
-    Returns:
-        dict: A dictionary containing the extracted keys.
-    """
 
-    try:
-        # Send a GET request to the website
-        response = requests.get(url)
-        response.raise_for_status()  # Raise an error for HTTP errors
+def convert_config(items):
+    return {item["name"]: item["value"] for item in items}
 
-        # Parse the HTML content
-        soup = BeautifulSoup(response.text, "html.parser")
 
-        # Extract the keys
-        access_key = None
-        secret_key = None
+def get_s3_config():
 
-        # Find all <dl> elements
-        dl_elements = soup.find_all("dl")
-
-        for dl in dl_elements:
-            dt = dl.find("dt")
-            dd = dl.find("dd")
-            if dt and dd:
-                label = dt.text.strip()
-                value = dd.text.strip()
-                if label == "Access Key":
-                    access_key = value
-                elif label == "Secret Key":
-                    secret_key = value
-
-        # Return the extracted keys
-        return {"access_key": access_key, "secret_key": secret_key}
-
-    except requests.exceptions.RequestException as e:
-        print(f"Error fetching the URL: {e}")
-        return None
-    except Exception as e:
-        print(f"Error parsing the HTML: {e}")
-        return None
+    tfds_config_url = os.environ.get("TFDS_CONFIG_URL")
+    print(f"using tsdf-config: {tfds_config_url}")
+    if not tfds_config_url:
+        raise EnvironmentError("Environment variable TFDS_CONFIG_URL is not set")
+    tfds_config_url += "/s3"
+    if os.environ.get("TFSD_CONFIG_LOCALHOST"):
+        tfds_config_url += "?localhost=yes"
+    print(f"retrieving s3 config from {tfds_config_url}")
+    response = requests.get(f"{tfds_config_url}")
+    return convert_config(response.json()["items"])
 
 
 def execute_notebook(notebook, parameters):
-    endpoint = get_endpoint()
-    endpoint_url = f"{endpoint}/s3"
-    keys = scrape_keys(f"{endpoint}/ui")
-
+    cfg = get_s3_config()
+    print(
+        f"using s3 config url:{cfg['url']}, 'access_key': {'access_key' in cfg.keys()}, 'secret_key': {'secret_key' in cfg.keys()}"
+    )
     s3_client = boto3.client(
         service_name="s3",
-        aws_access_key_id=keys["access_key"],
-        aws_secret_access_key=keys["secret_key"],
-        endpoint_url=endpoint_url,
+        aws_access_key_id=cfg["access_key"],
+        aws_secret_access_key=cfg["secret_key"],
+        endpoint_url=cfg["url"],
     )
 
     tmp_dir = f"/tmp/book_runner/{notebook}"
@@ -89,13 +62,13 @@ def execute_notebook(notebook, parameters):
     input_local_file = f"{tmp_dir}/{notebook}.ipynb"
 
     output_bucket = "output-notebooks"
-    output_local_file = (
-        f"{tmp_dir}/{notebook}_{dt.datetime.now().strftime('%Y%m%d_%H%M%S')}.ipynb"
+    output_prefix = f"{notebook}"
+    output_filename = (
+        f"{notebook}_{dt.datetime.now(dt.timezone.utc).strftime('%Y%m%d_%H%M%S')}.ipynb"
     )
-    output_prefix = f"{notebook}/"
-    output_object_name = (
-        f"{notebook}_{dt.datetime.now().strftime('%Y%m%d_%H%M%S')}.ipynb"
-    )
+
+    output_object_name = f"{output_prefix}/{output_filename}"
+    output_local_file = f"{tmp_dir}/{output_filename}"
 
     print(f"Downloading {input_bucket}, {input_object_name} to {input_local_file}")
     s3_client.download_file(input_bucket, input_object_name, input_local_file)
@@ -108,21 +81,12 @@ def execute_notebook(notebook, parameters):
     )
 
     print(
-        f"Uploading {output_local_file} to bucket {output_bucket} as {output_prefix}{output_object_name}"
+        f"Uploading {output_local_file} to bucket {output_bucket} as {output_object_name}"
     )
     with open(output_local_file, "rb") as f:
-        s3_client.upload_fileobj(
-            f, output_bucket, f"{output_prefix}{output_object_name}"
-        )
+        s3_client.upload_fileobj(f, output_bucket, output_object_name)
 
     print("Notebook executed")
-
-
-def get_endpoint():
-    endpoint = os.environ.get("S3NINJA_ENDPOINT")
-    if endpoint is None:
-        endpoint = "http://127.0.0.1:8004"
-    return endpoint
 
 
 def main():
@@ -160,10 +124,13 @@ def main():
     except json.JSONDecodeError:
         raise ValueError("Invalid JSON string for parameters")
 
-    execute_notebook(notbook=notebook, parameters=parameters)
+    execute_notebook(notebook=notebook, parameters=parameters)
 
 
-if __name__ == "__main__":
-    # endpoint = "https://s3-ninja:9000"
+if True:
+    main()
+else:
 
+    os.environ["TFDS_CONFIG_URL"] = "http://127.0.0.1:8005/api/configs"
+    os.environ["TFSD_CONFIG_LOCALHOST"] = "Yes please"
     execute_notebook(notebook="helloworld", parameters={"p1": "hello", "p2": "world"})

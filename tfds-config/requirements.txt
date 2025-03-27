@@ -1,0 +1,8 @@
+Flask
+flask-smorest
+marshmallow
+PyYAML
+pytest
+gunicorn
+requests
+beautifulsoup4

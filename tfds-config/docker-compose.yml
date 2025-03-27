@@ -1,0 +1,23 @@
+services:
+  api:
+    build: .
+    image: tfds-config
+    container_name: tfds-config
+    expose:
+      - 8005
+    ports:
+      - "127.0.0.1:8005:8005"
+    environment:
+      - FLASK_ENV=development
+      - YAML_DATA_PATH=/app/app/data/data_files
+    volumes:
+      - ./yaml_data:/app/app/data/data_files
+    networks:
+      - tfds-network
+
+
+
+networks:
+  tfds-network:
+    name: tfds-network
+    external: true

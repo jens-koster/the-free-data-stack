@@ -21,6 +21,9 @@ This is the global list of who gets what port:
 - 8002 - postgres web ui on http://127.0.0.1:8002
 - 8003 - jupyter web ui on http://127.0.0.1:8003
 - 8004 - s3 ninja on http://127.0.0.1:8004/ui
+- 8005 - tfds-config on:
+  - http://127.0.0.1:8005/swagger-ui
+  - http://127.0.0.1:8005/redoc
 - 8010 - spark master on http://127.0.0.1:8010
 - 8011 - spark worker 1 on http://127.0.0.1:8011
 - 8012 - spark worker 2 on http://127.0.0.1:8012
