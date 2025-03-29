@@ -1,44 +1,55 @@
-from marshmallow import Schema, fields, validate
+from marshmallow import Schema, fields
 
 
-class ConfigItemSchema(Schema):
-    """Schema for a configuration item."""
+class MetaSchema(Schema):
+    """Schema for the metadata dictionary."""
 
-    name = fields.Str(required=True, description="Configuration name")
-    value = fields.Raw(
-        required=True, description="Configuration value (can be any type)"
+    name = fields.Str(
+        required=True,
+        description="The name of the configuration, overwritten on each call",
+        example="training_config",
     )
-    description = fields.Str(description="Description of this configuration")
 
-    class Meta:
-        description = "A single configuration item"
-        example = {
-            "name": "max_batch_size",
-            "value": 64,
-            "description": "Maximum batch size for processing",
-        }
+    doc = fields.Str(
+        required=True,
+        description="Config documenttion, this is where you document the config values",
+        example="url: the url of the s3-ninja server",
+    )
+
+    notes = fields.Str(
+        required=True,
+        description="config server generated info, overwritten on each call",
+        example="Freshly created from defaults",
+    )
+    file_name = fields.Str(
+        required=True,
+        description="The name of the configuration file, overwritten on each call",
+        example="training.yaml",
+    )
 
 
 class ConfigFileSchema(Schema):
-    """Schema for a complete configuration file."""
+    """Schema for a configuration file with metadata."""
 
-    name = fields.Str(required=True, description="Configuration file name")
-    items = fields.List(fields.Nested(ConfigItemSchema), required=True)
+    # The main configuration dictionary
+    config = fields.Dict(
+        keys=fields.Str(description="Configuration key"),
+        values=fields.Raw(description="Configuration value (can be any type)"),
+        required=True,
+        description="A dictionary of configuration items",
+        example={
+            "max_batch_size": 64,
+            "learning_rate": 0.001,
+            "num_epochs": 10,
+        },
+    )
+
+    # Metadata dictionary with strict validation
+    meta = fields.Nested(
+        MetaSchema,
+        required=True,
+        description="Metadata about the configuration file",
+    )
 
     class Meta:
-        description = "A configuration file with multiple items"
-        example = {
-            "name": "training_config",
-            "items": [
-                {
-                    "name": "max_batch_size",
-                    "value": 64,
-                    "description": "Maximum batch size for processing",
-                },
-                {
-                    "name": "learning_rate",
-                    "value": 0.001,
-                    "description": "Learning rate for optimizer",
-                },
-            ],
-        }
+        description = "A configuration file with metadata and config"

@@ -1,0 +1,14 @@
+config:
+  spark-stack:
+    services:
+    - tfds-config
+    - s3-ninja
+    - postgreSQL
+    - spark
+    - papermill
+    - airflow
+  x-stack:
+    services:
+    - tfds-config
+    - s3-ninja
+    - clickhouse

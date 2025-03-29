@@ -2,15 +2,15 @@ import ipaddress
 import os
 
 import requests
-from app.api.schemas.request_models import ConfigFileSchema, ConfigItemSchema
+from app.api.schemas.request_models import ConfigFileSchema
 from app.api.schemas.response_models import (ConfigFileResponseSchema,
-                                             ConfigItemResponseSchema,
                                              ConfigListResponseSchema)
-from app.data.store import list_configs, read_yaml, write_yaml
+from app.data.store import list_configs, format_response, write_config, read_config, delete_config
 from bs4 import BeautifulSoup
 from flask import request
 from flask.views import MethodView
 from flask_smorest import Blueprint, abort
+from app.data.store import DATA_PATH
 
 blp = Blueprint(
     "Configurations",
@@ -31,17 +31,14 @@ class ConfigList(MethodView):
 
 def scrape_keys(url):
     """
-    Scrapes the given URL to extract 'Access Key' and 'Secret Key' fields.
-
+    Scrapes the s3-ninja ui and extracts 'Access Key' and 'Secret Key'.
     Args:
-        url (str): The URL of the website to scrape.
-
+        url (str): The URL of the s3-ninja ui.
     Returns:
         dict: A dictionary containing the extracted keys.
     """
 
     try:
-        # Send a GET request to the website
         print(f"scraping {url}")
         response = requests.get(url)
         response.raise_for_status()  # Raise an error for HTTP errors
@@ -67,17 +64,14 @@ def scrape_keys(url):
                 elif label == "Secret Key":
                     secret_key = value
 
-        # Return the extracted keys
         return {"access_key": access_key, "secret_key": secret_key}
-
     except requests.exceptions.RequestException as e:
         return None
 
 
 def get_s3():
     """
-    Get and set the S3 config by scrapeíng the keys.
-
+    Get and set the S3 config by scraping the keys.
     Returns:
         dict: A dictionary containing the S3 configuration.
     """
@@ -90,34 +84,24 @@ def get_s3():
     url_s3 = url + "/s3"
     cfg = scrape_keys(f"{url_ui}")
     print(f"scraped {url_ui}: {cfg}")
-    data = None
+    data = {}
     if cfg is None:
         print("no s3-ninja server found, trying to read s3.yaml")
-        data = read_yaml("s3.yaml")
+        data = read_config("s3")
         print(f"found s3.yaml: {data}")
     else:
         print("config found, formatting response from scraped data")
-        data = {
-            "items": [
-                {
-                    "name": "url",
-                    "value": f"{url}",
-                    "description": "URL of the S3 server",
-                },
-                {
-                    "name": "access_key",
-                    "value": cfg["access_key"],
-                    "description": "Access key of the S3 server",
-                },
-                {
-                    "name": "secret_key",
-                    "value": cfg["secret_key"],
-                    "description": "Secret key of the S3 server",
-                },
-            ]
-        }
+        data = format_response(
+            path=url_ui,
+            name='s3',
+            notes='scraped from service, did not look for a file',
+            config = {
+                "url": url_s3,
+                "access_key": cfg["access_key"],
+                "secret_key": cfg["secret_key"],
+            }
+        )
     return data
-
 
 @blp.route("/s3")
 class S3ConfigResource(MethodView):
@@ -127,58 +111,27 @@ class S3ConfigResource(MethodView):
         data = get_s3()
         if not data:
             abort(404, message=f"Configuration s3 not found. Is s3-ninja started?")
-
-        return {"name": "s3", "items": data.get("items", [])}
-
+        return data
 
 @blp.route("/<string:config_name>")
 class ConfigResource(MethodView):
     @blp.response(200, ConfigFileResponseSchema)
     @blp.response(404)
     def get(self, config_name):
-        """Get a specific configuration file"""
-        # Ensure .yaml extension
-        if not config_name.endswith(".yaml"):
-            config_name += ".yaml"
-
-        data = read_yaml(config_name)
+        data = read_config(config_name)
         if not data:
             abort(404, message=f"Configuration '{config_name}' not found")
-
-        return {
-            "name": config_name.replace(".yaml", ""),
-            "items": data.get("items", {}),
-        }
+        return data
 
     @blp.arguments(ConfigFileSchema)
     @blp.response(201, ConfigFileResponseSchema)
     def post(self, config_data, config_name):
         """Create or update a configuration file"""
-        # Ensure .yaml extension
-        if not config_name.endswith(".yaml"):
-            config_name += ".yaml"
-
-        write_yaml(config_name, {"items": config_data["items"]})
-        return {
-            "name": config_name.replace(".yaml", ""),
-            "items": config_data["items"],
-        }, 201
+        write_config(config_name, config_data)
+        return read_config(config_name), 201
 
     @blp.response(204)
-    @blp.response(404)
     def delete(self, config_name):
         """Delete a configuration file"""
-        # Ensure .yaml extension
-        if not config_name.endswith(".yaml"):
-            config_name += ".yaml"
-
-        import os
-
-        from app.data.store import DATA_PATH
-
-        file_path = os.path.join(DATA_PATH, config_name)
-        if not os.path.exists(file_path):
-            abort(404, message=f"Configuration '{config_name}' not found")
-
-        os.remove(file_path)
+        delete_config(config_name)
         return "", 204

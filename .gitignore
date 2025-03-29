@@ -169,4 +169,4 @@ _data/big/
 pmenv/
 tfds.code-workspace
 cfgenv/
-tfds-config/tfds-config/yaml_data/s3.yaml
+s3.yaml

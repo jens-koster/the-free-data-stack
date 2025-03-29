@@ -2,7 +2,6 @@ from app.api.schemas.request_models import ConfigFileSchema, ConfigItemSchema
 from marshmallow import Schema, fields
 
 # Reuse the request schemas for responses where appropriate
-ConfigItemResponseSchema = ConfigItemSchema
 ConfigFileResponseSchema = ConfigFileSchema
 
 

@@ -14,7 +14,3 @@ ln -s "$(pwd)/Airflow/config" /tmp/airflow/config
 ln -s "$(pwd)/Airflow/plugins" /tmp/airflow/plugins
 ln -s "$(pwd)/Airflow/dags" /tmp/airflow/dags
 
-# Papermill
-mkdir -p /tmp/logs/book-runner
-mkdir -p /tmp/notebooks
-mkdir -p /tmp/output_notebooks

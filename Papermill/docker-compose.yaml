@@ -1,10 +1,10 @@
 ---
 services:
   book-runner:
-    image: tfds/papermill-base:${TFDS_VERSION}
+    image: tfds/papermill-base:${TFDS_STACK_VERSION}
     container_name: papermill-base
     environment:
-      - TFDS_CONFIG_URL:"http://tfds-config:8005"
+      TFDS_CONFIG_URL: ${TFDS_CONFIG_URL}
     networks:
       - tfds-network
 

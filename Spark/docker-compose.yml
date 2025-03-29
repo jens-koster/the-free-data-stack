@@ -4,7 +4,7 @@
 services:
 
   spark-master:
-    image: "tfds/spark-base:${TFDS_VERSION}"
+    image: "tfds/spark-base:${TFDS_STACK_VERSION}"
     container_name: spark-master
     hostname: spark-master
     networks:
@@ -14,14 +14,14 @@ services:
 
     environment:
       - SPARK_MODE=master
-      - SPARK_MASTER_HOST=spark-master
-      - SPARK_MASTER_URL=spark://spark-master:7077
+      - SPARK_MASTER_HOST=${TFDS_SPARK_MASTER_HOST}
+      - SPARK_MASTER_URL=${TFDS_SPARK_MASTER_URL}
     ports:
       - "127.0.0.1:7077:7077"
       - "127.0.0.1:8010:8080"
 
   spark-worker-1:
-    image: "tfds/spark-base:${TFDS_VERSION}"
+    image: "tfds/spark-base:${TFDS_STACK_VERSION}"
     container_name: spark-worker-1
     hostname: spark-worker-1
     networks:
@@ -31,7 +31,7 @@ services:
 
     environment:
       - SPARK_MODE=worker
-      - SPARK_MASTER_URL=spark://spark-master:7077
+      - SPARK_MASTER_URL=${TFDS_SPARK_MASTER_URL}
     depends_on:
       - spark-master
     expose:
@@ -40,7 +40,7 @@ services:
       - "127.0.0.1:8011:8081"
 
   spark-worker-2:
-    image: "tfds/spark-base:${TFDS_VERSION}"
+    image: "tfds/spark-base:${TFDS_STACK_VERSION}"
     container_name: spark-worker-2
     hostname: spark-worker-2
     networks:
@@ -49,7 +49,7 @@ services:
       - ./data:/tmp/data
     environment:
       - SPARK_MODE=worker
-      - SPARK_MASTER_URL=spark://spark-master:7077
+      - SPARK_MASTER_URL=${TFDS_SPARK_MASTER_URL}
     depends_on:
       - spark-master
     expose:

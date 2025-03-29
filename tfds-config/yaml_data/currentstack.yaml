@@ -1,0 +1,4 @@
+annotation: the current stack for tfds cli, use setstack to change it, editing here
+  is fine too
+config:
+  current_stack: spark-stack
