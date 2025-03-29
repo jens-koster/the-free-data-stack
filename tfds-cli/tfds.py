@@ -5,9 +5,7 @@ import yaml
 import subprocess
 from pathlib import Path
 
-TFDS_CLI_FOLDER = Path(__file__).resolve().parent  # Get the directory of the current file
-
-TFDS_CONFIG_DIR = "tfds-config/yaml_data"
+TFDS_CONFIG_DIR = "./tfds-config/yaml_data"
 STACKS_FILE = f"{TFDS_CONFIG_DIR}/stacks.yaml"
 CURRENT_STACK_FILE = f"{TFDS_CONFIG_DIR}/currentstack.yaml"
 
@@ -27,6 +25,7 @@ def init():
     """Create the stacks.yaml file if it doesn't exist and populate it with sample content."""
     if not Path(STACKS_FILE).exists():
         sample_content = {
+            'annotation': 'The stack definitions for tfds cli. tfds will do some magic and then iterate these folders in order to run docker compose with the chosen command in each',
             'config': {
                 'spark-stack': {'services': ['tfds-config', 's3-ninja', 'postgreSQL', 'spark', 'papermill', 'airflow']},
                 'x-stack': {'services': ['tfds-config', 's3-ninja', 'clickhouse']}
@@ -38,6 +37,9 @@ def init():
         set_current_stack('spark-stack')
     else:
         print(f"{STACKS_FILE} already exists.")
+        if get_current_stack() is None:
+            stacks = load_stacks()
+            set_current_stack(stacks.keys()[0])
 
 
 def get_current_stack()->str:
@@ -117,7 +119,10 @@ def execute_docker_command(command, service=None, *args):
         os.chdir(service_dir)
         try:
             print(f"Running 'docker compose {command}' for service '{svc}'...")
-            subprocess.run(["docker", "compose", command, *args], check=True)
+            cmd = ["docker", "compose", command, *args]
+            if command in ["up", "start"]:
+                cmd.append("-d")
+            subprocess.run(cmd, check=True)
         except subprocess.CalledProcessError as e:
             print(f"Error: Failed to execute 'docker compose {command}' for service '{svc}'.")
             sys.exit(1)
