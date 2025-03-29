@@ -1,4 +1,4 @@
-from app.api.schemas.request_models import ConfigFileSchema, ConfigItemSchema
+from app.api.schemas.request_models import ConfigFileSchema
 from marshmallow import Schema, fields
 
 # Reuse the request schemas for responses where appropriate
