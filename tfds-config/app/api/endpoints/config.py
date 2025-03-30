@@ -19,11 +19,15 @@ blp = Blueprint(
     url_prefix="/api/configs",
 )
 
+def printlog():
+
+    print('#' * 20, request.method, request.path)
 
 @blp.route("/")
 class ConfigList(MethodView):
     @blp.response(200, ConfigListResponseSchema)
     def get(self):
+        printlog()
         """List all available configuration files"""
         config_files = list_configs()
         return {"configs": config_files}
@@ -103,35 +107,43 @@ def get_s3():
         )
     return data
 
+
 @blp.route("/s3")
 class S3ConfigResource(MethodView):
     @blp.response(200, ConfigFileResponseSchema)
     @blp.response(404)
     def get(self):
+        printlog()
+
         data = get_s3()
         if not data:
             abort(404, message=f"Configuration s3 not found. Is s3-ninja started?")
-        return data
+        return data, 200
 
 @blp.route("/<string:config_name>")
 class ConfigResource(MethodView):
     @blp.response(200, ConfigFileResponseSchema)
     @blp.response(404)
     def get(self, config_name):
+        printlog()
         data = read_config(config_name)
         if not data:
             abort(404, message=f"Configuration '{config_name}' not found")
-        return data
+        return data, 200
 
     @blp.arguments(ConfigFileSchema)
     @blp.response(201, ConfigFileResponseSchema)
     def post(self, config_data, config_name):
+        printlog()
+        print(config_name)
+        print(config_data)
         """Create or update a configuration file"""
         write_config(config_name, config_data)
         return read_config(config_name), 201
 
     @blp.response(204)
     def delete(self, config_name):
+        printlog()
         """Delete a configuration file"""
         delete_config(config_name)
         return "", 204

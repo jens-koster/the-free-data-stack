@@ -132,10 +132,11 @@ def execute_docker_command(command, service=None, *args):
 
 def main():
     if len(sys.argv) < 2:
-        print("Usage: stack_manager.py <command> [options]")
+        print("Usage: tfds.py <command> [options]")
         print("options are passed on docker compose except -s <service> which executes the docker command for one service.")
         print("Commands: init, ls, setstack <stack_name>, <docker_compose_command>")
-        sys.exit(1)
+        print(sys.argv)
+        return 1
 
     start_dir = Path.cwd()  # Get the current working directory and make sure we end up back there
     # Check if we're in a project subdirectory and move to root if necessary

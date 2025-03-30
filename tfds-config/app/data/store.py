@@ -14,7 +14,8 @@ def format_response(path, name, notes, config):
             "path": path,
             "notes": notes
         },
-        "config": config
+        "config": config.get('config',{}),
+        "doc": config.get('doc', '')
     }
 
 def strip_yaml(config_name)->str:
@@ -49,10 +50,6 @@ def read_config(config_name)-> dict:
 def write_config(config_name: str, config: Dict) -> None:
     """write a config block, if config looks like a full response object the config element is extracted and the meta element is ignored.
     don't use the same names (meta and config) for an the actual config"""
-
-    if 'meta' in  config.keys() and 'config' in config.keys() and len(config.keys())==2:
-        #we likely have a full response object, let's strip the config part.
-        config = config['config']
     file_path = get_file_name(config_name, must_exist=False)
     write_yaml(file_path=file_path, data=config)
 
@@ -77,10 +74,7 @@ def list_configs() -> List[str]:
     """List all available configuration files."""
     try:
         import os
-
-        print(os.path.abspath(DATA_PATH))
-        print([f for f in os.listdir(DATA_PATH)])
-        return [f for f in os.listdir(DATA_PATH)]
+        return [strip_yaml(f) for f in os.listdir(DATA_PATH)]
     except FileNotFoundError:
         os.makedirs(DATA_PATH, exist_ok=True)
         return []

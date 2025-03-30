@@ -1,4 +1,4 @@
-annotation: >
+doc: >
     the current version of TFDS, specifies which docker images to pull. like image: "tfds/spark-base:${TFDS_STACK_VERSION}"
     we should make this play better with the current stack and the tfds cli tools, i.e. the version should be part of the stack definition.
     this works for now as tfds cli populates the env variable TFDS_STACK_VERSION with this valie and we only have one stak so far...
