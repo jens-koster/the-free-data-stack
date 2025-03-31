@@ -14,3 +14,4 @@ ln -s "$(pwd)/Airflow/config" /tmp/airflow/config
 ln -s "$(pwd)/Airflow/plugins" /tmp/airflow/plugins
 ln -s "$(pwd)/Airflow/dags" /tmp/airflow/dags
 
+ln -s "$(pwd)/tfds-config/yaml_data" /tmp/tfds/config

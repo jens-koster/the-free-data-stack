@@ -8,7 +8,8 @@ tfds_config:
   - noenv
 
 config:
-  clean_up_temp: true
+  clean_up_temp: false
+  temp_folder: /tmp/nbdeploy
   repositories:
     - pipe-dreams:
       folders:

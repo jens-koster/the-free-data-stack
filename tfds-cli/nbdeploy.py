@@ -14,6 +14,26 @@ from botocore.exceptions import NoCredentialsError
 import git
 from common import get_config, find_dir
 
+_deploy_config = None
+def get_deploy_config():
+    global _deploy_config
+    if _deploy_config is None:
+        _deploy_config = get_config("nbdeploy")['config']
+    return _deploy_config
+
+get_deploy_config()
+
+
+_s3_config = None
+def get_s3_config():
+    global _s3_config
+    if _s3_config is None:
+        _s3_config = get_config("s3")['config']
+        _s3_config["bucket"] = 'notebooks'
+    return _s3_config
+
+get_s3_config()
+
 def get_git_info():
     """Get Git information using GitPython."""
     try:
@@ -106,9 +126,9 @@ def stamp_notebook(input_path, output_path):
         print(f"Error processing notebook {input_path}: {e}")
         return None
 
-def upload_to_s3(file_path, s3_key, s3_config):
+def upload_to_s3(file_path, s3_key):
     """Upload a file to S3 bucket."""
-
+    s3_config = get_s3_config()
     s3_client = boto3.client(
         service_name="s3",
         aws_access_key_id=s3_config["access_key"],
@@ -125,7 +145,7 @@ def upload_to_s3(file_path, s3_key, s3_config):
         print(f"Upload failed {text}: {e}")
         return False
 
-def process_notebooks(notebooks_dir, temp_dir, s3_config, s3_prefix):
+def process_notebooks(notebooks_dir, temp_dir, s3_prefix):
     """
     Process each notebook in the specified directory, stamp it with Git info,
     and upload it to S3.
@@ -152,11 +172,11 @@ def process_notebooks(notebooks_dir, temp_dir, s3_config, s3_prefix):
     if stamped_notebooks:
         print(f"Found {len(stamped_notebooks)} notebooks to upload")
         for local_path, s3_key in stamped_notebooks:
-            upload_to_s3(file_path=local_path, s3_config=s3_config, s3_key=s3_key)
-            if clean_up_temp:
+            upload_to_s3(file_path=local_path, s3_key=s3_key)
+            if get_deploy_config().get('clean_up_temp',True):
                 os.remove(local_path)  # Clean up local copy after upload
 
-def process_repo(repo_name, notebook_dirs, temp_dir, s3_config):
+def process_repo(repo_name, notebook_dirs, temp_dir):
     """
     Process each notebook in the specified directory, stamp it with Git info,
     and upload it to S3.
@@ -182,40 +202,34 @@ def process_repo(repo_name, notebook_dirs, temp_dir, s3_config):
         process_notebooks(
             notebooks_dir=notebooks_dir,
             temp_dir=temp_dir,
-            s3_config=s3_config,
             s3_prefix=os.path.join(repo_name, dir)
         )
 
+
+
 def main():
-    # Configuration
-    s3_config = get_config("s3")['config']
-    s3_config["bucket"] = 'notebooks'
-
     start_dir = os.getcwd()
+    temp_dir = get_deploy_config().get('temp_folder')
 
-    temp_dir = "./temp_notebooks"
     # create temp dir
     temp_dir = os.path.abspath(temp_dir)
-    pre_existing_temp_dir =  os.path.exists(temp_dir)
+    pre_existing_temp_dir = os.path.exists(temp_dir)
     if not pre_existing_temp_dir:
         os.makedirs(temp_dir, exist_ok=True)
 
-    deploy_config = get_config("nbdeploy")['config']
-    for repo in deploy_config.keys():
-
+    for repo in get_deploy_config()['repositories']:
+        repo_name = list(repo.keys())[0]
         process_repo(
-            repo_name=repo,
-            notebook_dirs=deploy_config[repo],
-            temp_dir=temp_dir,
-            s3_config=s3_config
+            repo_name=repo_name,
+            notebook_dirs=repo['folders'],
+            temp_dir=temp_dir
         )
 
     os.chdir(start_dir)
-    if not pre_existing_temp_dir and clean_up_temp:
+    if not pre_existing_temp_dir and get_deploy_config().get(['clean_up_temp'],True):
         os.rmdir(temp_dir)
     print("Deployment complete!")
 
 if __name__ == "__main__":
     # Load environment variables
-    os.environ['TFDS_NBDEPLOY_CLEAN_UP_TEMP'] = 'True'
     main()

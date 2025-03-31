@@ -4,3 +4,13 @@ PyYAML
 boto3
 papermill
 GitPython
+
+# tfds-config
+Flask
+flask-smorest
+marshmallow
+PyYAML
+pytest
+gunicorn
+requests
+beautifulsoup4
