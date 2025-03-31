@@ -1,3 +1,6 @@
 pytest
 requests
 PyYAML
+boto3
+papermill
+GitPython

@@ -1,4 +1,4 @@
-from marshmallow import Schema, fields
+from marshmallow import Schema, fields, validate, ValidationError, pre_load
 
 
 class MetaSchema(Schema):
@@ -19,8 +19,20 @@ class MetaSchema(Schema):
         required=False,
         description="The name of the configuration file, overwritten on each call",
         example="training.yaml",
+        data_key="file-name",
     )
 
+def tfds_config_validator(value):
+    """Custom validator to ensure tfds_config has unique values and only the allowed strings."""
+    allowed_set = {"noserve", "noenv"}
+    value_set= set(value)
+
+    if len(value) != len(value_set):
+        raise ValidationError("Duplicate values are not allowed.")
+    diff = value_set.difference(allowed_set)
+    if diff:
+        raise ValidationError(f"Found {diff}, allowed values are {allowed_set}.")
+    return value
 
 class ConfigFileSchema(Schema):
     """Schema for a configuration file with metadata."""
@@ -28,6 +40,17 @@ class ConfigFileSchema(Schema):
         required=False,
         description="Config documenttion, this is where you document the config values",
         example="url: the url of the s3-ninja server",
+    )
+
+    tfds_config = fields.List(
+        fields.Str(
+            description="Allowed values: 'noserve', 'noenv'",
+        ),
+        validate=tfds_config_validator,
+        required=False,
+        description="Config for how tfds_config treats this file. Allowed values: 'noserve', 'noenv'.",
+        example=["noserve", "noenv"],
+        # this is how we get yaml fields with a dash in them
     )
 
     # The main configuration dictionary

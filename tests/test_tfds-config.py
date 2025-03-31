@@ -40,12 +40,36 @@ def test_create_and_get_config():
     response = requests.delete(f"{os.environ[ENV_CONFIG]}/test_config")
     assert response.status_code == 204
 
+def test_tfds_config():
+    test_config = {
+        "doc": "this config is created by pytest and should be deleted",
+        "config": {"test_value": "test_value"},
+        "tfds_config": []
+    }
+
+    response = requests.post(f"{os.environ[ENV_CONFIG]}/test_config", json=test_config)
+    assert response.status_code == 201
+
+    test_config['tfds_config'] = ['noenv']
+    response = requests.post(f"{os.environ[ENV_CONFIG]}/test_config", json=test_config)
+    assert response.status_code == 201
+
+    response = requests.get(f"{os.environ[ENV_CONFIG]}/test_config")
+    config = response.json()
+    assert response.status_code == 200
+    assert config.get('config') == test_config['config']
+    assert config.get('doc') == test_config['doc']
+    assert config.get('tfds_config') == test_config['tfds_config']
+
+    test_config['tfds_config'] = ['noserve']
+    response = requests.post(f"{os.environ[ENV_CONFIG]}/test_config", json=test_config)
+    assert response.status_code == 400
+
+    response = requests.delete(f"{os.environ[ENV_CONFIG]}/test_config")
+    assert response.status_code == 204
+
 if __name__ == '__main__':
     os.chdir(os.path.dirname(__file__)+'/..')
+    print(set_env_variables())
 
-    set_env_variables()
-    test_create_and_get_config()
-
-
-
-b'{\n  "config": {\n    "config": {\n      "test_value": "test_value"\n    },\n    "doc": "this config is created by pytest and should be deleted"\n  },\n  "meta": {\n    "name": "test_config",\n    "notes": "loaded from disk",\n    "path": "/Users/jens/src/datastack/tfds-config/yaml_data/test_config.yaml"\n  }\n}\n'
+    test_tfds_config()

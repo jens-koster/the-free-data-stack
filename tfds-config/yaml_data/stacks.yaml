@@ -1,5 +1,10 @@
 doc: The stack definitions for tfds cli. tfds will do some magic and then iterate
   these folders in order to run docker compose with the chosen command in each
+
+tfds_config:
+  - noserve
+  - noenv
+
 config:
   spark-stack:
     services:

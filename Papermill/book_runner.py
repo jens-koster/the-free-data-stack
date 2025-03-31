@@ -23,11 +23,6 @@ import requests
 
 print("book_runner.py is running...")
 
-
-def convert_config(items):
-    return {item["name"]: item["value"] for item in items}
-
-
 def get_s3_config():
 
     tfds_config_url = os.environ.get("TFDS_CONFIG_URL")
@@ -38,8 +33,9 @@ def get_s3_config():
     if os.environ.get("TFSD_CONFIG_LOCALHOST"):
         tfds_config_url += "?localhost=yes"
     print(f"retrieving s3 config from {tfds_config_url}")
-    response = requests.get(f"{tfds_config_url}")
-    return convert_config(response.json()["items"])
+    response = requests.get(tfds_config_url)
+
+    return response.json()["config"]
 
 
 def execute_notebook(notebook, parameters):
@@ -71,7 +67,11 @@ def execute_notebook(notebook, parameters):
     output_local_file = f"{tmp_dir}/{output_filename}"
 
     print(f"Downloading {input_bucket}, {input_object_name} to {input_local_file}")
-    s3_client.download_file(input_bucket, input_object_name, input_local_file)
+    try:
+        s3_client.download_file(input_bucket, input_object_name, input_local_file)
+    except s3_client.exceptions.ClientError as e:
+        print(f"Error downloading {notebook} from s3: {e.response['Error']['Message']}")
+        return
 
     print(f"Executing papermill: {input_local_file} -> {output_local_file}")
     pm.execute_notebook(
@@ -127,7 +127,7 @@ def main():
     execute_notebook(notebook=notebook, parameters=parameters)
 
 
-if True:
+if False:
     main()
 else:
 

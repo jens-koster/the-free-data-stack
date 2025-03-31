@@ -4,8 +4,9 @@ import sys
 import yaml
 import subprocess
 from pathlib import Path
+from common import load_env_variables, TFDS_CONFIG_DIR
 
-TFDS_CONFIG_DIR = "./tfds-config/yaml_data"
+
 STACKS_FILE = f"{TFDS_CONFIG_DIR}/stacks.yaml"
 CURRENT_STACK_FILE = f"{TFDS_CONFIG_DIR}/currentstack.yaml"
 
@@ -71,22 +72,7 @@ def set_current_stack(stack_name):
     print(f"Current stack set to '{stack_name}'.")
 
 
-def load_env_variables():
-    """Load environment variables from YAML files in tfds-config/yaml_data."""
-    if not Path(TFDS_CONFIG_DIR).exists():
-        print(f"Warning: {TFDS_CONFIG_DIR} does not exist. Skipping environment variable setup.")
-        return
 
-    for yaml_file in Path(TFDS_CONFIG_DIR).glob("*.yaml"):
-        if yaml_file.name in ["stacks.yaml", "currentstack.yaml"]:
-            continue
-        with open(yaml_file, "r") as f:
-            config = yaml.safe_load(f)
-        base_name = yaml_file.stem.upper()
-        config = config.get('config', {})
-        for key, value in config.items():
-            env_var = f"TFDS_{base_name}_{key.upper()}"
-            os.environ[env_var] = str(value)
 
 
 def execute_docker_command(command, service=None, *args):

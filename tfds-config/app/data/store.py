@@ -8,15 +8,13 @@ DATA_PATH = os.environ.get("YAML_DATA_PATH", "/tmp/config")
 
 
 def format_response(path, name, notes, config):
-    return {
-        "meta": {
+    config = config.copy()
+    config['meta'] =  {
             "name": name,
             "path": path,
             "notes": notes
-        },
-        "config": config.get('config',{}),
-        "doc": config.get('doc', '')
-    }
+        }
+    return config
 
 def strip_yaml(config_name)->str:
     if config_name.endswith(".yaml"):
@@ -26,16 +24,16 @@ def strip_yaml(config_name)->str:
     return config_name
 
 
-def get_file_name(config_name, must_exist=True):
+def get_file_name(config_name):
     config_name = strip_yaml(config_name)
     file_path = os.path.join(DATA_PATH, config_name + '.yaml')
-    if must_exist and not os.path.isfile(file_path):
-        raise FileNotFoundError(f"Configuration file '{file_path}' not found.")
     return file_path
 
 
 def read_config(config_name)-> dict:
     file_path = get_file_name(config_name)
+    if not os.path.exists(file_path):
+        return None
     with open(file_path, "r") as file:
         config = yaml.safe_load(file) or {}
 
@@ -46,25 +44,20 @@ def read_config(config_name)-> dict:
         config=config
     )
 
-
-def write_config(config_name: str, config: Dict) -> None:
-    """write a config block, if config looks like a full response object the config element is extracted and the meta element is ignored.
-    don't use the same names (meta and config) for an the actual config"""
-    file_path = get_file_name(config_name, must_exist=False)
-    write_yaml(file_path=file_path, data=config)
-
-def write_yaml(file_path: str, data: Dict) -> None:
-    """Write data to a YAML file with file locking for thread safety."""
+def write_config(config_name: str, config_data: Dict) -> None:
+    """Write a configuration file, the config is assumed to be the entire content."""
+    file_path = get_file_name(config_name)
     os.makedirs(os.path.dirname(file_path), exist_ok=True)
     with open(file_path, "w") as file:
         # Lock the file to prevent race conditions
         fcntl.flock(file, fcntl.LOCK_EX)
-        yaml.dump(data, file, default_flow_style=False)
+        yaml.dump(config_data, file, default_flow_style=False)
         fcntl.flock(file, fcntl.LOCK_UN)
+
 
 def delete_config(config_name: str) -> None:
     """Delete a configuration file."""
-    file_path = get_file_name(config_name, must_exist=False)
+    file_path = get_file_name(config_name)
     if os.path.exists(file_path):
         os.remove(file_path)
     else:
