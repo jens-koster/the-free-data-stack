@@ -14,4 +14,6 @@ config:
     - pipe-dreams:
       folders:
         - notebooks
-        - notebooks-2
+    - the-free-data-stack:
+      folders:
+        - tfds-config/notebooks
