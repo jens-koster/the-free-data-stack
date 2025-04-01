@@ -127,10 +127,5 @@ def main():
     execute_notebook(notebook=notebook, parameters=parameters)
 
 
-if False:
+if __name__ == '__main__':
     main()
-else:
-
-    os.environ["TFDS_CONFIG_URL"] = "http://127.0.0.1:8005/api/configs"
-    os.environ["TFSD_CONFIG_LOCALHOST"] = "Yes please"
-    execute_notebook(notebook="helloworld", parameters={"p1": "hello", "p2": "world"})

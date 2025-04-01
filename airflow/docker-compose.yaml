@@ -25,7 +25,7 @@
 #
 # AIRFLOW_IMAGE_NAME           - Docker image name used to run Airflow.
 #                                Default: apache/airflow:2.10.5
-# AIRFLOW_UID                  - User ID in Airflow containers
+# TFDS_AIRFLOW_UID                  - User ID in Airflow containers
 #                                Default: 50000
 # AIRFLOW_PROJ_DIR             - Base path to which all the files will be volumed.
 #                                Default: .
@@ -82,12 +82,12 @@ x-airflow-common:
     #- ./plugins:/opt/airflow/plugins
 
     - /tmp/logs/airflow:/opt/airflow/logs
-    - /tmp/airflow/dags:/opt/airflow/dags
-    - /tmp/airflow/config:/opt/airflow/config
-    - /tmp/airflow/plugins:/opt/airflow/plugins
+    - ./dags:/opt/airflow/dags
+    - ./config:/opt/airflow/config
+    - ./plugins:/opt/airflow/plugins
     - /var/run/docker.sock:/var/run/docker.sock
 
-  user: "${AIRFLOW_UID:-50000}:0"
+  user: "${TFDS_AIRFLOW_UID:-50000}:0"
 
   networks:
     &airflow-common-networks
@@ -198,11 +198,11 @@ services:
     command:
       - -c
       - |
-        if [[ -z "${AIRFLOW_UID}" ]]; then
+        if [[ -z "${TFDS_AIRFLOW_UID}" ]]; then
           echo
-          echo -e "\033[1;33mWARNING!!!: AIRFLOW_UID not set!\e[0m"
+          echo -e "\033[1;33mWARNING!!!: TFDS_AIRFLOW_UID not set!\e[0m"
           echo "If you are on Linux, you SHOULD follow the instructions below to set "
-          echo "AIRFLOW_UID environment variable, otherwise files will be owned by root."
+          echo "TFDS_AIRFLOW_UID environment variable, otherwise files will be owned by root."
           echo "For other operating systems you can get rid of the warning with manually created .env file:"
           echo "    See: https://airflow.apache.org/docs/apache-airflow/stable/howto/docker-compose/index.html#setting-the-right-airflow-user"
           echo
@@ -241,7 +241,7 @@ services:
           echo
         fi
         mkdir -p /sources/logs /sources/dags /sources/plugins
-        chown -R "${AIRFLOW_UID}:0" /sources/{logs,dags,plugins}
+        chown -R "${TFDS_AIRFLOW_UID}:0" /sources/{logs,dags,plugins}
         exec /entrypoint airflow version
     # yamllint enable rule:line-length
     environment:

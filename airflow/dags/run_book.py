@@ -7,7 +7,7 @@ from airflow.providers.docker.operators.docker import DockerOperator
 default_args = {
     "owner": "airflow",
     "depends_on_past": False,
-    "retries": 1,
+    "retries": 0,
 }
 
 
@@ -23,7 +23,7 @@ with DAG(
     print("-" * 50)
     run_book_runner = DockerOperator(
         task_id="run_book_runner",
-        image="tfds/papermill-base:1.0.10",  # Use the same image as in docker-compose.yaml
+        image="tfds/papermill-base:1.0.15",  # Use the same image as in docker-compose.yaml
         container_name=f"book_runner-{dag.dag_id}-{datetime.now().strftime('%Y%m%d%H%M%S')}",
         api_version="auto",
         force_pull=True,

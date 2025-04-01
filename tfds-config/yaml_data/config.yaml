@@ -1,3 +1,4 @@
 # the config config... services need to know the url for the config service
 config:
     url: http://tfds-config:8005/api/configs
+    is_test: false

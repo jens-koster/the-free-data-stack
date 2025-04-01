@@ -2,6 +2,20 @@
 My various tinkering with open source data tools.
 Each product has a docker compose file, all use the same network so any combination should be able to coummunicate. I'm not yet sure how to deal with configuring different combinations.
 
+# Setup - getting started
+
+    git clone https://github.com/jens-koster/the-free-data-stack.git
+    cd the-free-data-stack
+    # setup folders, docker network and python venv
+    source setup.sh
+    # make sure you have a fresh build of the docker images
+    python3 ./tfds-cli/tfds.py build
+    # fire it up!
+    python3 ./tfds-cli/tfds.py up
+
+    # to shut everything down:
+    python3 ./tfds-cli/tfds.py down
+
 
 # Networking
 All docker compose files use a common network named `tfds-network`.

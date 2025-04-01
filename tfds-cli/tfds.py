@@ -158,14 +158,15 @@ def main():
 
     else:
         # any docker compose command is allowed, let docker compose print any errors...
+        is_service_seq = False
         service = None
         args = []
         for arg in sys.argv[2:]:
-            if is_service:
+            if is_service_seq:
                 service = arg
-                is_service = False
+                is_service_seq = False
             elif arg == '-s':
-                is_service = True
+                is_service_seq = True
             else:
                 args.append(arg)
         execute_docker_command(command, service, *args)
