@@ -2,9 +2,12 @@
 Run a notebook in papermill.
 Intended as entrypoint to a docker container
 some useful commands, full documentation in the readme.
-python3 book_runner.py --notebook helloworld --parameters '{"p1":"hello", "p2":"world"}'
-docker compose run book-runner --notebook 'helloworld' --parameters '{"p1":"hello", "p2":"world"}'
-docker compose run --remove-orphans --rm -it --entrypoint /bin/bash book-runner
+
+set the env variables:
+eval "$(python3 ./tfds_cli/tfds.py env | grep "^export TFDS_")"
+
+run the debug version of the docker, where this file is mounted rather than deployed in the docker. (you can edit and run, no build)
+docker compose run debug --notebook "pipe-dreams/notebooks/helloworld" --parameters '{"p1": "hello", "p2": "world"}'
 
 """
 
@@ -30,12 +33,12 @@ def get_s3_config():
     if not tfds_config_url:
         raise EnvironmentError("Environment variable TFDS_CONFIG_URL is not set")
     tfds_config_url += "/s3"
-    if os.environ.get("TFSD_CONFIG_LOCALHOST"):
-        tfds_config_url += "?localhost=yes"
     print(f"retrieving s3 config from {tfds_config_url}")
     response = requests.get(tfds_config_url)
+    cfg = response.json()
 
-    return response.json()["config"]
+    return cfg["config"]
+
 
 
 def execute_notebook(notebook, parameters):
@@ -43,24 +46,25 @@ def execute_notebook(notebook, parameters):
     print(
         f"using s3 config url:{cfg['url']}, 'access_key': {'access_key' in cfg.keys()}, 'secret_key': {'secret_key' in cfg.keys()}"
     )
+
     s3_client = boto3.client(
         service_name="s3",
         aws_access_key_id=cfg["access_key"],
         aws_secret_access_key=cfg["secret_key"],
         endpoint_url=cfg["url"],
     )
+    notebook_base_name = notebook.split('/')[-1]
 
     tmp_dir = f"/tmp/book_runner/{notebook}"
     os.makedirs(tmp_dir, exist_ok=True)
-
     input_bucket = "notebooks"
     input_object_name = f"{notebook}.ipynb"
-    input_local_file = f"{tmp_dir}/{notebook}.ipynb"
+    input_local_file = f"{tmp_dir}/{notebook_base_name}.ipynb"
 
     output_bucket = "output-notebooks"
     output_prefix = f"{notebook}"
     output_filename = (
-        f"{notebook}_{dt.datetime.now(dt.timezone.utc).strftime('%Y%m%d_%H%M%S')}.ipynb"
+        f"{notebook_base_name}_{dt.datetime.now(dt.timezone.utc).strftime('%Y%m%d_%H%M%S')}.ipynb"
     )
 
     output_object_name = f"{output_prefix}/{output_filename}"

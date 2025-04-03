@@ -14,8 +14,8 @@ config:
     - spark
     - papermill
     - airflow
-  x-stack:
+  book-runner:
     services:
     - tfds-config
     - s3-ninja
-    - clickhouse
+    - papermill

@@ -28,8 +28,14 @@ _s3_config = None
 def get_s3_config():
     global _s3_config
     if _s3_config is None:
-        _s3_config = get_config("s3")['config']
+        cfg = get_config("s3")
+        if not cfg:
+            raise FileNotFoundError ('could not find s3 config')
+        _s3_config = cfg['config']
         _s3_config["bucket"] = 'notebooks'
+        # can't think of a generic way to deal with the fact we sometimes need to access a host port and sometimes the tdfs docker network
+        # for now just replace it...
+        _s3_config["url"] = _s3_config["url"].replace('s3-ninja:9000', '127.0.0.1:8004')
     return _s3_config
 
 get_s3_config()
@@ -231,5 +237,4 @@ def main():
     print("Deployment complete!")
 
 if __name__ == "__main__":
-    # Load environment variables
     main()

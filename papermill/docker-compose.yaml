@@ -1,12 +1,22 @@
 ---
 services:
-  book-runner:
-    image: tfds/papermill-base:${TFDS_STACK_VERSION}
-    container_name: papermill-base
+  base:
+    build: .
+    container_name: papermill
     environment:
       TFDS_CONFIG_URL: ${TFDS_CONFIG_URL}
     networks:
       - tfds-network
+
+  debug:
+    build: .
+    container_name: papermilldbg
+    environment:
+      TFDS_CONFIG_URL: ${TFDS_CONFIG_URL}
+    networks:
+      - tfds-network
+    volumes:
+      - .:/app
 
 networks:
   tfds-network:

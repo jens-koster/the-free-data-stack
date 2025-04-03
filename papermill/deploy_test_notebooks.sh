@@ -1,1 +1,0 @@
-cp ./notebooks/*.* /tmp/notebooks/

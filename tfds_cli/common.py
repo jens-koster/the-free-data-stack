@@ -1,7 +1,9 @@
 from pathlib import Path
 import os
 import yaml
-TFDS_CONFIG_DIR = "./tfds-config/yaml_data"
+
+def get_config_dir()->str:
+    return '/tmp/tfds/config'
 
 def find_dir(dir_name: str) -> Path:
     """Find the specified directory in the current working directory or its parent directories."""
@@ -11,7 +13,7 @@ def find_dir(dir_name: str) -> Path:
     for i in range(4):
         looked_in.append(p.absolute())
         if p.exists():
-            return p.absolute()
+            return p.resolve()
         p = Path("..") / p
     else:
         raise FileNotFoundError(
@@ -22,7 +24,7 @@ def find_dir(dir_name: str) -> Path:
 def get_config(config_name: str) -> dict:
     """Get the configuration from the specified YAML file."""
 
-    config_file = Path(find_dir(TFDS_CONFIG_DIR)) / f"{config_name}.yaml"
+    config_file = Path(get_config_dir()) / f"{config_name}.yaml"
     if not config_file.exists():
         print(f"Error: {config_file} does not exist.")
         return None
@@ -34,16 +36,16 @@ def get_config(config_name: str) -> dict:
 def load_env_variables():
     """Load environment variables from YAML files in tfds-config/yaml_data.
     returns a dict of the added env variables."""
-    if not Path(TFDS_CONFIG_DIR).exists():
-        print(f"Warning: {TFDS_CONFIG_DIR} does not exist. Skipping environment variable setup.")
+    if not Path(get_config_dir()).exists():
+        print(f"Warning: {get_config_dir()} does not exist. Skipping environment variable setup.")
         return []
     envs =  {}
-    for yaml_file in Path(TFDS_CONFIG_DIR).glob("*.yaml"):
+    for yaml_file in Path(get_config_dir()).glob("*.yaml"):
         if yaml_file.name in ["stacks.yaml", "currentstack.yaml"]:
             continue
         base_name = yaml_file.stem.upper()
         complete_file = get_config(yaml_file.stem)
-        if 'noenv' in complete_file.get('tfds-config', []):
+        if 'noenv' in complete_file.get('tfds_config', []):
             print(f"noenv set in {base_name} skipping it for env")
             continue
         config = complete_file.get('config', {})

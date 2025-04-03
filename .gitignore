@@ -171,3 +171,5 @@ tfds.code-workspace
 cfgenv/
 s3.yaml
 temp_notebooks/
+junk/
+_data/s3/

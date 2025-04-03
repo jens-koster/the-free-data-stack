@@ -4,6 +4,7 @@ PyYAML
 boto3
 papermill
 GitPython
+cowsay
 
 # tfds-config
 Flask

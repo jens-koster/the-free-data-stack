@@ -11,7 +11,7 @@ services:
       - FLASK_ENV=development
       - YAML_DATA_PATH=/app/app/data/data_files
     volumes:
-      - ./yaml_data:/app/app/data/data_files
+      - /tmp/tfds/yaml_data:/app/app/data/data_files
     networks:
       - tfds-network
 

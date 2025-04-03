@@ -4,11 +4,11 @@ import sys
 import yaml
 import subprocess
 from pathlib import Path
-from common import load_env_variables, TFDS_CONFIG_DIR
+from common import load_env_variables, get_config_dir
 
 
-STACKS_FILE = f"{TFDS_CONFIG_DIR}/stacks.yaml"
-CURRENT_STACK_FILE = f"{TFDS_CONFIG_DIR}/currentstack.yaml"
+STACKS_FILE = f"{get_config_dir()}/stacks.yaml"
+CURRENT_STACK_FILE = f"{get_config_dir()}/currentstack.yaml"
 
 
 def load_stacks()->dict:
@@ -104,14 +104,15 @@ def execute_docker_command(command, service=None, *args):
 
         os.chdir(service_dir)
         try:
-            print(f"Running 'docker compose {command}' for service '{svc}'...")
+            print(f"Running 'docker compose {command}' for service '{svc}' {args}...")
             cmd = ["docker", "compose", command, *args]
             if command in ["up", "start"]:
                 cmd.append("-d")
+            print(os.getcwd(), cmd)
             subprocess.run(cmd, check=True)
         except subprocess.CalledProcessError as e:
             print(f"Error: Failed to execute 'docker compose {command}' for service '{svc}'.")
-            sys.exit(1)
+            return 1
         finally:
             os.chdir(start_dir)
 
@@ -142,13 +143,8 @@ def main():
         else:
             print("No stacks found.")
     elif command == "env":
-        print ('\n' + '='*20 + ' TFDS env variables ' + '='*20)
-        load_env_variables()
-        result = subprocess.run("env | grep TFDS", shell=True, text=True, capture_output=True)
-        if result.returncode == 0:
-            print(result.stdout)  # Print the matched environment variables
-        else:
-            print("No matching environment variables found.")
+        envs = load_env_variables()
+        print( '\n'.join(f'export {key}={value}' for key, value in envs.items() ))
 
     elif command == "setstack":
         if len(sys.argv) < 3:

@@ -23,12 +23,12 @@ with DAG(
     print("-" * 50)
     run_book_runner = DockerOperator(
         task_id="run_book_runner",
-        image="tfds/papermill-base:1.0.15",  # Use the same image as in docker-compose.yaml
+        image="tfds/papermill-base:1.0.16",  # Use the same image as in docker-compose.yaml
         container_name=f"book_runner-{dag.dag_id}-{datetime.now().strftime('%Y%m%d%H%M%S')}",
         api_version="auto",
         force_pull=True,
         auto_remove="force",  # Automatically remove the container after execution
-        command='--notebook helloworld --parameters \'{"p1":"hello", "p2":"world"}\'',
+        command='--notebook pipe-dreams/notebooks/helloworld --parameters \'{"p1":"hello", "p2":"world"}\'',
         docker_url="unix://var/run/docker.sock",  # Docker socket
         network_mode="tfds-network",  # Attach the container to the tfds-network
         mount_tmp_dir=False,
