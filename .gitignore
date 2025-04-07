@@ -174,3 +174,5 @@ temp_notebooks/
 junk/
 _data/s3/
 jars/
+tfds-config/yaml_data/minio.yaml
+tfds-config/yaml_data/s3 copy.yaml

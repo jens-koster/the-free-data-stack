@@ -1,0 +1,29 @@
+---
+services:
+  s3-minio:
+    image: quay.io/minio/minio
+    container_name: s3-minio
+    networks:
+      - tfds-network
+    expose:
+      - 9000
+      - 9001
+    ports:
+      - "127.0.0.1:9000:9000"
+      - "127.0.0.1:9001:9001"
+      - "127.0.0.1:8006:41467"
+    volumes:
+      # - ${TFDS_MINIO_DATA_DIR}:"/mnt/data"
+      - "${TFDS_MINIO_DATA_DIR}:/data"
+    environment:
+      - MINIO_ROOT_USER=${TFDS_MINIO_USER}
+      - MINIO_ROOT_PASSWORD=${TFDS_MINIO_PASSWORD}
+      - MINIO_VOLUMES="/data"
+      # MINIO_OPTS sets any additional commandline options to pass to the MinIO server.
+      # For example, `--console-address :9001` sets the MinIO Console listen port
+      - MINIO_OPTS="--console-address :9001"
+    command: server /data --console-address ":9001"
+networks:
+  tfds-network:
+    name: tfds-network
+    external: true

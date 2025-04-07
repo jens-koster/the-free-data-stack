@@ -9,7 +9,7 @@ config:
   spark-stack:
     services:
     - tfds-config
-    - s3-ninja
+    - s3-minio
     - postgreSQL
     - spark
     - papermill
