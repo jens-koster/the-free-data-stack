@@ -7,16 +7,16 @@ fi
 
 
 echo building
-docker compose build
+docker compose -f docker-compose-base.yml build
 
 echo 'pushing...'
 
-tag="tfds/papermill-base:1.0"
+tag="tfds/spark-base:1.0"
 echo "📦 pushing version $tag"
-docker tag "papermill-base" "$tag"
+docker tag "spark-base" "$tag"
 docker push "$tag"
 
-tag="tfds/papermill-base:1.0.$1"
+tag="tfds/spark-base:1.0.$1"
 echo "📦 pushing version $tag"
-docker tag "papermill-base" "$tag"
+docker tag "spark-base" "$tag"
 docker push "$tag"

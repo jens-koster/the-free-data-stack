@@ -1,0 +1,2 @@
+# let's see of we can do without.... pyspark seems to be included.
+# pyspark==3.5.0

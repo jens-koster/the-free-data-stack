@@ -35,9 +35,13 @@ def get_s3_config():
     tfds_config_url += "/s3"
     print(f"retrieving s3 config from {tfds_config_url}")
     response = requests.get(tfds_config_url)
-    cfg = response.json()
+    response.raise_for_status()
+    cfg = response.json().get("config")
 
-    return cfg["config"]
+    if cfg is None:
+        raise ValueError(f"No config element found in response from config server: {response.text}")
+
+    return cfg
 
 
 
@@ -54,21 +58,19 @@ def execute_notebook(notebook, parameters):
         endpoint_url=cfg["url"],
     )
     notebook_base_name = notebook.split('/')[-1]
+    notebook_prefix = '/'.join(notebook.split('/')[:-1])
 
-    tmp_dir = f"/tmp/book_runner/{notebook}"
+    tmp_dir = f"/tmp/book_runner/{notebook_prefix}"
     os.makedirs(tmp_dir, exist_ok=True)
     input_bucket = "notebooks"
     input_object_name = f"{notebook}.ipynb"
     input_local_file = f"{tmp_dir}/{notebook_base_name}.ipynb"
 
     output_bucket = "output-notebooks"
-    output_prefix = f"{notebook}"
-    output_filename = (
-        f"{notebook_base_name}_{dt.datetime.now(dt.timezone.utc).strftime('%Y%m%d_%H%M%S')}.ipynb"
-    )
+    output_filename = f"{notebook_base_name}_{dt.datetime.now(dt.timezone.utc).strftime('%Y%m%d_%H%M%S')}.ipynb"
 
-    output_object_name = f"{output_prefix}/{output_filename}"
-    output_local_file = f"{tmp_dir}/{output_filename}"
+    output_object_name = f"{notebook_prefix}/{output_filename}"
+    output_local_file = os.path.join(tmp_dir, output_filename)
 
     print(f"Downloading {input_bucket}, {input_object_name} to {input_local_file}")
     try:

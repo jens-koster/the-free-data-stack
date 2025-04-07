@@ -5,6 +5,8 @@ boto3
 papermill
 GitPython
 cowsay
+pyspark==3.5.0
+ipykernel
 
 # tfds-config
 Flask

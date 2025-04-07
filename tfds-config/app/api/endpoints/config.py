@@ -139,6 +139,8 @@ class ConfigResource(MethodView):
         if not is_served(config_name):
             abort(404, message=f"Configuration '{config_name}' not found")
         data = read_config(config_name)
+        if data is None:
+            abort(404, message=f"Configuration '{config_name}' not found")
         return data, 200
 
     @blp.arguments(ConfigFileSchema)

@@ -9,9 +9,9 @@ services:
       - "127.0.0.1:8005:8005"
     environment:
       - FLASK_ENV=development
-      - YAML_DATA_PATH=/app/app/data/data_files
+      - YAML_DATA_PATH=/app/config_files
     volumes:
-      - /tmp/tfds/yaml_data:/app/app/data/data_files
+      - /tmp/tfds/config:/app/config_files
     networks:
       - tfds-network
 

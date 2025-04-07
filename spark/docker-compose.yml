@@ -2,16 +2,18 @@
 # Spark UI: http://localhost:8002
 # Jupyter Notebook: http://localhost:8888
 services:
+# spark master http://localhost:7077
+# Spark UI: http://localhost:8002
+# Jupyter Notebook: http://localhost:8888
 
   spark-master:
-    image: "tfds/spark-base:${TFDS_STACK_VERSION}"
+    image: "tfds/spark-base:1.0.6"
     container_name: spark-master
     hostname: spark-master
     networks:
       - tfds-network
     volumes:
-      - ./data:/tmp/data
-
+      - /tmp/data:/tmp/data
     environment:
       - SPARK_MODE=master
       - SPARK_MASTER_HOST=${TFDS_SPARK_MASTER_HOST}
@@ -21,13 +23,13 @@ services:
       - "127.0.0.1:8010:8080"
 
   spark-worker-1:
-    image: "tfds/spark-base:${TFDS_STACK_VERSION}"
+    image: "tfds/spark-base:1.0.6"
     container_name: spark-worker-1
     hostname: spark-worker-1
     networks:
       - tfds-network
     volumes:
-      - ./data:/tmp/data
+      - /tmp/data:/tmp/data
 
     environment:
       - SPARK_MODE=worker
@@ -40,13 +42,13 @@ services:
       - "127.0.0.1:8011:8081"
 
   spark-worker-2:
-    image: "tfds/spark-base:${TFDS_STACK_VERSION}"
+    image: "tfds/spark-base:1.0.6"
     container_name: spark-worker-2
     hostname: spark-worker-2
     networks:
       - tfds-network
     volumes:
-      - ./data:/tmp/data
+      - /tmp/data:/tmp/data
     environment:
       - SPARK_MODE=worker
       - SPARK_MASTER_URL=${TFDS_SPARK_MASTER_URL}
