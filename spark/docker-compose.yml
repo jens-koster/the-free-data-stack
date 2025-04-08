@@ -59,6 +59,46 @@ services:
     ports:
       - "127.0.0.1:8012:8081"
 
+  spark-worker-3:
+    image: "tfds/spark-base:1.0.6"
+    container_name: spark-worker-3
+    hostname: spark-worker-3
+    networks:
+      - tfds-network
+    volumes:
+      - /tmp/data:/tmp/data
+    environment:
+      - SPARK_MODE=worker
+      - SPARK_MASTER_URL=${TFDS_SPARK_MASTER_URL}
+    depends_on:
+      - spark-master
+    expose:
+      - "8081"
+    ports:
+      - "127.0.0.1:8013:8081"
+    profiles:
+      - w3
+      - w4
+  spark-worker-4:
+    image: "tfds/spark-base:1.0.6"
+    container_name: spark-worker-4
+    hostname: spark-worker-4
+    networks:
+      - tfds-network
+    volumes:
+      - /tmp/data:/tmp/data
+    environment:
+      - SPARK_MODE=worker
+      - SPARK_MASTER_URL=${TFDS_SPARK_MASTER_URL}
+    depends_on:
+      - spark-master
+    expose:
+      - "8081"
+    ports:
+      - "127.0.0.1:8014:8081"
+    profiles:
+      - w3
+      - w4
 networks:
   tfds-network:
     name: tfds-network
