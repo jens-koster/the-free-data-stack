@@ -13,6 +13,8 @@ services:
       - "127.0.0.1:9000:9000"
     volumes:
       - ${TFDS_S3NINJA_DATA_DIR}:/home/sirius/data
+    extra_hosts:
+      - "s3-ninja:127.0.0.1"
 
 networks:
   tfds-network:

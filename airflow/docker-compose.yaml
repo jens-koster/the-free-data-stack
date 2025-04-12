@@ -81,7 +81,7 @@ x-airflow-common:
     #- ./config:/opt/airflow/config
     #- ./plugins:/opt/airflow/plugins
 
-    - /tmp/logs/airflow:/opt/airflow/logs
+    - ~/tfsd/logs/airflow:/opt/airflow/logs
     - ./dags:/opt/airflow/dags
     - ./config:/opt/airflow/config
     - ./plugins:/opt/airflow/plugins

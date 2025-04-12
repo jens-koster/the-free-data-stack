@@ -1,14 +1,7 @@
 #!/bin/bash
 
-# globals
-mkdir -p /tmp
-
-# a folder where all logs are stores
-mkdir -p /tmp/logs
-
 # we need a common network so the containers can communicate
 # this is  persistent so no need to run this command but once.
-
 echo "creating docker tfds-network..."
 output=$(docker network create tfds-network 2>&1)
 if [[ "$output" == *"Error response from daemon: network with name tfds-network already exists"* ]]; then
@@ -17,41 +10,39 @@ else
     echo "$output"
 fi
 
-echo "creating folders in /tmp and link some folders from the project to /tmp"
-# link the data folder in a well known location, probabaly won't be needing this when all is using s3-ninja
-echo "linking _data folder to /tmp/data"
-if [ -L /tmp/data ]; then
-    rm /tmp/data
-fi
-ln -s "$(pwd)/_data" /tmp/data
+root=~/tfds
+mkdir -p "$root"
+mkdir -p "$root"/airflow
+mkdir -p "$root"/secrets
+mkdir -p "$root"/logs
+mkdir -p "$root"/data
+mkdir -p "$root"/data/minio
+mkdir -p "$root"/data/spark-warehouse
 
 # tfds
 echo "linking config folder to /tmp/tfds/config"
-mkdir -p /tmp/tfds
-if [ -L /tmp/tfds/config ]; then
-    rm /tmp/tfds/config
+
+if [ -L "$root"/config ]; then
+    rm "$root"/config
 fi
-ln -s "$(pwd)/tfds-config/yaml_data" /tmp/tfds/config
+ln -s "$(pwd)/tfds-config/yaml_data" "$root"/config
 
 # Airflow
-echo "linking some airflow folders to /tmp/tfds/airflow/*"
-mkdir -p /tmp/logs/airflow
-mkdir -p /tmp/airflow
-
-if [ -L /tmp/airflow/config ]; then
-    rm /tmp/airflow/config
+echo "linking some airflow folders"
+if [ -L "$root"/airflow/config ]; then
+    rm "$root"/airflow/config
 fi
-ln -s "$(pwd)/Airflow/config" /tmp/airflow/config
+ln -s "$(pwd)/airflow/config" "$root"/airflow/config
 
-if [ -L /tmp/airflow/plugins ]; then
-    rm /tmp/airflow/plugins
+if [ -L "$root"/airflow/plugins ]; then
+    rm "$root"/airflow/plugins
 fi
-ln -s "$(pwd)/Airflow/plugins" /tmp/airflow/plugins
+ln -s "$(pwd)/airflow/plugins" "$root"/airflow/plugins
 
-if [ -L /tmp/airflow/dags ]; then
-    rm /tmp/airflow/dags
+if [ -L "$root"/airflow/dags ]; then
+    rm "$root"/airflow/dags
 fi
-ln -s "$(pwd)/Airflow/dags" /tmp/airflow/dags
+ln -s "$(pwd)/airflow/dags" "$root"/airflow/dags
 
 echo "setting up python..."
 echo "making sure there's a venv and that it's activated..."

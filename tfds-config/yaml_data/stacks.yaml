@@ -17,5 +17,10 @@ config:
   book-runner:
     services:
     - tfds-config
-    - s3-ninja
+    - s3-minio
     - papermill
+  spark-mini:
+    services:
+    - tfds-config
+    - s3-minio
+    - spark

@@ -4,8 +4,8 @@ from typing import Any, Dict, List, Optional
 
 import yaml
 
-DATA_PATH = os.environ.get("YAML_DATA_PATH", "/tmp/config")
-
+CONFIG_PATH = "/app/config_files"
+SECRETS_PATH = "/app/secret_files"
 
 def format_response(path, name, notes, config):
     config = config.copy()
@@ -23,11 +23,12 @@ def strip_yaml(config_name)->str:
         return config_name[:-4]
     return config_name
 
-
 def get_file_name(config_name):
     config_name = strip_yaml(config_name)
-    file_path = os.path.join(DATA_PATH, config_name + '.yaml')
-    return file_path
+    attempt = os.path.join(SECRETS_PATH, config_name + '.yaml')
+    if os.path.isfile(attempt):
+        return attempt
+    return os.path.join(CONFIG_PATH, config_name + '.yaml')
 
 
 def read_config(config_name)-> dict:
@@ -67,7 +68,6 @@ def list_configs() -> List[str]:
     """List all available configuration files."""
     try:
         import os
-        return [strip_yaml(f) for f in os.listdir(DATA_PATH)]
+        return [strip_yaml(f) for f in os.listdir(CONFIG_PATH)]
     except FileNotFoundError:
-        os.makedirs(DATA_PATH, exist_ok=True)
         return []

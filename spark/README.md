@@ -19,19 +19,53 @@ Find out how to edit the hostfile on your os and add:
     127.0.0.1 spark-worker-1
     127.0.0.1 spark-worker-2
     127.0.0.1 spark-master
-    127.0.0.1 s3-ninja
+    127.0.0.1 s3-minio
     127.0.0.1 tfds-config
 
 This makes anything running on your host, like the notebooks, resolve the host names to the same service as your spark containers living in the tfds-network on docker.
 
 ## align the port numbers
 Secondly the port numbers must match up, it's not possible to re-map portnumbers inside the docker network. So all services must be configured to use a portnumber that is also free on your host.
+
+edit: after changing to minio s3 it is likelt possible to use another port for s3, we probabaly should...
+
 Where, I found that vs code automatically start up the jupyter service on port 9000, which is also the port s3-ninja will use.
 This was the final clinch before I got spark running on s3.
 s3-ninja is very sparsely documented and seems not to honour the S3NINJA_PORT env variable.
 Vs code seems not to honour the jupyter startup command line parameters.
 
 Solution: there's a setting on the Jupyter extension to conrol automtic start up of the jupyter service. Uncheck that and make sure to start up s3-ninja before you run a notebook. The jupyter service seems to run just fine on whatever free port it can find.
+
+### Spark ports and the spark webui
+To get the spark web ui working there's a few things to tweak.
+Spark nodes by default uses ip addresses to refer each other, also in the web ui. these ip:s are internal to the docker network and have no menaing on the host.
+To each container in the spark cluster you add this env variable set to the service name. This makes spark nodes use host names to refer each other, also in the web ui.
+
+    - SPARK_LOCAL_HOSTNAME=spark-worker-1
+
+Spark workers default to 8081 for the web ui and spark master to 8080. Even if we could let spark master have 8080 we can't have the two workers on the same port.
+We can also take the opportunity to arrange the ports for the tfds setup of putting web-ui from 8000 and up. For spark master you add the `SPARK_MASTER_WEBUI_PORT` and for the workers the `SPARK_WORKER_WEBUI_PORT`
+
+so for master and the workers we'd set:
+
+    # master
+    enviroment:
+      - SPARK_MASTER_WEBUI_PORT=8010
+    ports:
+      - "127.0.0.1:8010:8010"
+
+    # worker 1
+    enviroment:
+      - SPARK_WORKER_WEBUI_PORT=8011
+    ports:
+      - "127.0.0.1:8011:8011"
+
+  For the webui to work you need the mapping of host names to 127.0.0.1 in your hosts file as described above in "Align the host names".
+
+
+
+
+
 
 
 ## align spark versions

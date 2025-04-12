@@ -17,4 +17,3 @@ PyYAML
 pytest
 gunicorn
 requests
-beautifulsoup4

@@ -4,16 +4,17 @@ import sys
 import yaml
 import subprocess
 from pathlib import Path
-from common import load_env_variables, get_config_dir
+from common import load_env_variables, get_config_file
+from s3 import create_s3_bucket
 
 
-STACKS_FILE = f"{get_config_dir()}/stacks.yaml"
-CURRENT_STACK_FILE = f"{get_config_dir()}/currentstack.yaml"
+STACKS_FILE = get_config_file("stacks")
+CURRENT_STACK_FILE = get_config_file("currentstack")
 
 
 def load_stacks()->dict:
     """Load the stacks from the stacks.yaml file."""
-    if not Path(STACKS_FILE).exists():
+    if not STACKS_FILE.exists():
         print(f"Error: {STACKS_FILE} does not exist.")
         return None
 
@@ -23,8 +24,12 @@ def load_stacks()->dict:
 
 
 def init():
-    """Create the stacks.yaml file if it doesn't exist and populate it with sample content."""
-    if not Path(STACKS_FILE).exists():
+    """
+        Create the stacks.yaml file if it doesn't exist and populate it with sample content.
+        creates the buckets if they don't exist.
+
+    """
+    if not STACKS_FILE.exists():
         sample_content = {
             'annotation': 'The stack definitions for tfds cli. tfds will do some magic and then iterate these folders in order to run docker compose with the chosen command in each',
             'config': {
@@ -168,6 +173,9 @@ def main():
         execute_docker_command(command, service, *args)
 
     os.chdir(start_dir)
+    create_s3_bucket("notebooks")
+    create_s3_bucket("output-notebooks")
+    create_s3_bucket("data")
 
 if __name__ == "__main__":
     main()

@@ -4,4 +4,3 @@ marshmallow
 PyYAML
 gunicorn
 requests
-beautifulsoup4
