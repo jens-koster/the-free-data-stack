@@ -12,7 +12,6 @@ def get_s3_client():
     if cfg is None or url is None:
         raise ValueError("s3 config not found")
 
-    print(f"using s3 endpoint: {cfg['url']}")
     s3_client = boto3.client(
         service_name="s3",
         aws_access_key_id=cfg["access_key"],
@@ -40,9 +39,11 @@ def create_s3_bucket(bucket_name):
     """
     try:
         if bucket_exists(bucket_name):
+            print(f"S3 bucket {bucket_name} already exists.")
             return True
         s3_client = get_s3_client()
         s3_client.create_bucket(Bucket=bucket_name)
+        print(f"Bucket {bucket_name} created.")
         return True
     except ClientError as e:
         print(f"Error creating bucket: {e}")

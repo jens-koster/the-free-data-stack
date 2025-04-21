@@ -4,7 +4,19 @@
     docker exec -it spark-master /bin/bash
 
 
+# versions
+inside the spark-master docker you run
 
+    docker exec -it /bin/bash
+
+    # to get spark, java and scala versions (exit using ctrl-d)
+    spark-shell
+
+    # python version
+    python --version
+
+    #pyspark verions
+    pip freeze
 
 # Troubleshooting
 
@@ -61,11 +73,6 @@ so for master and the workers we'd set:
       - "127.0.0.1:8011:8011"
 
   For the webui to work you need the mapping of host names to 127.0.0.1 in your hosts file as described above in "Align the host names".
-
-
-
-
-
 
 
 ## align spark versions
@@ -127,3 +134,9 @@ At the time of writing my spark was on 3.11.8
 
     # install requirements
     pip install -r requirements.txt
+
+# setup spark to use delta
+https://docs.delta.io/3.0.0/quick-start.html#set-up-apache-spark-with-delta-lake
+
+https://repo1.maven.org/maven2/io/delta/delta-core_2.12/2.1.0/delta-core_2.12-2.1.0.jar
+download delta-core_2.12-2.1.0.jar

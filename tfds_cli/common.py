@@ -3,7 +3,7 @@ import os
 import yaml
 
 def get_config_dirs()->tuple:
-    return (Path(p).expanduser() for p in ('~/tfds/config', '~/tfds/secrets'))
+    return ('/opt/tfds/config', '/opt/tfds/secrets')
 
 def get_config_file(config_name:str)->Path:
     for p in get_config_dirs():
@@ -56,6 +56,8 @@ def load_env_variables():
             config = complete_file.get('config', {})
 
             for key, value in config.items():
+                if isinstance(value, str) and value.startswith("~/"):
+                    value = str(Path(value).expanduser())
                 if isinstance(value, list):
                     value = ",".join(map(str, value))
                 env_var = f"TFDS_{base_name}_{key.upper()}"

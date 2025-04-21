@@ -10,22 +10,27 @@ else
     echo "$output"
 fi
 
-root=~/tfds
-mkdir -p "$root"
+root=/opt/tfds
+
 mkdir -p "$root"/airflow
-mkdir -p "$root"/secrets
 mkdir -p "$root"/logs
 mkdir -p "$root"/data
 mkdir -p "$root"/data/minio
 mkdir -p "$root"/data/spark-warehouse
+mkdir -p "$root"/data/spark
 
 # tfds
-echo "linking config folder to /tmp/tfds/config"
+echo "linking config folder to $root/config"
 
 if [ -L "$root"/config ]; then
     rm "$root"/config
 fi
 ln -s "$(pwd)/tfds-config/yaml_data" "$root"/config
+
+
+echo "Creating secrets fodler and copying content: $root/sercrets"
+mkdir -p "$root"/secrets
+cp -rn "./tfds-config/secret_data/"* "$root"/secrets
 
 # Airflow
 echo "linking some airflow folders"
@@ -64,6 +69,7 @@ else
         echo "Upgrading pip and installing requirements..."
         pip install --upgrade pip
         pip install -r requirements.txt
+        pip install -r ./spark/requirements.txt
     else
         echo "Skipping venv creation, here's the DYI version:"
         echo ""
@@ -71,5 +77,6 @@ else
         echo "source .venv/bin/activate"
         echo "pip install --upgrade pip"
         echo "pip install -r requirements.txt"
+        echo "pip install -r ./spark/requirements.txt"
     fi
 fi

@@ -46,11 +46,15 @@ def init():
         if get_current_stack() is None:
             stacks = load_stacks()
             set_current_stack(stacks.keys()[0])
+    create_s3_bucket("notebooks")
+    create_s3_bucket("output-notebooks")
+    create_s3_bucket("data")
+    create_s3_bucket("dwh")
 
 
 def get_current_stack()->str:
     """Get the current stack name from the currentstack.yaml file."""
-    if not Path(CURRENT_STACK_FILE).exists():
+    if not CURRENT_STACK_FILE.exists():
         print(f"Error: {CURRENT_STACK_FILE} does not exist.")
         return None
 
@@ -173,9 +177,7 @@ def main():
         execute_docker_command(command, service, *args)
 
     os.chdir(start_dir)
-    create_s3_bucket("notebooks")
-    create_s3_bucket("output-notebooks")
-    create_s3_bucket("data")
+
 
 if __name__ == "__main__":
     main()

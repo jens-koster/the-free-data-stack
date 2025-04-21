@@ -23,7 +23,7 @@ to open a shell inside a docker for troubleshooting dependencies.
 To configure a venv as jupyter kernel:
     # unless it is alreayd there:
     pip install ipykernel
-    python -m ipykernel install --user --name=your_venv_name --display-name "Python (your_venv_name)"
+    python -m ipykernel install --user --name=.venv --display-name "TFDS 3.12.x"
 
 
 Activate the New Virtual Environment

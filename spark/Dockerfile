@@ -1,13 +1,30 @@
-FROM bitnami/spark:3.5.0
-WORKDIR /app
+FROM apache/spark:3.5.5
 
-# Add Hadoop AWS and AWS SDK JARs for S3 support
-#ADD https://repo1.maven.org/maven2/org/apache/hadoop/hadoop-aws/3.3.5/hadoop-aws-3.3.5.jar /opt/bitnami/spark/jars/
-#ADD https://repo1.maven.org/maven2/com/amazonaws/aws-java-sdk-bundle/1.12.524/aws-java-sdk-bundle-1.12.524.jar /opt/bitnami/spark/jars/
+ENV SPARK_MODE=master \
+    SPARK_MASTER_WEBUI_PORT=8010 \
+    SPARK_WORKER_WEBUI_PORT=8011
 
-# currently we have no dependencies, but I leave this part around in case we do...
-COPY requirements.txt /app/requirements.txt
-RUN pip install -r requirements.txt
 
-ENV JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
-ENV PATH=$JAVA_HOME/bin:$PATH
+
+# doing things in /opt requires root access
+USER root
+
+# Add Delta jars to classpath
+ENV SPARK_CLASSPATH="/opt/spark/jars/*"
+EXPOSE 7077 8010 8011 8012
+
+RUN mkdir -p /opt/spark/jars /opt/tfds/data
+
+# COPY custom_jars /opt/spark/jars
+
+VOLUME /opt/tfds/data
+
+COPY requirements.txt requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY entrypoint.sh /app/entrypoint.sh
+RUN chmod +x /app/entrypoint.sh
+
+USER spark
+# Custom entrypoint
+ENTRYPOINT ["/app/entrypoint.sh"]

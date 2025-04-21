@@ -17,6 +17,19 @@ Each product has a docker compose file, all use the same network so any combinat
     python3 ./tfds-cli/tfds.py down
 
 
+# create the root tfds folder
+    After various attempts I came to the conclusion that we need a folder that can be on the same path in all of tfds, dockers, host, everything.
+    Not including any current user stuff, not a tmp folder that is magically recreated on restart. a simple persistent file folder for storing things...
+    Especially spark is very finicky about...well everything, which includes folder locations.
+
+    So, at least on mac you need to be root to create top level folders and then make yourself owner of that folder.
+
+    sudo mkdir /opt/tfds
+    sudo chown -R $USER:$USER /opt/tfds
+
+    Docker desktop on mac protects the host by only allowing mounting on a few default folders like /tmp and ~, so you need to add /opt/tfds to the list in Settings->Resources->File sharing.
+
+
 # Networking
 All docker compose files use a common network named `tfds-network`.
 There's no "create if not exists" for networks in docker-compose so it needs to be created stand alone before firing up anything else. It is included in `setup.sh`
@@ -47,15 +60,19 @@ This is the global list of who gets what port:
   - airflow
 - 5555 - Celery flower(airflow thing, not tested)
 - 7077 - spark master
+- 9000 - minio S3
 
 # Storage
-Anything that can reasonably go on S3 shoud do so, we user s3-ninja to emulate S3 locally. Sharing data on disk between dockers turned out to be complex and cumbersome. Especially the airflow DockerOperator where you do "Docker in Docker", the spawned docker either needs to know a common place  or get the data as a parameter. Also, S3 gives a more realistic experience for us to learn from.
+Anything that can reasonably go on S3 shoud do so, we user minio
+Sharing data on disk between dockers turned out not to solce all use cases. The airflow DockerOperator where you do "Docker in Docker", I could not get the spawned docker to mount a host directory. S3 and the config api server means we only need to supply the config server url to any docker in docker or host container. It is also easier editing a config on file and then directly using it in the code, rather than piping things thorugh env variables and whatnot. TFDS is "opinionated", flexibility is traded for simplicity where it makes sense.
 
-## mounts and volumes
-Let's try to use volumes where possible, but host mounts for stuff like postgrSQL and DuckDB, we want to manual control when that data is deleted or disappears, regardless of docker reinstalls etc.
-The base folder for all shared files should be one of the few things to go in an env variable. Preferably a place in your user folder, outside that we're more likely to run into permission issues.
-TBD: *Let's use real folders for the vanilla tfds setup, you can then replace them with symlinks to dev folders as needed.*
+The default storage location root is ~/tfds, there is not yet an env variable to control the root. That will come...
 
+S3 is first choice for any data shared between stack service.
+
+We'll see what to do with DuckDB, you can create a readonly connection to it on s3. We could setup a duckdb container that performs the loading of the database and then publish it to s3 for readonly access...
+
+postgreSQL uses a docker managed volume for storage.
 
 ### Prerequisite software
 ### pipx
@@ -67,6 +84,8 @@ This will also do the trick:
 
     python -m pip install pipx
 
-### required environment variables
-    export DATASTACK_ROOT="/location/of/the/folder/datastack"
-    export DATASTACK_DUCKDB="${DATASTACK_ROOT}/DuckDB/data/warehouse.duckdb"
+### pyenv
+You'll probably need to adjust your python version to match whatever you have in spark, it's insanely picky about those things.
+
+### java
+You definitely need to adjust your java version to spark. see more in the spark readme.
