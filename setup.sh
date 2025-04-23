@@ -12,12 +12,32 @@ fi
 
 root=/opt/tfds
 
+
+
+
 mkdir -p "$root"/airflow
 mkdir -p "$root"/logs
 mkdir -p "$root"/data
+mkdir -p "$root"/spark
 mkdir -p "$root"/data/minio
 mkdir -p "$root"/data/spark-warehouse
 mkdir -p "$root"/data/spark
+mkdir -p "$root"/data/spark/metastore
+
+
+# spark
+echo "linking spark conf and jars folders to $root/spark"
+if [ -L "$root"/spark/jars ]; then
+    rm "$root"/spark/jars
+fi
+ln -s "$(pwd)/spark/jars" "$root"/spark/jars
+
+
+if [ -L "$root"/spark/jars ]; then
+    rm "$root"/spark/conf
+fi
+ln -s "$(pwd)/spark/conf" "$root"/spark/conf
+
 
 # tfds
 echo "linking config folder to $root/config"

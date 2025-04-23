@@ -5,17 +5,17 @@ ENV SPARK_MODE=master \
     SPARK_WORKER_WEBUI_PORT=8011
 
 
-
 # doing things in /opt requires root access
 USER root
 
-# Add Delta jars to classpath
-ENV SPARK_CLASSPATH="/opt/spark/jars/*"
 EXPOSE 7077 8010 8011 8012
 
-RUN mkdir -p /opt/spark/jars /opt/tfds/data
+RUN mkdir -p /opt/spark/jars /opt/spark/conf /opt/tfds/data /opt/tfds/spark/jars
 
-# COPY custom_jars /opt/spark/jars
+ENV SPARK_CLASSPATH="/opt/tfds/spark/jars/*"
+COPY package_jars/*.jar /opt/tfds/spark/jars/
+
+COPY ./conf/ /opt/spark/conf/
 
 VOLUME /opt/tfds/data
 

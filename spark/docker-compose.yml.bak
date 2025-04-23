@@ -1,17 +1,14 @@
 services:
   spark-master:
-    image: "tfds/spark-base:1.0.24"
+    image: tfds/spark-base:1.0.35
     container_name: spark-master
     hostname: spark-master
     networks:
       - tfds-network
     volumes:
-      # most data resides on s3 but sometimes you just want to dump a df to text file to debug it.
-      # then a lcoal volume comes in handy
+      # let's make sure any data we want to store is preserved over container recreates
+      # we put the catalog metadata here.
       - /opt/tfds/data/spark:/opt/tfds/data/spark
-      # Default storage for spark table metadata is a db on the local file system , i.e. inside the container
-      # we map that to a host folder so we don't lose everything when we recreate the container
-      - /opt/tfds/data/spark-warehouse:/tmp/spark-warehouse
 
     environment:
         - SPARK_MODE=master
@@ -30,7 +27,7 @@ services:
       - "127.0.0.1:8010:8010"
 
   spark-worker-1:
-    image: "tfds/spark-base:1.0.24"
+    image: tfds/spark-base:1.0.35
     container_name: spark-worker-1
     hostname: spark-worker-1
     networks:
@@ -51,7 +48,7 @@ services:
 
 
   spark-worker-2:
-    image: "tfds/spark-base:1.0.24"
+    image: tfds/spark-base:1.0.35
     container_name: spark-worker-2
     hostname: spark-worker-2
     networks:

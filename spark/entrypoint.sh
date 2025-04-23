@@ -2,6 +2,7 @@
 set -e
 
 export SPARK_DIST_CLASSPATH="$SPARK_CLASSPATH"
+export SPARK_CONF_DIR=/opt/spark/conf
 ls /opt/spark/sbin
 if [ "$SPARK_MODE" = "master" ]; then
   echo "Starting Spark Master...x"

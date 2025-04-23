@@ -140,3 +140,13 @@ https://docs.delta.io/3.0.0/quick-start.html#set-up-apache-spark-with-delta-lake
 
 https://repo1.maven.org/maven2/io/delta/delta-core_2.12/2.1.0/delta-core_2.12-2.1.0.jar
 download delta-core_2.12-2.1.0.jar
+
+# get the jars built into the image
+
+    brew install coursier
+
+    coursier fetch \
+    org.apache.hadoop:hadoop-aws:3.3.4 \
+    org.apache.hadoop:hadoop-common:3.3.4 \
+    com.amazonaws:aws-java-sdk-bundle:1.12.262 \
+    --classpath | tr ':' '\n' | while read jar; do cp "$jar" jars/; done
