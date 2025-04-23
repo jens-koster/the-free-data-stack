@@ -1,4 +1,5 @@
 #!/bin/bash
+
 pyenv global 3.8.10
 
 # Remove existing .venv if it exists
