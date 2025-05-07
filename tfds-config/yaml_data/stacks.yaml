@@ -10,7 +10,7 @@ config:
     services:
     - tfds-config
     - s3-minio
-    - postgreSQL
+    - postgres
     - spark
     - papermill
     - airflow
@@ -23,4 +23,5 @@ config:
     services:
     - tfds-config
     - s3-minio
+    - postgres
     - spark

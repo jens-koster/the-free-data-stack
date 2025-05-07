@@ -15,6 +15,10 @@ RUN mkdir -p /opt/spark/jars /opt/spark/conf /opt/tfds/data /opt/tfds/spark/jars
 ENV SPARK_CLASSPATH="/opt/tfds/spark/jars/*"
 COPY package_jars/*.jar /opt/tfds/spark/jars/
 
+# Clean out stuff we want to upgrade
+RUN find /opt/spark/jars/ -name "guava-*.jar" -delete
+RUN find /opt/spark/jars/ -name "datanucleus*.jar" -delete
+
 COPY ./conf/ /opt/spark/conf/
 
 VOLUME /opt/tfds/data

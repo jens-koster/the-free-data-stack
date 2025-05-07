@@ -12,9 +12,6 @@ fi
 
 root=/opt/tfds
 
-
-
-
 mkdir -p "$root"/airflow
 mkdir -p "$root"/logs
 mkdir -p "$root"/data
@@ -23,6 +20,14 @@ mkdir -p "$root"/data/minio
 mkdir -p "$root"/data/spark-warehouse
 mkdir -p "$root"/data/spark
 mkdir -p "$root"/data/spark/metastore
+mkdir -p "$root"/postgres
+
+# postgres
+echo "linking postgres"
+if [ -L "$root"/postgres/init ]; then
+    rm "$root"/postgres/init
+fi
+ln -s "$(pwd)/postgres/init" "$root"/postgres/init
 
 
 # spark

@@ -142,11 +142,49 @@ https://repo1.maven.org/maven2/io/delta/delta-core_2.12/2.1.0/delta-core_2.12-2.
 download delta-core_2.12-2.1.0.jar
 
 # get the jars built into the image
+We're using coursier to get the jars.
 
     brew install coursier
 
+at the time of writing we'r egetting these:
+
     coursier fetch \
+    io.delta:delta-spark_2.12:3.3.0 \
     org.apache.hadoop:hadoop-aws:3.3.4 \
     org.apache.hadoop:hadoop-common:3.3.4 \
     com.amazonaws:aws-java-sdk-bundle:1.12.262 \
-    --classpath | tr ':' '\n' | while read jar; do cp "$jar" jars/; done
+    org.postgresql:postgresql:42.6.0 \
+    org.apache.hive:hive-metastore:2.3.9 \
+    org.apache.hive:hive-exec:2.3.9 \
+    org.apache.hive:hive-common:2.3.9 \
+    org.datanucleus:datanucleus-core:4.1.17 \
+    org.datanucleus:datanucleus-api-jdo:4.2.4 \
+    org.datanucleus:datanucleus-rdbms:4.1.19 \
+    javax.jdo:jdo-api:3.2.0-m3 \
+    commons-pool:commons-pool:1.6 \
+    --classpath | tr ':' '\n' | while read jar; do cp "$jar" package_jars/; done
+
+
+**io.delta:delta-spark_2.12**
+
+provides delta table functionality, that's the preferred way to store the data.
+
+
+**org.apache.hadoop:hadoop-aws**
+
+**org.apache.hadoop:hadoop-common**
+
+**com.amazonaws:aws-java-sdk-bundle**
+
+These provide the S3 functionality. We use s3 to store extracted source files and as our warehouse for the created delta tables.
+
+    org.postgresql:postgresql
+    org.apache.hive:hive-metastore
+    org.apache.hive:hive-exec
+    org.apache.hive:hive-common
+    org.datanucleus:datanucleus-core
+    org.datanucleus:datanucleus-api-jdo
+    org.datanucleus:datanucleus-rdbms
+    javax.jdo:jdo-api
+    commons-pool:commons-pool**
+This bunch was added to support Hive catalog on postgres.

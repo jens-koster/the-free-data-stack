@@ -3,6 +3,8 @@ echo "\n=============================================="
 echo "| building the spark cluster                 |"
 echo "==============================================\n"
 
+echo "stopping cluster"
+docker compose down
 
 echo "🔄 Auto incrementing version number..."
 
@@ -22,36 +24,19 @@ new_version=$((current_version + 1))
 
 # Replace in the file using '|' as delimiter
 sed -i.bak "s|${IMAGE_PREFIX}${current_version}|${IMAGE_PREFIX}${new_version}|g" "$FILE"
-
 echo "✅ Updated docker image in $FILE: ${IMAGE_PREFIX}${current_version} → ${IMAGE_PREFIX}${new_version}"
 
-echo "downloading jar packages to package_jars"
-rm -rf package_jars
-mkdir -p package_jars
-coursier fetch \
-    io.delta:delta-spark_2.12:3.3.0 \
-    org.apache.hadoop:hadoop-aws:3.3.4 \
-    org.apache.hadoop:hadoop-common:3.3.4 \
-    com.amazonaws:aws-java-sdk-bundle:1.12.262 \
-    --classpath | tr ':' '\n' | while read jar; do cp "$jar" package_jars/; done
-
-rm -rf docker_jars
-echo "copying spark jars from apache image"
-docker create --name spark-temp apache/spark:3.5.5
-docker cp spark-temp:/opt/spark/jars ./docker_jars
-docker rm spark-temp
-
-python3 fix_jars.py
+source jar.sh
 
 echo building docker image
 docker compose -f docker-compose-base.yml build
 
 echo 'pushing...'
 
-tag="tfds/spark-base:1.0"
-echo "📦 pushing version $tag"
-docker tag "spark-base" "$tag"
-docker push "$tag"
+# tag="tfds/spark-base:1.0"
+# echo "📦 pushing version $tag"
+# docker tag "spark-base" "$tag"
+# docker push "$tag"
 
 tag="tfds/spark-base:1.0.$new_version"
 echo "📦 pushing version $tag"
@@ -66,10 +51,9 @@ echo "merging docker_jars and package_jars to jars folder"
 mkdir -p jars
 cp docker_jars/*.jar jars/
 cp package_jars/*.jar jars/
-rm -rf package_jars docker_jars
+# rm -rf package_jars docker_jars
 
-echo "restarting cluster"
-docker compose down
+echo "starting cluster"
 docker compose up -d --remove-orphans
 
 docker ps
