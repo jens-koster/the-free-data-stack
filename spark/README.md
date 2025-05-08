@@ -21,11 +21,16 @@ inside the spark-master docker you run
 # Troubleshooting
 
     docker exec -it spark-master /bin/bash
+    There's also the notebooks/spark_check.ipynb to check versions of python, jars, java, spark and the lot.
+
 ## general learnings
 spark is extremely finicky and exepects EVERYTHING to have the exact same version, url, path in all places. i.e. not only in the docker network but also on the host (the driver).
 
+Next step will be to include notebook functionality in the common spark image and run vs code against a jupyter server in that. That might help, or make troubleshooting even more arcane... I think it will make setting up tfds more streamlined, a lot less stuff to install on the host.
+
+
 ## align the host names
-We have to get stuff like the s3-ninja host name be exactly the same on the docker network and on localhost.
+We have to get stuff like the s3 host name be exactly the same on the docker network and on localhost.
 Find out how to edit the hostfile on your os and add:
 
     127.0.0.1 spark-worker-1
@@ -35,12 +40,12 @@ Find out how to edit the hostfile on your os and add:
     127.0.0.1 tfds-config
 
 This makes anything running on your host, like the notebooks, resolve the host names to the same service as your spark containers living in the tfds-network on docker.
+It's also part of making the spark web ui work from within the container (I think...).
 
 ## align the port numbers
 Secondly the port numbers must match up, it's not possible to re-map portnumbers inside the docker network. So all services must be configured to use a portnumber that is also free on your host.
 
-edit: after changing to minio s3 it is likelt possible to use another port for s3, we probabaly should...
-
+edit: after changing to minio s3 it is likely possible to use another port for s3, we probabaly should...
 Where, I found that vs code automatically start up the jupyter service on port 9000, which is also the port s3-ninja will use.
 This was the final clinch before I got spark running on s3.
 s3-ninja is very sparsely documented and seems not to honour the S3NINJA_PORT env variable.
@@ -142,49 +147,22 @@ https://repo1.maven.org/maven2/io/delta/delta-core_2.12/2.1.0/delta-core_2.12-2.
 download delta-core_2.12-2.1.0.jar
 
 # get the jars built into the image
-We're using coursier to get the jars.
+We're using coursier to get the jars. Check the jar.sh script to see what we're currently using.
+There's a lot of logic to clean up and get a working set of jars all over the place.
+This includes copying the jars from the docker image and merging that set with the ones we download for delta, hive and s3.
+It's was hard getting that right, where the main learning was that our favourite genAI friends do some serioue mansplaining and hallucinating when it comes to spark. I'm taking that to be a mirror of the real world, there's a lot of confusion on spark configs and what verisons work together. My tactic was to provide details in the prompt, submit the coursier download script and the spark conf file.
 
-    brew install coursier
+It is not sufficient to install the jars using pip for pyspark packages, you get the jars but spark seem not to find them. It worked fine locally when using pyspark, but the spark cluster did not find them.
 
-at the time of writing we'r egetting these:
+#### delta table
+io.delta:delta-spark_2.12
+Provides delta table functionality, that's the preferred way to store the data.
 
-    coursier fetch \
-    io.delta:delta-spark_2.12:3.3.0 \
-    org.apache.hadoop:hadoop-aws:3.3.4 \
-    org.apache.hadoop:hadoop-common:3.3.4 \
-    com.amazonaws:aws-java-sdk-bundle:1.12.262 \
-    org.postgresql:postgresql:42.6.0 \
-    org.apache.hive:hive-metastore:2.3.9 \
-    org.apache.hive:hive-exec:2.3.9 \
-    org.apache.hive:hive-common:2.3.9 \
-    org.datanucleus:datanucleus-core:4.1.17 \
-    org.datanucleus:datanucleus-api-jdo:4.2.4 \
-    org.datanucleus:datanucleus-rdbms:4.1.19 \
-    javax.jdo:jdo-api:3.2.0-m3 \
-    commons-pool:commons-pool:1.6 \
-    --classpath | tr ':' '\n' | while read jar; do cp "$jar" package_jars/; done
+#### S3
+* org.apache.hadoop:hadoop-aws
 
+* org.apache.hadoop:hadoop-common
 
-**io.delta:delta-spark_2.12**
+* com.amazonaws:aws-java-sdk-bundle
 
-provides delta table functionality, that's the preferred way to store the data.
-
-
-**org.apache.hadoop:hadoop-aws**
-
-**org.apache.hadoop:hadoop-common**
-
-**com.amazonaws:aws-java-sdk-bundle**
-
-These provide the S3 functionality. We use s3 to store extracted source files and as our warehouse for the created delta tables.
-
-    org.postgresql:postgresql
-    org.apache.hive:hive-metastore
-    org.apache.hive:hive-exec
-    org.apache.hive:hive-common
-    org.datanucleus:datanucleus-core
-    org.datanucleus:datanucleus-api-jdo
-    org.datanucleus:datanucleus-rdbms
-    javax.jdo:jdo-api
-    commons-pool:commons-pool**
-This bunch was added to support Hive catalog on postgres.
+These three provide the S3 functionality. We use s3 to store extracted source files and as our warehouse for the created delta tables.

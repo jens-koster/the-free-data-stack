@@ -83,7 +83,7 @@ This is the global list of who gets what port:
   - airflow
 - 5555 - Celery flower(airflow thing, not tested)
 - 7077 - spark master
-- 9000 - minio S3
+- 9000 - minio S3 - change this! vs code sometimes start something on multiple ports around 9000 and minio allows port to be configured.
 
 ## host mappings
 Find out how to edit the hosts file on your os;
