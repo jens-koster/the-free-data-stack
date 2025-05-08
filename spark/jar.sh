@@ -16,7 +16,8 @@ coursier fetch \
     com.google.guava:guava:30.1.1-jre \
     --exclude org.pentaho:pentaho-aggdesigner-algorithm \
     --exclude log4j:log4j \
-    --classpath | tr ':' '\n' | while read jar; do cp "$jar" package_jars/; done
+    --exclude org.apache.parquet:parquet-hadoop-bundle \
+    | tr ':' '\n' | while read jar; do cp "$jar" package_jars/; done
 
 
 rm -rf docker_jars
@@ -26,15 +27,19 @@ docker cp spark-temp:/opt/spark/jars ./docker_jars
 docker rm spark-temp
 
 echo "ensuring:"
+
 echo "no log4j from packages is used"
 rm ./package_jars/log4j*
-
-rm /Users/jens/src/the-free-data-stack/.venv/lib/python3.8/site-packages/pyspark/jars/log4j-1.2-api-2.20.0.jar
+rm ~/src/the-free-data-stack/.venv/lib/python3.8/site-packages/pyspark/jars/log4j-1.2-api-2.20.0.jar
 rm ./jars/log4j-1.2-api-2.20.0.jar
+
+echo "not using: parquet-hadoop-bundle-1.8.1.jar"
+rm ./package_jars/parquet-hadoop-bundle-1.8.1.jar
 
 echo "no datanucleus from docker is used"
 rm ./docker_jars/datanucleus*
-echo "guava from packages i sused"
+
+echo "guava from packages is used"
 rm ./docker_jars/guava*
 
 python3 fix_jars.py

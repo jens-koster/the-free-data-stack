@@ -39,7 +39,7 @@ ln -s "$(pwd)/spark/jars" "$root"/spark/jars
 
 
 if [ -L "$root"/spark/jars ]; then
-    rm "$root"/spark/conf
+   rm "$root"/spark/conf
 fi
 ln -s "$(pwd)/spark/conf" "$root"/spark/conf
 
