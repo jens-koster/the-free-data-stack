@@ -179,3 +179,4 @@ tfds-config/yaml_data/s3 copy.yaml
 _data/dump/
 docker_jars/
 package_jars/
+.airenv/

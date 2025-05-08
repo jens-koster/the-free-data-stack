@@ -76,12 +76,15 @@ This is the global list of who gets what port:
   - http://127.0.0.1:8005/redoc
   - http://127.0.0.1:8005/api/configs
 - 8006 minio S3 on http://127.0.0.1:8006
+- 8007 redis insight on http://127.0.0.1:8007
+
 - 8010 - spark master on http://127.0.0.1:8010
 - 8011 - spark worker 1 on http://127.0.0.1:8011
 - 8012 - spark worker 2 on http://127.0.0.1:8012
 - 5432 - postgreSQL, reserved schemas:
   - airflow
 - 5555 - Celery flower(airflow thing, not tested)
+- 6379 - redis
 - 7077 - spark master
 - 9000 - minio S3 - change this! vs code sometimes start something on multiple ports around 9000 and minio allows port to be configured.
 

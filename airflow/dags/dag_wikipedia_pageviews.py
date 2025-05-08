@@ -1,9 +1,10 @@
 import json
 from datetime import datetime, timedelta
 
-from airflow import DAG
+from airflow.decorators import dag, task
 from airflow.operators.docker_operator import DockerOperator
 from docker.types import Mount
+
 
 default_args = {
     "owner": "airflow",
@@ -12,43 +13,43 @@ default_args = {
     "email_on_retry": False,
     "retries": 2,
     "retry_delay": timedelta(minutes=5),
-
 }
 
 
-def create_command(ds):
-
-    p = {
-        "execution_hour_str": ds,
-        "output_bucket": "data",
-        "output_root_prefix": "wikipedia_pageviews",
-        "overlap_hours": 25,
-        "force_reupload": False
-    }
-    return f"--notebook pipe-dreams/notebooks/extract_wikipedia_pageviews --parameters '{json.dumps(p)}'"
-
-
-with DAG(
-    "extract_wikipedia_pageviews",
+@dag(
+    dag_id="extract_wikipedia_pageviews",
     default_args=default_args,
     description="Download wikipedia pageviews hourly",
-    schedule_interval='@daily',
+    schedule_interval="@daily",
     start_date=datetime(2025, 1, 1),
-    end_date = None,
     catchup=True,
     max_active_runs=1,
-) as dag:
+    tags=["wikipedia", "pageviews"],
+)
+def extract_wikipedia_pageviews_dag():
 
-    wikipedia_pageviews_extract = DockerOperator(
+    def build_command(execution_date: str):
+        params = {
+            "execution_hour_str": execution_date,
+            "output_bucket": "data",
+            "output_root_prefix": "wikipedia_pageviews",
+            "overlap_hours": 1,
+            "force_reupload": False,
+        }
+        return f"--notebook pipe-dreams/notebooks/wikipedia_pageviews/wikipedia_pageviews_extract --parameters '{json.dumps(params)}'"
+
+    extract_task = DockerOperator(
         task_id="extract",
         image="tfds/papermill-base:1.0.21",
         force_pull=True,
-        command=create_command("{{ ds }}"),
+        command=build_command("{{ ds }}"),
         auto_remove='force',
         docker_url="unix://var/run/docker.sock",
-        network_mode="tfds-network",  # Attach the container to the tfds-network
-        mount_tmp_dir=False
-
+        network_mode="tfds-network",
+        mount_tmp_dir=False,
     )
 
-    wikipedia_pageviews_extract
+    extract_task
+
+
+dag = extract_wikipedia_pageviews_dag()

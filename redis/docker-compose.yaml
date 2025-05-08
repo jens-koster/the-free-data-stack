@@ -1,0 +1,35 @@
+services:
+  redis:
+    # Redis is limited to 7.2-bookworm due to licencing change
+    # https://redis.io/blog/redis-adopts-dual-source-available-licensing/
+    image: redis:7.2-bookworm
+    container_name: redis
+    networks:
+      - tfds-network
+    expose:
+      - 6379
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 30s
+      retries: 50
+      start_period: 30s
+    restart: always
+
+  redisinsight:
+    image: redislabs/redisinsight:latest
+    container_name: redisinsight
+    ports:
+      - "127.0.0.1:8007:5540"
+    volumes:
+      - redisinsight_data:/data
+    networks:
+      - tfds-network
+
+volumes:
+  redisinsight_data:
+
+networks:
+  tfds-network:
+    name: tfds-network
+    external: true

@@ -4,13 +4,11 @@ Script to stamp Git revision information into Jupyter notebooks
 and upload them to S3. Uses cell tags to identify the Git info cell.
 """
 
-import json
 import os
 import sys
 from datetime import datetime, timezone
 import nbformat
 import boto3
-from botocore.exceptions import NoCredentialsError
 import git
 from common import get_config, find_dir
 
@@ -33,9 +31,6 @@ def get_s3_config():
             raise FileNotFoundError ('could not find s3 config')
         _s3_config = cfg['config']
         _s3_config["bucket"] = 'notebooks'
-        # can't think of a generic way to deal with the fact we sometimes need to access a host port and sometimes the tdfs docker network
-        # for now just replace it...
-        _s3_config["url"] = _s3_config["url"].replace('s3-ninja:9000', '127.0.0.1:8004')
     return _s3_config
 
 get_s3_config()
@@ -122,8 +117,8 @@ def stamp_notebook(input_path, output_path):
 
             # Add the cell at the top of the notebook
             notebook.cells.insert(0, revision_cell)
-
-        os.makedirs(os.path.basename(output_path), exist_ok=True)
+        containing_folder = os.path.dirname(output_path)
+        os.makedirs(containing_folder, exist_ok=True)
         with open(output_path, 'w', encoding='utf-8') as f:
             nbformat.write(notebook, f)
 

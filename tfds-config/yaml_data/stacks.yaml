@@ -13,6 +13,7 @@ config:
     - postgres
     - spark
     - papermill
+    - redis
     - airflow
   book-runner:
     services:
@@ -25,3 +26,11 @@ config:
     - s3-minio
     - postgres
     - spark
+  airflow-mini:
+    services:
+    - tfds-config
+    - s3-minio
+    - postgres
+    - papermill
+    - redis
+    - airflow
