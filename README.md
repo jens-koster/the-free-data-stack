@@ -17,6 +17,12 @@ A docker network is created outside the docker compose files and all containers 
 A list of all ports used by different services is maintained here, as services are added ports are configured and re-mapped to make every hostname and port used globally unique.
 Each stack is given a name defined in configuration file, specifying the folder names of services in the stack. A python CLI is created to run docker compose in each folder, it changes the current directory before calling docker compose so relative paths can be used.
 
+# Pipeline notebooks
+The notebooks making up the pipelines (extract, bronze, silver and gold) go in a separate repo; https://github.com/jens-koster/pipe-dreams.
+This keeps tfds clean and is also the lab for doing things by the book, there's a ton of commit hooks linting and sorting things. That gets a bit tedious for the tfds repo, I know I should ...mea culpa.
+
+There's the papermill service to execute these parameterized notebooks form s3 and deliver the result on s3.
+Might require some love and attention but it all worked nicely from airflow DockerOperator at one point...
 
 # Setup - getting started
 
