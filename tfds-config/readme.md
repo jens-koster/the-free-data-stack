@@ -2,10 +2,12 @@
 
 A simple API server for managing YAML-based configuration files.
 
-There's CRUD functionality but that's currently just for fun and exercise, it's nice to have a flask api server up and running in case we want to do something else. Right now we're only using it to get configs. I do all the editing directly in the files.
+There's CRUD functionality but that's currently just for fun and exercise, it's nice to have a flask api server up and running in case we want to do something else. Right now we're only using this service to retrieve configs. I do all the editing directly in the files.
+
 so it could as well be an nginx serving up files from the mounted directories.
+
 It could however not be folder in a well known location, airflow DockerOperator is unable to mount host directories (on mac).
-Using env values is an alternative but judged too cumbersome, any new config for whatever we want to do in airflow would need to be passed into the airflow container and then the DockerOperator would pass it to the executing docker container. This way we just add the config value in a file and the code in the executing container can start using it without modifing the airflow code.
+Using env values is an alternative but that's cumbersome, any new config for whatever we want to do in airflow would need to be passed into the airflow container and then the DockerOperator would pass it to the executing docker container. This way we just add the config value in a file and the code in the executing container can start using it without modifing the airflow code.
 
 
 ## Overview
@@ -34,4 +36,7 @@ The API will be available at:
 - `DELETE /api/configs/{config_name}` - Delete a configuration
 
 ### secrets
-If a file has an api key or something in it, just put it in the tfds/secrets folder and it stays on your disk.
+If a file has an api key or something in it, put it in the /opt/tfds/secrets folder and it stays on your disk.
+tfds-config looks in:
+/opt/tfds/secrets - whihc is a regular folder
+/opt/tfds/config - which is a symlink to the yaml_data folder in the git repo.
