@@ -7,7 +7,7 @@ GitPython
 cowsay
 ipykernel
 pandas
-
+docker
 
 # tfds-config
 Flask

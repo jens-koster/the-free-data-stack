@@ -30,8 +30,11 @@ echo "ensuring:"
 
 echo "no log4j from packages is used"
 rm ./package_jars/log4j*
+rm ./package_jars/logback*
+rm ./package_jars/slf4j*
 rm ~/src/the-free-data-stack/.venv/lib/python3.8/site-packages/pyspark/jars/log4j-1.2-api-2.20.0.jar
 rm ./jars/log4j-1.2-api-2.20.0.jar
+
 
 echo "not using: parquet-hadoop-bundle-1.8.1.jar"
 rm ./package_jars/parquet-hadoop-bundle-1.8.1.jar

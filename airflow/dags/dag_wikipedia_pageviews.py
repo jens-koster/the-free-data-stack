@@ -40,8 +40,8 @@ def extract_wikipedia_pageviews_dag():
 
     extract_task = DockerOperator(
         task_id="extract",
-        image="tfds/papermill-base:1.0.21",
-        force_pull=True,
+        image="tfds/papermill-base:latest",
+        force_pull=False,
         command=build_command("{{ ds }}"),
         auto_remove='force',
         docker_url="unix://var/run/docker.sock",

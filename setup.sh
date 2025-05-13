@@ -53,7 +53,7 @@ fi
 ln -s "$(pwd)/tfds-config/yaml_data" "$root"/config
 
 
-echo "Creating secrets fodler and copying content: $root/sercrets"
+echo "Creating secrets folder and copying content: $root/secrets"
 mkdir -p "$root"/secrets
 cp -rn "./tfds-config/secret_data/"* "$root"/secrets
 

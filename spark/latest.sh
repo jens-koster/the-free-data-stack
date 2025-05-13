@@ -1,0 +1,5 @@
+docker tag "spark-base" "tfds/spark-base:latest"
+# tag="tfds/spark-base:1.0"
+# echo "📦 pushing version $tag"
+# docker tag "spark-base" "$tag"
+# docker push "$tag"

@@ -9,12 +9,13 @@ ENV SPARK_MODE=master \
 USER root
 
 EXPOSE 7077 8010 8011 8012
-
-RUN mkdir -p /opt/spark/jars /opt/spark/conf /opt/tfds/data /opt/tfds/spark/jars
+# for some reason papermill build needs the saprk home folder...
+RUN mkdir -p /opt/spark/jars /opt/spark/conf /opt/tfds/data /opt/tfds/spark/jars /home/spark
+RUN chown -R spark:spark /home/spark
 
 ENV SPARK_CLASSPATH="/opt/tfds/spark/jars/*"
-# COPY package_jars/*.jar /opt/tfds/spark/jars/
-COPY jars/*.jar /opt/tfds/spark/jars/
+COPY package_jars/*.jar /opt/tfds/spark/jars/
+# COPY jars/*.jar /opt/tfds/spark/jars/
 
 # Clean out stuff we want to upgrade
 RUN find /opt/spark/jars/ -name "guava-*.jar" -delete
@@ -30,6 +31,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY entrypoint.sh /app/entrypoint.sh
 RUN chmod +x /app/entrypoint.sh
 
+
 USER spark
+
 # Custom entrypoint
 ENTRYPOINT ["/app/entrypoint.sh"]

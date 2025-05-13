@@ -1,10 +1,19 @@
 #!/bin/bash
+if [[ -z "$VIRTUAL_ENV" ]]; then
+  echo "❌ No virtual environment is activated. Please activate a venv and try again."
+  return
+fi
+
 echo "\n=============================================="
 echo "| building the spark cluster                 |"
 echo "==============================================\n"
 
 echo "stopping cluster"
 docker compose down
+
+echo "re-installing spark requirements for this venv"
+pip uninstall -r requirements.txt -y
+pip install -r requirements.txt
 
 echo "🔄 Auto incrementing version number..."
 
@@ -26,6 +35,7 @@ new_version=$((current_version + 1))
 sed -i.bak "s|${IMAGE_PREFIX}${current_version}|${IMAGE_PREFIX}${new_version}|g" "$FILE"
 echo "✅ Updated docker image in $FILE: ${IMAGE_PREFIX}${current_version} → ${IMAGE_PREFIX}${new_version}"
 
+
 source jar.sh
 
 echo building docker image
@@ -42,10 +52,6 @@ tag="tfds/spark-base:1.0.$new_version"
 echo "📦 pushing version $tag"
 docker tag "spark-base" "$tag"
 docker push "$tag"
-
-echo "re-installing spark requirements for this venv"
-pip uninstall -r requirements.txt -y
-pip install -r requirements.txt
 
 echo "merging docker_jars and package_jars to jars folder"
 mkdir -p jars

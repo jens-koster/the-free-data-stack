@@ -11,3 +11,5 @@ For fun I added the redisinsight web client: https://hub.docker.com/r/redis/redi
 It's avaialble on http://127.0.0.1:8007 you need to configure a new database;
 
  `redis://default@redis:6379`
+
+note: you'll need to change from db0 to db1 to see anything, db0 should be empty, we don't use that.

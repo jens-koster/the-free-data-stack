@@ -4,6 +4,14 @@ My various tinkering with open source data tools. I'm aiming at a open source pl
 * Packaging could be smoother
 * Supported on mac, possibly Linux, will not work on Windows.
 
+I am maintaining a list in notion of all free stack tools I can find:
+https://ambitious-bowl-f63.notion.site/Free-Datastack-Catalogue-1bc65454dd3f80f4a8e7cfda2edcb4a9?pvs=4
+
+
+
+ideas:
+a tfds web console, once there's a tfds cli with automated testing, it could be nice to have a UI on top of it to start and stop things and monitor...?
+
 # Rationale
 A data stack is a collection of services, like spark, postgresql, airflow, redis, S3 storage, dbt and so on. When you want try out for example aitflow you'll find a docker compose file firing up the entire stack needed to run airflow, with no connectivity to other local services. Many stacks depend on basic services like postgres and redis, I want to break the stacks up and re-use the same postgres for all services depending on it. I want all services on the same docker network with unique and consistent hostnames.
 Most services come with a web ui on a typical web port, that I want to map to localhost. Let's make those ports unique in the entire fds. Actually, we generalize that to say all services should be able to run in parallel without conflicts.
@@ -18,8 +26,8 @@ A list of all ports used by different services is maintained here, as services a
 Each stack is given a name defined in configuration file, specifying the folder names of services in the stack. A python CLI is created to run docker compose in each folder, it changes the current directory before calling docker compose so relative paths can be used.
 
 # Pipeline notebooks
-The notebooks making up the pipelines (extract, bronze, silver and gold) go in a separate repo; https://github.com/jens-koster/pipe-dreams.
-This keeps tfds clean and is also the lab for doing things by the book, there's a ton of commit hooks linting and sorting things. That gets a bit tedious for the tfds repo, I know I should ...mea culpa.
+The notebooks making up the pipelines (extract, bronze, silver, gold, etc) go in a separate repo; https://github.com/jens-koster/pipe-dreams.
+This keeps tfds clean and is also the lab for doing things by the book, there's a ton of commit hooks linting and sorting things. That gets a bit tedious for the tfds repo, I know, I should have that here as well ...mea culpa.
 
 There's the papermill service to execute these parameterized notebooks form s3 and deliver the result on s3.
 Might require some love and attention but it all worked nicely from airflow DockerOperator at one point...

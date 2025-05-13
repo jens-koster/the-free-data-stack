@@ -227,7 +227,7 @@ def main():
         )
 
     os.chdir(start_dir)
-    if not pre_existing_temp_dir and get_deploy_config().get(['clean_up_temp'],True):
+    if not pre_existing_temp_dir and get_deploy_config().get('clean_up_temp',True):
         os.rmdir(temp_dir)
     print("Deployment complete!")
 

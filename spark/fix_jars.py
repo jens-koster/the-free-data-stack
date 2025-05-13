@@ -28,8 +28,11 @@ docker_jar_names = {(parse_jar_name(f), f) for f in os.listdir(docker_jars_path)
 
 for f in os.listdir(package_jars_path):
     if f.endswith(".jar"):
-        jar_name = parse_jar_name(f)
-        for docker_jar, jar_name in docker_jar_names:
-            if docker_jar and jar_name and docker_jar == jar_name:
-                print(f"Removing {jar_name} from package_jars (conflicts with docker jars): package: {f}, docker: {jar_name}")
-                os.remove(os.path.join(package_jars_path, f))
+        package_parsed = parse_jar_name_and_version(f)
+        package_base_name = package_parsed.get('base_name')
+        package_file_name = package_parsed.get('jar_name')
+        for docker_base_name, docker_file_name in docker_jar_names:
+            if docker_base_name and package_base_name and docker_base_name == package_base_name:
+                package_file_path = os.path.join(package_jars_path, f)
+                print(f"Removing {package_base_name} from package_jars (conflicts with docker jars): package: {package_file_name}, docker: {docker_file_name}")
+                os.remove(package_file_path)
