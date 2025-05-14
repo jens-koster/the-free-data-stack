@@ -35,8 +35,7 @@ then run the helloworld notebook in a container
 
 to open a shell inside a docker for troubleshooting dependencies.
 
-    docker compose run --remove-orphans --rm -it --entrypoint /bin/bash book-runner
-
+    docker run --rm -it --entrypoint /bin/bash tfds/papermill-base:latest
 
 To configure a venv as jupyter kernel:
     # unless it is alreayd there:

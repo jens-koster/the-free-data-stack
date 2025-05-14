@@ -1,9 +1,8 @@
 import json
 from datetime import datetime, timedelta
 
-from airflow.decorators import dag, task
+from airflow.decorators import dag
 from airflow.operators.docker_operator import DockerOperator
-from docker.types import Mount
 
 
 default_args = {
@@ -11,9 +10,24 @@ default_args = {
     "depends_on_past": False,
     "email_on_failure": False,
     "email_on_retry": False,
-    "retries": 2,
+    "retries": 0,
     "retry_delay": timedelta(minutes=5),
 }
+
+IMAGE = "tfds/papermill-base:latest"
+DOCKER_URL = "unix://var/run/docker.sock"
+NETWORK_MODE = "tfds-network"
+NOTEBOOK_DIR = "pipe-dreams/notebooks/wikipedia_pageviews"
+
+def build_command(notebook_name: str, execution_date: str) -> str:
+    params = {
+        "execution_hour_str": execution_date,
+        "output_bucket": "data",
+        "output_root_prefix": "wikipedia_pageviews",
+        "overlap_hours": 1,
+        "force_reupload": False,
+    }
+    return f"--notebook {NOTEBOOK_DIR}/{notebook_name} --parameters '{json.dumps(params)}'"
 
 
 @dag(
@@ -27,29 +41,37 @@ default_args = {
     tags=["wikipedia", "pageviews"],
 )
 def extract_wikipedia_pageviews_dag():
-
-    def build_command(execution_date: str):
-        params = {
-            "execution_hour_str": execution_date,
-            "output_bucket": "data",
-            "output_root_prefix": "wikipedia_pageviews",
-            "overlap_hours": 1,
-            "force_reupload": False,
-        }
-        return f"--notebook pipe-dreams/notebooks/wikipedia_pageviews/wikipedia_pageviews_extract --parameters '{json.dumps(params)}'"
-
-    extract_task = DockerOperator(
+    extract = DockerOperator(
         task_id="extract",
-        image="tfds/papermill-base:latest",
-        force_pull=False,
-        command=build_command("{{ ds }}"),
-        auto_remove='force',
-        docker_url="unix://var/run/docker.sock",
-        network_mode="tfds-network",
+        image=IMAGE,
+        command=build_command("wikipedia_pageviews_extract", "{{ ds }}"),
+        auto_remove="force",
+        docker_url=DOCKER_URL,
+        network_mode=NETWORK_MODE,
         mount_tmp_dir=False,
     )
 
-    extract_task
+    bronze = DockerOperator(
+        task_id="bronze",
+        image=IMAGE,
+        command=build_command("wikipedia_pageviews_bronze", "{{ ds }}"),
+        auto_remove="force",
+        docker_url=DOCKER_URL,
+        network_mode=NETWORK_MODE,
+        mount_tmp_dir=False,
+    )
+
+    silver = DockerOperator(
+        task_id="silver",
+        image=IMAGE,
+        command=build_command("wikipedia_pageviews_silver", "{{ ds }}"),
+        auto_remove="force",
+        docker_url=DOCKER_URL,
+        network_mode=NETWORK_MODE,
+        mount_tmp_dir=False,
+    )
+
+    extract >> bronze >> silver
 
 
 dag = extract_wikipedia_pageviews_dag()

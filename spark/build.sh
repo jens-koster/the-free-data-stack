@@ -20,48 +20,45 @@ echo "🔄 Auto incrementing version number..."
 IMAGE_PREFIX="tfds/spark-base:1.0."
 FILE="docker-compose.yml"
 
-# Extract the current version number
-current_version=$(grep -oE "${IMAGE_PREFIX}[0-9]+" "$FILE" | sed "s|${IMAGE_PREFIX}||" | head -n 1)
+# # Extract the current version number
+# current_version=$(grep -oE "${IMAGE_PREFIX}[0-9]+" "$FILE" | sed "s|${IMAGE_PREFIX}||" | head -n 1)
 
-if [[ -z "$current_version" ]]; then
-  echo "❌ Could not find a version like ${IMAGE_PREFIX}x in $FILE"
-  exit 1
-fi
+# if [[ -z "$current_version" ]]; then
+#   echo "❌ Could not find a version like ${IMAGE_PREFIX}x in $FILE"
+#   exit 1
+# fi
 
-# Increment version
-new_version=$((current_version + 1))
+# # Increment version
+# new_version=$((current_version + 1))
 
-# Replace in the file using '|' as delimiter
-sed -i.bak "s|${IMAGE_PREFIX}${current_version}|${IMAGE_PREFIX}${new_version}|g" "$FILE"
-echo "✅ Updated docker image in $FILE: ${IMAGE_PREFIX}${current_version} → ${IMAGE_PREFIX}${new_version}"
-
+# # Replace in the file using '|' as delimiter
+# sed -i.bak "s|${IMAGE_PREFIX}${current_version}|${IMAGE_PREFIX}${new_version}|g" "$FILE"
+# echo "✅ Updated docker image in $FILE: ${IMAGE_PREFIX}${current_version} → ${IMAGE_PREFIX}${new_version}"
 
 source jar.sh
 
 echo building docker image
 docker compose -f docker-compose-base.yml build
 
-echo 'pushing...'
+echo 'tagging docker image "tfds/spark-base:latest"'
 
-# tag="tfds/spark-base:1.0"
+docker tag "spark-base" "tfds/spark-base:latest"
+# tag="tfds/spark-base:1.0.$new_version"
 # echo "📦 pushing version $tag"
 # docker tag "spark-base" "$tag"
 # docker push "$tag"
-
-tag="tfds/spark-base:1.0.$new_version"
-echo "📦 pushing version $tag"
-docker tag "spark-base" "$tag"
-docker push "$tag"
 
 echo "merging docker_jars and package_jars to jars folder"
 mkdir -p jars
 cp docker_jars/*.jar jars/
 cp package_jars/*.jar jars/
-# rm -rf package_jars docker_jars
+
 
 echo "starting cluster"
 docker compose up -d --remove-orphans
 
-docker ps
+echo "building papermill"
 
-echo "Make sure spark is: 1.0.$new_version"
+cd ../papermill
+source build.sh
+cd ../spark

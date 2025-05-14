@@ -14,6 +14,10 @@ RUN mkdir -p /opt/spark/jars /opt/spark/conf /opt/tfds/data /opt/tfds/spark/jars
 RUN chown -R spark:spark /home/spark
 
 ENV SPARK_CLASSPATH="/opt/tfds/spark/jars/*"
+
+COPY requirements.txt requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
+
 COPY package_jars/*.jar /opt/tfds/spark/jars/
 # COPY jars/*.jar /opt/tfds/spark/jars/
 
@@ -21,18 +25,20 @@ COPY package_jars/*.jar /opt/tfds/spark/jars/
 RUN find /opt/spark/jars/ -name "guava-*.jar" -delete
 RUN find /opt/spark/jars/ -name "datanucleus*.jar" -delete
 
-COPY ./conf/ /opt/spark/conf/
+# for spark master/workers to find it
+# COPY ./conf/ /opt/spark/conf/
+
+# we're using this conf folder in local development,
+# let's make it the same in master, worker and driver dockers.
+COPY ./conf/ /opt/tfds/spark/conf/
+ENV SPARK_CONF_DIR=/opt/tfds/spark/conf
 
 VOLUME /opt/tfds/data
-
-COPY requirements.txt requirements.txt
-RUN pip install --no-cache-dir -r requirements.txt
 
 COPY entrypoint.sh /app/entrypoint.sh
 RUN chmod +x /app/entrypoint.sh
 
-
 USER spark
 
-# Custom entrypoint
+# override the spark entrypoint
 ENTRYPOINT ["/app/entrypoint.sh"]

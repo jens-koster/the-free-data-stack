@@ -55,6 +55,7 @@ params_hello = {
 
 nb = 'pipe-dreams/notebooks/helloworld'
 nb = 'pipe-dreams/notebooks/wikipedia_pageviews/wikipedia_pageviews_extract'
+nb = 'pipe-dreams/notebooks/wikipedia_pageviews/wikipedia_pageviews_bronze'
 p = params_wiki_extract
 
 run_book_prod(nb, p)

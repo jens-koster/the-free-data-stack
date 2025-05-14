@@ -1,22 +1,6 @@
 #!/bin/bash
 
-if [ -z "$1" ]; then
-    echo "Error: No minor revision supplied. Please provide an int."
-    return 1
-fi
-
-
-echo building
+echo building perpmill-base:latest
 docker compose build
 
-echo 'pushing...'
-
-tag="tfds/papermill-base:1.0"
-echo "📦 pushing version $tag"
-docker tag "papermill-base" "$tag"
-docker push "$tag"
-
-tag="tfds/papermill-base:1.0.$1"
-echo "📦 pushing version $tag"
-docker tag "papermill-base" "$tag"
-docker push "$tag"
+docker tag "papermill-base" "tfds/papermill-base:latest"

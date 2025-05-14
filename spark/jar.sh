@@ -28,7 +28,7 @@ docker rm spark-temp
 
 echo "ensuring:"
 
-echo "no log4j from packages is used"
+echo "only docker log4j is used"
 rm ./package_jars/log4j*
 rm ./package_jars/logback*
 rm ./package_jars/slf4j*
@@ -36,14 +36,20 @@ rm ~/src/the-free-data-stack/.venv/lib/python3.8/site-packages/pyspark/jars/log4
 rm ./jars/log4j-1.2-api-2.20.0.jar
 
 
-echo "not using: parquet-hadoop-bundle-1.8.1.jar"
+echo "legacy jar not used: parquet-hadoop-bundle-1.8.1.jar"
 rm ./package_jars/parquet-hadoop-bundle-1.8.1.jar
 
-echo "no datanucleus from docker is used"
+echo "datanucleus from packages is used"
 rm ./docker_jars/datanucleus*
 
 echo "guava from packages is used"
 rm ./docker_jars/guava*
+
+echo "remove some conflicting jars we got in the package dependecies"
+rm ./package_jars/javax.servlet*.jar
+rm ./package_jars/servlet-api-*.jar
+rm ./package_jars/jetty-*.jar
+rm ./package_jars/netty-*.jar
 
 python3 fix_jars.py
 rm -rf jars
