@@ -1,14 +1,6 @@
 """
-Run a notebook in papermill.
-Intended as entrypoint to a docker container
-some useful commands, full documentation in the readme.
-
-set the env variables:
-eval "$(python3 ./tfds_cli/tfds.py env | grep "^export TFDS_")"
-
-run the debug version of the docker, where this file is mounted rather than deployed in the docker. (you can edit and run, no build)
-docker compose run debug --notebook "pipe-dreams/notebooks/helloworld" --parameters '{"p1": "hello", "p2": "world"}'
-
+Run a notebook in papermill, intended to be run in a docker container by airflow.
+Use book_debugger.py to run this script in dev mode.
 """
 
 import argparse
@@ -63,30 +55,22 @@ def get_s3_client():
     )
     return s3_client
 
-def download_notebook(notebook, bucket, tmp_dir)->str:
-    notebook_base_name = notebook.split('/')[-1]
-    input_object_name = f"{notebook}.ipynb"
-    input_local_filename = f"{tmp_dir}/{notebook_base_name}.ipynb"
+def download_notebook(notebook_name, notebook_prefix, bucket, tmp_dir)->str:
 
-    print(f"Downloading bucket: {bucket}, {input_object_name} to {input_local_filename}")
+    source_object_name = f"{notebook_prefix}/{notebook_name}.ipynb"
+    target_filename = f"{tmp_dir}/{notebook_name}.ipynb"
+
+    print(f"Downloading {source_object_name} to {target_filename} from bucket {bucket}")
     try:
         s3_client = get_s3_client()
-        s3_client.download_file(bucket, input_object_name, input_local_filename)
+        s3_client.download_file(bucket, source_object_name, target_filename)
     except s3_client.exceptions.ClientError as e:
-        print(f"Error downloading {notebook} from s3: {e.response['Error']['Message']}")
+        print(f"Error downloading {source_object_name} from s3: {e.response['Error']['Message']}")
         return
-    return input_local_filename
-
-
-def make_output_filename(notebook):
-    notebook_base_name = notebook.split('/')[-1]
-    output_filename = f"{notebook_base_name}_{dt.datetime.now(dt.timezone.utc).strftime('%Y%m%d_%H%M%S')}.ipynb"
-    return output_filename
-
+    return target_filename
 
 def redirect_logging():
-        # Set up logging to print to both terminal and notebook
-
+    # Set up papermill logging to print output to both terminal and notebook
     logger = pm.log.logger
     logger.setLevel(logging.INFO)
 
@@ -97,22 +81,32 @@ def redirect_logging():
 
 
 
-def execute_notebook(notebook, parameters, kernel):
+def execute_notebook(notebook_name:str, notebook_prefix:str, parameters:dict, kernel:str):
+    """Execute a notebook: download the notebook from s3 and upload the result to s3.
+    execution_date and execution_id are injected into parameters."""
+
     redirect_logging()
-    notebook_prefix = '/'.join(notebook.split('/')[:-1])
     tmp_dir = f"/tmp/book_runner/{notebook_prefix}"
     os.makedirs(tmp_dir, exist_ok=True)
 
-    input_local_filename = download_notebook(notebook, bucket="notebooks", tmp_dir=tmp_dir)
+    input_local_filename = download_notebook(
+        notebook_name=notebook_name,
+        notebook_prefix=notebook_prefix,
+        bucket="notebooks",
+        tmp_dir=tmp_dir)
 
     print(f"Setting kernel to {kernel}")
     set_kernel (notebook_path=input_local_filename, kernel_name=kernel)
 
-    output_filename = make_output_filename(notebook)
+    output_filename = f"{notebook_name}_{dt.datetime.now(dt.timezone.utc).strftime('%Y%m%d_%H%M%S')}.ipynb"
     output_local_filename = os.path.join(tmp_dir, output_filename)
     output_object_name = f"{notebook_prefix}/{output_filename}"
 
-    print(f"Executing papermill: {input_local_filename} -> {output_local_filename}")
+    for key, value in os.environ.items():
+        print(f"{key}={value}")
+    parameters = parameters.copy()
+
+    print(f"Executing papermill: {input_local_filename} -> {output_local_filename} with parameters: {parameters}")
     pm.execute_notebook(
         input_path=input_local_filename,
         output_path=output_local_filename,
@@ -121,7 +115,7 @@ def execute_notebook(notebook, parameters, kernel):
         parameters=parameters,
     )
 
-    output_bucket = "output-notebooks"
+    output_bucket = "output-notebooks" # make this a config
     print(
         f"Uploading {output_local_filename} to bucket {output_bucket} as {output_object_name}"
     )
@@ -140,10 +134,16 @@ def main():
 
     # notebook
     parser.add_argument(
-        "--notebook",
+        "--notebook_name",
         type=str,
         required=True,
         help="Notebok filename excluding the .ipynb extension",
+    )
+    parser.add_argument(
+        "--notebook_prefix",
+        type=str,
+        required=True,
+        help="s3 prefix for the notebook, e.g. pipe-dreams/notebooks",
     )
     # parameters
     parser.add_argument(
@@ -155,7 +155,6 @@ def main():
             "use doublequotes on value and key"
         ),
     )
-
     parser.add_argument(
         "--kernel",
         type=str,
@@ -168,17 +167,20 @@ def main():
     )
 
     args = parser.parse_args()
-    # Parse the parameters
-    notebook = args.notebook
-    print(f"Running notebook {notebook}")
-
+    if '/' in args.notebook_name:
+        raise ValueError("Notebook name should not contain '/', prefix is provided in the notebook_prefix argument")
+    print(f"Running notebook {args.notebook_prefix}/{args.notebook_name}")
     try:
         print(f"Parameters: {args.parameters}")
-        parameters = json.loads(args.parameters)
+        parameters_dict = json.loads(args.parameters)
     except json.JSONDecodeError:
         raise ValueError("Invalid JSON string for parameters")
-    kernel = args.kernel
-    execute_notebook(notebook=notebook, parameters=parameters, kernel=kernel)
+
+    execute_notebook(
+        notebook_name=args.notebook_name,
+        notebook_prefix=args.notebook_prefix,
+        parameters=parameters_dict,
+        kernel=args.kernel)
 
 
 if __name__ == '__main__':

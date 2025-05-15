@@ -11,4 +11,4 @@ ENV TFDS_CONFIG_URL=http://tfds-config:8005/api/configs
 
 COPY book_runner.py /app/book_runner.py
 
-ENTRYPOINT ["python3", "/app/book_runner.py"]
+ENTRYPOINT []

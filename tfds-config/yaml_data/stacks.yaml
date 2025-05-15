@@ -12,7 +12,6 @@ config:
     - s3-minio
     - postgres
     - spark
-    - papermill
     - redis
     - airflow
   book-runner:
@@ -31,6 +30,5 @@ config:
     - tfds-config
     - s3-minio
     - postgres
-    - papermill
     - redis
     - airflow
