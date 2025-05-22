@@ -32,6 +32,26 @@ This keeps tfds clean and is also the lab for doing things by the book, there's 
 There's the papermill service to execute these parameterized notebooks form s3 and deliver the result on s3.
 Might require some love and attention but it all worked nicely from airflow DockerOperator at one point...
 
+# Labs
+## Wikipedia Pageviews
+
+Stack: spark-stack
+
+Airflow ELT pipeline: https://github.com/jens-koster/the-free-data-stack/blob/
+main/airflow/dags/dag_wikipedia_pageviews.py
+
+Pipeline notebooks: https://github.com/jens-koster/pipe-dreams/tree/main/notebooks/wikipedia_pageviews
+
+Remaining work: https://github.com/users/jens-koster/projects/2
+
+## Øresund Train Spotter
+In exploration phase.
+
+Repo: https://github.com/jens-koster/tfds-train-spotter
+
+Project: https://github.com/users/jens-koster/projects/3
+
+
 # Setup - getting started
 
     git clone https://github.com/jens-koster/the-free-data-stack.git
