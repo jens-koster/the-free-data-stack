@@ -1,0 +1,26 @@
+services:
+  devpi:
+    build: .
+    container_name: devpi
+
+    ports:
+      - "127.0.0.1:8008:8008"
+    volumes:
+      - /opt/tfds/local-pypi:/data
+    command: devpi-server --host 0.0.0.0 --port 8008 --serverdir /data
+    restart: unless-stopped
+    networks:
+      - tfds-network
+
+  devpi-cli:
+    build: .
+    container_name: devpi-cli
+    volumes:
+      - /opt/tfds/local-pypi:/data
+    networks:
+      - tfds-network
+
+
+networks:
+  tfds-network:
+    external: true  # Use the existing tfds-network

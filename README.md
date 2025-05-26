@@ -103,8 +103,9 @@ This is the global list of who gets what port:
   - http://127.0.0.1:8005/swagger-ui
   - http://127.0.0.1:8005/redoc
   - http://127.0.0.1:8005/api/configs
-- 8006 minio S3 on http://127.0.0.1:8006
-- 8007 redis insight on http://127.0.0.1:8007
+- 8006 - minio S3 on http://127.0.0.1:8006
+- 8007 - redis insight on http://127.0.0.1:8007
+- 8008 - devpi python package index
 
 - 8010 - spark master on http://127.0.0.1:8010
 - 8011 - spark worker 1 on http://127.0.0.1:8011

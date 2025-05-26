@@ -21,6 +21,7 @@ mkdir -p "$root"/data/spark-warehouse
 mkdir -p "$root"/data/spark
 mkdir -p "$root"/data/spark/metastore
 mkdir -p "$root"/postgres
+mkdir -p "$root"/local-pypi
 
 # postgres
 echo "linking postgres"
