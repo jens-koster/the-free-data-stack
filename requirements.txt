@@ -9,7 +9,7 @@ cowsay
 ipykernel
 pandas
 docker
-
+tfdslib
 
 # tfds-config
 Flask

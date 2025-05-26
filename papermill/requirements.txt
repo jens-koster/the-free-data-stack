@@ -1,6 +1,8 @@
+
 requests==2.32.3
 cowsay==6.1
 jupyter==1.1.1
 papermill==2.6.0
 papermill[all]==2.6.0
-boto3==1.37.38
+boto3==1.38.23
+tfdslib

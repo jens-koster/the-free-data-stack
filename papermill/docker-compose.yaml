@@ -5,9 +5,3 @@ services:
     container_name: papermill
     environment:
       TFDS_CONFIG_URL: ${TFDS_CONFIG_URL}
-    networks:
-      - tfds-network
-
-networks:
-  tfds-network:
-    external: true  # Use the existing tfds-network

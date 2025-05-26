@@ -32,3 +32,31 @@ Since the config is global you just need to tell poetry to use devpi when publis
 
     poetry build
     poetry publish -r devpi
+
+# using the packages
+
+
+### What works:
+set env variable in your host environment:
+
+    export PIP_INDEX_URL=http://127.0.0.1:8008/root/tfds/
+
+in the dockerfiles you'll need to use this construct
+
+    RUN pip install --trusted-host host.docker.internal --index-url http://host.docker.internal:8008/root/tfds/ --no-cache-dir -r requirements.txt
+
+as long as the requirements.txt is not used in docker builds you can set the devpi url in requirements.txt
+
+    --index-url http://devpi:8008/root/tfds/
+
+
+**host.docker.internal**: a special hostname, works on mac and apparently windows. docker build can't directly access neither the host nor the docker network. It's tricky reaching our local devpi server. The special host name allows access from docker build to the host.
+
+**--trusted-host host.docker.internal** : bypasses pips check that the host uses https with a proper certificate
+
+**--index-url http://host.docker.internal:8008/root/tfds/** : tells pip to use this package index
+
+### next attempt:
+This is messy... I might change to downloading the artifacts to the docker context folder before starting the build.
+or building them in github actions and referring a github path from the build
+or simply push it to pypi, or github index.
