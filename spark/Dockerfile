@@ -8,6 +8,23 @@ ENV SPARK_MODE=master \
 # doing things in /opt requires root access
 USER root
 
+# Upgrade from the ancient 3.8 that comes with the spark image:
+# install Python 3.11 and tools
+RUN apt-get update && apt-get install -y software-properties-common \
+    && add-apt-repository ppa:deadsnakes/ppa \
+    && apt-get update \
+    && apt-get install -y python3.11 python3.11-venv python3.11-dev python3-pip \
+    && update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.11 1 \
+    && update-alternatives --install /usr/bin/python python /usr/bin/python3.11 1 \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+# Upgrade pip and install requirements with Python 3.11
+COPY requirements.txt requirements.txt
+RUN python3.11 -m ensurepip --upgrade \
+    && python3.11 -m pip install --upgrade pip setuptools wheel
+RUN python3.11 -m pip install --no-cache-dir -r requirements.txt
+
 EXPOSE 7077 8010 8011 8012
 # for some reason papermill build needs the saprk home folder...
 RUN mkdir -p /opt/spark/jars /opt/spark/conf /opt/tfds/data /opt/tfds/spark/jars /home/spark

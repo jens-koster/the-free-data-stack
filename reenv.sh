@@ -1,6 +1,8 @@
 #!/bin/bash
 
-pyenv global 3.8.10
+# pyenv global 3.8.10
+pyenv global 3.11.12
+
 
 # Remove existing .venv if it exists
 if [ -d ".venv" ]; then

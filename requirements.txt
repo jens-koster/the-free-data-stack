@@ -1,3 +1,4 @@
+--index-url http://127.0.0.1:8008/root/tfds/
 pytest
 requests
 PyYAML
@@ -8,6 +9,7 @@ cowsay
 ipykernel
 pandas
 docker
+
 
 # tfds-config
 Flask
