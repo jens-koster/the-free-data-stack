@@ -8,20 +8,14 @@ ConfigFileResponseSchema = ConfigFileSchema
 class ConfigListResponseSchema(Schema):
     """Schema for listing available configuration files."""
 
-    configs = fields.List(
-        fields.Str(), description="List of available configuration files"
-    )
-
-    class Meta:
-        description = "List of available configuration files"
-        example = {"configs": ["training_config.yaml", "preprocessing_config.yaml"]}
+    configs = fields.List(fields.Str(), metadata={"description":"List of available configuration files"})
 
 
 class ErrorResponseSchema(Schema):
     """Schema for error responses."""
 
-    message = fields.Str(required=True, description="Error message")
-    status_code = fields.Int(required=True, description="HTTP status code")
+    message = fields.Str(required=True)
+    status_code = fields.Int(required=True)
 
     class Meta:
         description = "Error response"

@@ -1,2 +1,0 @@
-dlt[postgres]==1.8.1
-dlt[duckdb]==1.8.1

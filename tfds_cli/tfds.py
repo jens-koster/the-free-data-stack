@@ -1,18 +1,19 @@
 #!/usr/bin/env python3
 import os
-import sys
-import yaml
 import subprocess
+import sys
 from pathlib import Path
-from common import load_env_variables, get_config_file
-from s3 import create_s3_bucket
+from typing import Any, Union
 
+import yaml  # type: ignore
+from common import get_config_file, load_env_variables
+from s3 import create_s3_bucket
 
 STACKS_FILE = get_config_file("stacks")
 CURRENT_STACK_FILE = get_config_file("currentstack")
 
 
-def load_stacks()->dict:
+def load_stacks() -> dict[str, Any]:
     """Load the stacks from the stacks.yaml file."""
     if not STACKS_FILE.exists():
         print(f"Error: {STACKS_FILE} does not exist.")
@@ -20,27 +21,27 @@ def load_stacks()->dict:
 
     with open(STACKS_FILE, "r") as f:
         stacks = yaml.safe_load(f)
-    return stacks['config']
+    return stacks["config"]
 
 
 def init():
     """
-        Create the stacks.yaml file if it doesn't exist and populate it with sample content.
-        creates the buckets if they don't exist.
+    Create the stacks.yaml file if it doesn't exist and populate it with sample content.
+    creates the buckets if they don't exist.
 
     """
     if not STACKS_FILE.exists():
         sample_content = {
-            'annotation': 'The stack definitions for tfds cli. tfds will do some magic and then iterate these folders in order to run docker compose with the chosen command in each',
-            'config': {
-                'spark-stack': {'services': ['tfds-config', 's3-ninja', 'postgreSQL', 'spark', 'papermill', 'airflow']},
-                'x-stack': {'services': ['tfds-config', 's3-ninja', 'clickhouse']}
-                }
-            }
+            "annotation": "The stack definitions for tfds cli. tfds will do some magic and then iterate these folders in order to run docker compose with the chosen command in each",
+            "config": {
+                "spark-stack": {"services": ["tfds-config", "s3-ninja", "postgreSQL", "spark", "papermill", "airflow"]},
+                "x-stack": {"services": ["tfds-config", "s3-ninja", "clickhouse"]},
+            },
+        }
         with open(STACKS_FILE, "w") as f:
             yaml.dump(sample_content, f)
         print(f"{STACKS_FILE} created with sample content.")
-        set_current_stack('spark-stack')
+        set_current_stack("spark-stack")
     else:
         print(f"{STACKS_FILE} already exists.")
         if get_current_stack() is None:
@@ -52,7 +53,7 @@ def init():
     create_s3_bucket("dwh")
 
 
-def get_current_stack()->str:
+def get_current_stack() -> str:
     """Get the current stack name from the currentstack.yaml file."""
     if not CURRENT_STACK_FILE.exists():
         print(f"Error: {CURRENT_STACK_FILE} does not exist.")
@@ -60,11 +61,11 @@ def get_current_stack()->str:
 
     with open(CURRENT_STACK_FILE, "r") as f:
         current_stack = yaml.safe_load(f)
-    return current_stack['config'].get('current_stack', None)
+    return current_stack["config"].get("current_stack", None)
 
 
 def set_current_stack(stack_name):
-    stack_names=load_stacks().keys()
+    stack_names = load_stacks().keys()
     if stack_name not in stack_names:
         print(f"Error: Stack '{stack_name}' not found in {STACKS_FILE}.")
         print(f"Available stacks: {', '.join(stack_names)}")
@@ -73,21 +74,17 @@ def set_current_stack(stack_name):
     with open(CURRENT_STACK_FILE, "w") as file:
         # Lock the file to prevent race conditions
         config = {
-            'annotation': 'the current stack for tfds cli, use setstack to change it, editing here is fine too',
-            'config': {
-                'current_stack': stack_name}
-                }
+            "annotation": "the current stack for tfds cli, use setstack to change it, editing here is fine too",
+            "config": {"current_stack": stack_name},
+        }
         yaml.dump(config, file, default_flow_style=False)
     print(f"Current stack set to '{stack_name}'.")
-
-
-
 
 
 def execute_docker_command(command, service=None, *args):
     """Execute a Docker Compose command for the current stack."""
     current_stack = get_current_stack()
-    stack_services=[]
+    stack_services = []
     if service:
         stack_services = [service]
     else:
@@ -95,10 +92,10 @@ def execute_docker_command(command, service=None, *args):
         if current_stack not in stacks:
             print(f"Error: Stack '{current_stack}' not found in {STACKS_FILE}.")
             return 1
-        stack_services = stacks[current_stack].get('services',[])
+        stack_services = stacks[current_stack].get("services", [])
 
         if command in ["down", "stop"]:
-            stack_services =  reversed(stack_services)
+            stack_services = reversed(stack_services)
 
     # Load environment variables
     load_env_variables()
@@ -129,7 +126,9 @@ def execute_docker_command(command, service=None, *args):
 def main():
     if len(sys.argv) < 2:
         print("Usage: tfds.py <command> [options]")
-        print("options are passed on docker compose except -s <service> which executes the docker command for one service.")
+        print(
+            "options are passed on docker compose except -s <service> which executes the docker command for one service."
+        )
         print("Commands: init, ls, setstack <stack_name>, <docker_compose_command>")
         print(sys.argv)
         return 1
@@ -144,7 +143,7 @@ def main():
     if command == "init":
         init()
     elif command == "ls":
-        print ('\n' + '='*20 + ' stacks ' + '='*20)
+        print("\n" + "=" * 20 + " stacks " + "=" * 20)
         stacks = load_stacks()
         if stacks:
             for stack_name, stack in stacks.items():
@@ -153,7 +152,7 @@ def main():
             print("No stacks found.")
     elif command == "env":
         envs = load_env_variables()
-        print( '\n'.join(f'export {key}={value}' for key, value in envs.items() ))
+        print("\n".join(f"export {key}={value}" for key, value in envs.items()))
 
     elif command == "setstack":
         if len(sys.argv) < 3:
@@ -170,7 +169,7 @@ def main():
             if is_service_seq:
                 service = arg
                 is_service_seq = False
-            elif arg == '-s':
+            elif arg == "-s":
                 is_service_seq = True
             else:
                 args.append(arg)

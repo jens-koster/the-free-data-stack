@@ -1,4 +1,0 @@
-doc: >
-  s3 ninja data storage, the folder is mounted to s3-mninja docker container.
-config:
-  data_dir: /tfds/data/s3

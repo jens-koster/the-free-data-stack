@@ -4,3 +4,4 @@ marshmallow
 PyYAML
 gunicorn
 requests
+tfdslib

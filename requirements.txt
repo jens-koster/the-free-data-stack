@@ -19,3 +19,11 @@ PyYAML
 pytest
 gunicorn
 requests
+
+# dev
+black
+isort
+mypy
+pytest
+ruff
+pre-commit

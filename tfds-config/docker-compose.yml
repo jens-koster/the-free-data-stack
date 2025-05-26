@@ -10,8 +10,8 @@ services:
     environment:
       - FLASK_ENV=development
     volumes:
-      - /opt/tfds/config:/app/config_files
-      - /opt/tfds/secrets:/app/secret_files
+      - /opt/tfds/config:/opt/tfds/config
+      - /opt/tfds/secrets:/opt/tfds/secrets
     networks:
       - tfds-network
 

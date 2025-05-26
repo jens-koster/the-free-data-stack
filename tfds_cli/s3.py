@@ -20,13 +20,15 @@ def get_s3_client():
     )
     return s3_client
 
+
 def bucket_exists(bucket_name):
     response = get_s3_client().list_buckets()
-    for bucket in response.get('Buckets', []):
-        if bucket['Name'] == bucket_name:
+    for bucket in response.get("Buckets", []):
+        if bucket["Name"] == bucket_name:
             return True
     else:
         return False
+
 
 def create_s3_bucket(bucket_name):
     """
@@ -49,5 +51,6 @@ def create_s3_bucket(bucket_name):
         print(f"Error creating bucket: {e}")
         return False
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     create_s3_bucket("data")

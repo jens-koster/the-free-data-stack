@@ -1,11 +1,12 @@
 from app.api.schemas.request_models import ConfigFileSchema
-from app.api.schemas.response_models import (ConfigFileResponseSchema,
-                                             ConfigListResponseSchema)
-from app.data.store import list_configs, format_response, write_config, read_config, delete_config
+from app.api.schemas.response_models import (
+    ConfigFileResponseSchema,
+    ConfigListResponseSchema,
+)
+from tfdslib.config_file import list_configs, read_config, write_config_to_file, delete_config
 from flask import request
 from flask.views import MethodView
 from flask_smorest import Blueprint, abort
-
 
 blp = Blueprint(
     "Configurations",
@@ -14,14 +15,16 @@ blp = Blueprint(
     url_prefix="/api/configs",
 )
 
+
 def is_served(config_name):
     data = read_config(config_name)
     if data is None:
         return True
-    return 'noserve' not in data.get('tfds_config', [])
+    return "noserve" not in data.get("tfds_config", [])
 
 def printlog():
-    print('#' * 20, request.method, request.path)
+    print("#" * 20, request.method, request.path)
+
 
 @blp.route("/")
 class ConfigList(MethodView):
@@ -54,9 +57,12 @@ class ConfigResource(MethodView):
         printlog()
         if not is_served(config_name):
             abort(400, message=f"Permission denied, '{config_name}' is not served through the api.")
-        if 'noserve' in config_data.get('tfds_config',[]):
-            abort(400, message=f"Permission denied, can't save 'noserve' configs thourgh the api, that would be non reversible.")
-        write_config(config_name=config_name, config_data=config_data)
+        if "noserve" in config_data.get("tfds_config", []):
+            abort(
+                400,
+                message=f"Permission denied, can't save 'noserve' configs thourgh the api, that would be non reversible.",
+            )
+        write_config_to_file(config_name=config_name, config_data=config_data)
         return read_config(config_name), 201
 
     @blp.response(204)
