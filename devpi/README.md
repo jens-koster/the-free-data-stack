@@ -37,7 +37,7 @@ Since the config is global you just need to tell poetry to use devpi when publis
 
 
 ### What works:
-set env variable in your host environment:
+set env variable in your host environment, affects pip but not poetry:
 
     export PIP_INDEX_URL=http://127.0.0.1:8008/root/tfds/
 
@@ -48,6 +48,13 @@ in the dockerfiles you'll need to use this construct
 as long as the requirements.txt is not used in docker builds you can set the devpi url in requirements.txt
 
     --index-url http://devpi:8008/root/tfds/
+
+for poetry you add in pyproject.toml:
+
+    [[tool.poetry.source]]
+    name = "devpi"
+    url = "http://devpi:8008/root/tfds/+simple/"
+    priority = "supplemental"
 
 
 **host.docker.internal**: a special hostname, works on mac and apparently windows. docker build can't directly access neither the host nor the docker network. It's tricky reaching our local devpi server. The special host name allows access from docker build to the host.

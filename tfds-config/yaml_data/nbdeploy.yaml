@@ -8,9 +8,10 @@ tfds_config:
   - noenv
 
 config:
-  clean_up_temp: false
-  temp_folder: /tmp/nbdeploy
-  repositories:
-    - pipe-dreams:
-      folders:
+  preseve_temp: false
+  temp_dir: /tmp/nbdeploy
+  bucket: notebooks
+  repos:
+    - name: pipe-dreams
+      directories:
         - notebooks
