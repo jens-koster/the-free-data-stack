@@ -1,6 +1,0 @@
-doc: >
-  a few values needed for airflow
-tfds-config:
-  - noserve
-config:
-  uid: 501

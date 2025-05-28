@@ -7,7 +7,7 @@ tfds_config:
 
 config:
   spark-stack:
-    services:
+    plugins:
     - tfds-config
     - s3-minio
     - postgres
@@ -15,18 +15,18 @@ config:
     - redis
     - airflow
   book-runner:
-    services:
+    plugins:
     - tfds-config
     - s3-minio
     - papermill
   spark-mini:
-    services:
+    plugins:
     - tfds-config
     - s3-minio
     - postgres
     - spark
   airflow-mini:
-    services:
+    plugins:
     - tfds-config
     - s3-minio
     - postgres
