@@ -59,6 +59,7 @@ def run_book(notebook_name: str, notebook_prefix: str, params: dict, context: di
     try:
         container = client.containers.run(
             image="tfds/papermill-base:latest",
+            name=f"nb-{notebook_name}",
             command=cmd,
             auto_remove=True,
             network="tfds-network",

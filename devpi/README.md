@@ -33,13 +33,18 @@ Since the config is global you just need to tell poetry to use devpi when publis
     poetry build
     poetry publish -r devpi
 
-# using the packages
+## debugging the conatiner
+
+    docker exec  -it --entrypoint /bin/bash devpi
+
 
 
 ### What works:
 set env variable in your host environment, affects pip but not poetry:
 
     export PIP_INDEX_URL=http://127.0.0.1:8008/root/tfds/
+    devpi use http://devpi:8008
+    devpi login root --password=''
 
 in the dockerfiles you'll need to use this construct
 

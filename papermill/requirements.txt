@@ -5,4 +5,5 @@ jupyter==1.1.1
 papermill==2.6.0
 papermill[all]==2.6.0
 boto3==1.38.23
-tfdslib
+tfdslib==0.1.10
+# 6
