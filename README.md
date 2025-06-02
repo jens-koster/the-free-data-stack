@@ -1,22 +1,17 @@
 # The Free Datastack (fds)
-My various tinkering with open source data tools. I'm aiming at a open source pluggabel lab stack, right now it's half way.
-* Documentation is a bit all over the place, it will be consolidated.
-* Packaging could be smoother
+My various tinkering with open source data tools. I'm aiming at a open source pluggable lab stack, it's still a bit rough a round the edges, but I had it working!
+
 * Supported on mac, possibly Linux, will not work on Windows.
 
-I am maintaining a list in notion of all free stack tools I can find:
+I am maintaining a list in notion of free stack tools, might be of interest:
 https://ambitious-bowl-f63.notion.site/Free-Datastack-Catalogue-1bc65454dd3f80f4a8e7cfda2edcb4a9?pvs=4
 
 
-
-ideas:
-a tfds web console, once there's a tfds cli with automated testing, it could be nice to have a UI on top of it to start and stop things and monitor...?
-
 # Rationale
-A data stack is a collection of services, like spark, postgresql, airflow, redis, S3 storage, dbt and so on. When you want try out for example aitflow you'll find a docker compose file firing up the entire stack needed to run airflow, with no connectivity to other local services. Many stacks depend on basic services like postgres and redis, I want to break the stacks up and re-use the same postgres for all services depending on it. I want all services on the same docker network with unique and consistent hostnames.
+A data stack is a collection of services, like spark, postgresql, airflow, redis, S3 storage, dbt and so on. When you want try out for example airflow you'll find a docker compose file firing up the entire stack needed to run airflow, with no connectivity to other local services. Many stacks depend on basic services like postgres and redis, I want to break the stacks up and re-use the same postgres for all services depending on it. I want all services on the same docker network with unique and consistent hostnames.
 Most services come with a web ui on a typical web port, that I want to map to localhost. Let's make those ports unique in the entire fds. Actually, we generalize that to say all services should be able to run in parallel without conflicts.
 In development it really helps if services are callable using the same hostname on the host as in the docker network. It doesn't solve every situation, but it really makes it easier. That's easily accomplished by mapping them in the hosts file.
-After dealing with spark it becomes clear we need the ability to define storage on the exact same location on the host and the containers, realtive paths and "user" paths have proven unreliable. We require a known root folder where tfds can create any folder needed. The containers will create the exact same folder structure, nost folders will are mounted from parallel Structure on the host.
+After dealing with spark it becomes clear we need the ability to define storage on the exact same location on the host and the containers, realtive paths and "user" paths have proven unreliable. We require a known root folder where tfds can create any folder needed. The containers will create the exact same folder structure, most folders will are mounted from parallel structure on the host.
 The "production" way of doing this is to use an object storage. So, we'll provide an S3 service which will be used for for data, notebooks and other things it works well for.
 
 # Architecture
@@ -70,7 +65,7 @@ Project: https://github.com/users/jens-koster/projects/3
 
 # create the root tfds folder
     After various attempts I came to the conclusion that we need a folder that can be on the same path in all of tfds, dockers, host, everything.
-    Not including any current user stuff, not a tmp folder that is magically recreated on restart. a simple persistent file folder for storing things...
+    Not including any current-user stuff, not a tmp folder that is magically recreated on restart. a simple persistent file folder for storing things...
     Especially spark is very finicky about...well everything, which includes folder locations.
 
     So, at least on mac you need to be root to create top level folders and then make yourself owner of that folder.
@@ -133,6 +128,9 @@ and add the following mappings:
     127.0.0.1 s3-minio
     127.0.0.1 tfds-config
     127.0.0.1 postgresql
+    127.0.0.1 devpi
+    127.0.0.1 redis
+    127.0.0.1 redisinsight
 
 # Storage
 Anything that can reasonably go on S3 shoud do so, we use minio S3 to provide a local (and free) S3 storage.
