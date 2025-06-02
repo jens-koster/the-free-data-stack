@@ -2,6 +2,17 @@
 services:
   base:
     build: .
-    container_name: papermill
+    image: tfds/papermill-base:latest
+    container_name: jupyter
     environment:
       TFDS_CONFIG_URL: ${TFDS_CONFIG_URL}
+    ports:
+      - "127.0.0.1:8888:8888"
+    networks:
+      tfds-network:
+    command: /home/spark/.local/bin/jupyter notebook --ip=0.0.0.0 --port=8888 --no-browser --NotebookApp.token=''
+
+networks:
+  tfds-network:
+    name: tfds-network
+    external: true
