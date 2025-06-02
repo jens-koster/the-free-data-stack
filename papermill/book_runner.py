@@ -12,11 +12,12 @@ import sys
 
 import nbformat
 from tfdslib.s3 import get_file, put_file
-
+from tfdslib.utils import setup_logging
 import papermill as pm
 
-print("book_runner.py is running...")
 
+print("book_runner.py is running...")
+setup_logging()
 
 def set_kernel(notebook_path: str, kernel_name: str) -> None:
     print(f"Setting kernel to {kernel_name}")

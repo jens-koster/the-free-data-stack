@@ -92,7 +92,7 @@ def run_papermill(notebook_filename, params) -> None:
     )
 
 
-prefix = "pipe-dreams/notebooks/wikipedia_pageviews"
+
 
 params_wiki_extract = {
     "output_bucket": "data",
@@ -111,12 +111,15 @@ params_wiki_silver = {
 
 params_hello = {"p1": "book", "p2": "debugger"}
 
-nb = "/Users/jens/src/pipe-dreams/notebooks/wikipedia_pageviews/wikipedia_pageviews_extract.ipynb"
-nb = "wikipedia_pageviews_extract"
 nb = "wikipedia_pageviews_bronze"
 nb = "helloworld"
-p = params_hello
+nb = "/Users/jens/src/pipe-dreams/notebooks/wikipedia_pageviews/wikipedia_pageviews_extract.ipynb"
+nb = "wikipedia_pageviews_extract"
+p = params_wiki_extract
+prefix = "pipe-dreams/notebooks/wikipedia_pageviews"
 
 # run_papermill(notebook_filename=nb, params=p)
-# run_book_dev(notebook_name=nb, notebook_prefix=prefix, params=p)
-run_book(notebook_name=nb, notebook_prefix="pipe-dreams/notebooks", params=p)
+import logging
+logging.basicConfig(level=logging.INFO)
+run_book(notebook_name=nb, notebook_prefix=prefix, params=p)
+# run_book(notebook_name=nb, notebook_prefix="pipe-dreams/notebooks", params=p)

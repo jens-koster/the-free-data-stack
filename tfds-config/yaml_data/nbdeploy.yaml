@@ -1,11 +1,5 @@
 doc: >
   This config contains the repos and folders to scan for notebooks in nbdeploy.
-  To have the values accessible as env values they need to be attributes rather than an array.
-  The array of folders will be exposed as a comma separated string.
-
-tfds_config:
-  - noserve
-  - noenv
 
 config:
   preseve_temp: false
