@@ -75,8 +75,24 @@ Project: https://github.com/users/jens-koster/projects/3
 
     Docker desktop on mac protects the host by only allowing mounting on a few default folders like /tmp and ~, so you need to add /opt/tfds to the list in Settings->Resources->File sharing.
 
+# plugin folder structure
+Plugins reside in a repo, which has a git url.
+Assumptions (to keep things simple):
+* all repos are cloned to the same root dir, they need not be alone in it, but all are in the same directory.
+* the git repo is cloned to a directory named as the repo, repo names are not required to be the same as the github repo names except for the core tfds repos. Allowing name clashes to be resolved in repos.yaml.
+* plugins are in directories directly under a repo dir, one plugin in each directory. There can be other folders in the repo. (but plugin names are unique under the repo name)
+* plugin directories are named after the plugin, plugin names are defined in config files. One config file per repo.
+* There's a plugins.yaml config file that define the plugins in the-free-data-stack.
+* *There's a repos.yaml defining the other plugin repos*
+* there's a docker-compose.yaml file in every plugin directory
+* there's a README.md in every plugin directory
+
+How to find the roots:
+*nyi: a ~/.tfds file is created poiting to a location for /opt/tfds and the full path to the folder with the repos.*
+Default tfds searches the current directory and upwards to find the parent of 'the-free-data-stack' dir for repo root. It assumes '/opt/tfds' for the root of the app files.
 
 # Networking
+
 All docker compose files use a common network named `tfds-network`.
 There's no "create if not exists" for networks in docker-compose so it needs to be created stand alone before firing up anything else. It is included in `setup.sh`
 

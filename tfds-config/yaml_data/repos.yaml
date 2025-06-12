@@ -1,0 +1,6 @@
+config:
+  repos:
+  - name: the-free-data-stack
+    description: "The one and only tfds plugin repo"
+    plugin_config: plugins
+    # url: https://github.com/jens-koster/the-free-data-stack.git # nyi: at some point it would be nice to

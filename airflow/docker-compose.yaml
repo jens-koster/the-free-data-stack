@@ -55,6 +55,7 @@ x-airflow-common:
   environment:
     &airflow-common-env
     TFDS_CONFIG_URL: ${TFDS_CONFIG_URL}
+    AIRFLOW__WEBSERVER__WEB_SERVER_PORT: 8001
 
     AIRFLOW__CORE__EXECUTOR: CeleryExecutor
     AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres/airflow
@@ -98,9 +99,9 @@ services:
     command: webserver
     container_name: airflow-webserver
     ports:
-      - "127.0.0.1:8001:8080"
+      - "127.0.0.1:8001:8001"
     healthcheck:
-      test: ["CMD", "curl", "--fail", "http://localhost:8080/health"]
+      test: ["CMD", "curl", "--fail", "http://localhost:8001/health"]
       interval: 30s
       timeout: 10s
       retries: 5
