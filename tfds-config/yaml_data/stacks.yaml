@@ -7,6 +7,7 @@ config:
     - tfds-config
     - s3-minio
     - postgres
+    - papermill
     - spark
     - redis
     - airflow

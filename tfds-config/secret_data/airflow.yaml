@@ -2,6 +2,6 @@ doc: >
   mainly for the tfds selftest to run airflow.
 
 config:
-  user: user_name
-  password: my_secret_password
+  user: airflow
+  password: airflow
   url: http://airflow-webserver:8001

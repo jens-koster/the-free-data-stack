@@ -14,7 +14,6 @@ default_args = {
 
 # DOCKER_URL = "unix://var/run/docker.sock"
 
-
 def create_execution_id(notebook_name, notebook_prefix, context):
     """Build a unique string to represent this notebook execution in logging and as spark app name etc."""
     dag_id = context["dag"].dag_id
@@ -129,9 +128,10 @@ def silver_task():
     dag_id="wikipedia_pageview_pipeline",
     default_args=default_args,
     description="Download and process wikipedia pageviews hourly",
-    schedule_interval="@hourly",
+    # schedule_interval="@hourly",
+    schedule_interval=None,
     start_date=dt.datetime(2025, 1, 1),
-    catchup=True,
+    catchup=False,
     max_active_runs=1,
     tags=["wikipedia", "pageviews"],
 )
