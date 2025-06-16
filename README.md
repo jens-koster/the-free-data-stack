@@ -29,8 +29,8 @@ Might require some love and attention but it all worked nicely from airflow Dock
 
 # Labs
 ## Wikipedia Pageviews
-
-Documentation:
+Currently considered "done".
+Documentation: https://github.com/jens-koster/the-free-data-stack/blob/main/docs/labs/wikipedia_pageviews.md
 
 ## Øresund Train Spotter
 In exploration phase.
