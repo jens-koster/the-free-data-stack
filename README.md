@@ -30,14 +30,7 @@ Might require some love and attention but it all worked nicely from airflow Dock
 # Labs
 ## Wikipedia Pageviews
 
-Stack: spark-stack
-
-Airflow ELT pipeline: https://github.com/jens-koster/the-free-data-stack/blob/
-main/airflow/dags/dag_wikipedia_pageviews.py
-
-Pipeline notebooks: https://github.com/jens-koster/pipe-dreams/tree/main/notebooks/wikipedia_pageviews
-
-Remaining work: https://github.com/users/jens-koster/projects/2
+Documentation:
 
 ## Øresund Train Spotter
 In exploration phase.
