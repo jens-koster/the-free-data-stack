@@ -1,9 +1,20 @@
-[tool.pytest.ini_options]
-norecursedirs = [
-    "tfds",
-    "the-free-data-stack",
-    "pipe-dreams"
+[project]
+name = "the-free-data-stack"
+version = "0.1.0"
+description = "FreeDS plugin repo"
+authors = [
+    {name = "freeds@jensbox.se"}
 ]
+license = {text = "GNU GENERAL PUBLIC LICENSE v3"}
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "cowsay (>=6.1,<7.0)"
+]
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
 
 [tool.isort]
 profile = "black"
@@ -16,20 +27,31 @@ pytest = "^8.4.0"
 ruff = "^0.11.13"
 pre-commit = "^4.2.0"
 
-[project]
-name = "the-free-data-stack"
-version = "0.1.0"
-description = "FreeDS plugin repo"
-authors = [
-    {name = "freeds@jensbox.se"}
-]
-license = {text = "GNU GENERAL PUBLIC LICENSE v3"}
-readme = "README.md"
-requires-python = ">=3.11"
-dependencies = [
-]
+
+[tool.mypy]
+python_version = "3.11"
+strict = true
 
 
-[build-system]
-requires = ["poetry-core>=2.0.0,<3.0.0"]
-build-backend = "poetry.core.masonry.api"
+[[tool.mypy.overrides]]
+module = "tests.*"
+disable_error_code = ["no-untyped-def"]
+
+[[tool.mypy.overrides]]
+module = "yaml"
+ignore_missing_imports = true
+
+
+[tool.pytest.ini_options]
+norecursedirs = [
+    "tfds",
+    "the-free-data-stack",
+    "pipe-dreams"
+]
+
+[tool.ruff]
+line-length = 88
+target-version = "py310"
+
+[tool.ruff.lint]
+ignore-init-module-imports = true

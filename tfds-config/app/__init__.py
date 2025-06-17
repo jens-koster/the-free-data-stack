@@ -1,8 +1,10 @@
+from typing import Any
+
 from flask import Flask
 from flask_smorest import Api
 
 
-def create_app():
+def create_app() -> Any:
     app = Flask(__name__)
 
     # Configure OpenAPI documentation
@@ -22,8 +24,8 @@ def create_app():
 
     api.register_blueprint(config_blueprint)
 
-    @app.route("/health")
-    def health_check():
+    @app.route("/health")  # type: ignore[misc]
+    def health_check() -> tuple[dict[str, Any], int]:
         return {"status": "healthy"}, 200
 
     return app

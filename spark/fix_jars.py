@@ -1,8 +1,8 @@
 import os
-import re
+from typing import Any, cast
 
 
-def parse_jar_name_and_version(jar_path):
+def parse_jar_name_and_version(jar_path: str) -> dict[str, Any]:
     """
     Extract the main name and version from a JAR file path.
     :param jar_path: Full path to the JAR file.
@@ -18,14 +18,14 @@ def parse_jar_name_and_version(jar_path):
     return {"base_name": jar_name, "version": "", "jar_name": jar_name}
 
 
-def parse_jar_name(filename):
+def parse_jar_name(filename: str) -> str:
     p = parse_jar_name_and_version(filename)
-    return p.get("base_name")
+    return cast(str, p.get("base_name"))
 
 
 docker_jars_path = "docker_jars"
 package_jars_path = "package_jars"
-print(f"grooming the package jars to avoid conflicts with the jars already in the spark base image.")
+print("grooming the package jars to avoid conflicts with the jars already in the spark base image.")
 docker_jar_names = {(parse_jar_name(f), f) for f in os.listdir(docker_jars_path) if f.endswith(".jar")}
 
 for f in os.listdir(package_jars_path):

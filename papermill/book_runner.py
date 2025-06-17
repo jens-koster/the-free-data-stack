@@ -9,15 +9,17 @@ import json
 import logging
 import os
 import sys
+from typing import Any
 
 import nbformat
 from tfdslib.s3 import get_file, put_file
 from tfdslib.utils import setup_logging
-import papermill as pm
 
+import papermill as pm
 
 print("book_runner.py is running...")
 setup_logging()
+
 
 def set_kernel(notebook_path: str, kernel_name: str) -> None:
     print(f"Setting kernel to {kernel_name}")
@@ -47,7 +49,7 @@ def redirect_logging() -> None:
     logger.addHandler(terminal_handler)
 
 
-def execute_notebook(notebook_name: str, notebook_prefix: str, parameters: dict, kernel: str) -> None:
+def execute_notebook(notebook_name: str, notebook_prefix: str, parameters: dict[str, Any], kernel: str) -> None:
     """Execute a notebook: download the notebook from s3 and upload the result to s3.
     execution_date and execution_id are injected into parameters."""
 
@@ -83,7 +85,7 @@ def execute_notebook(notebook_name: str, notebook_prefix: str, parameters: dict,
     print("Notebook executed")
 
 
-def main():
+def main() -> None:
 
     parser = argparse.ArgumentParser(description="Run a Jupyter notebook with papermill.")
 

@@ -1,6 +1,7 @@
 import datetime as dt
 import json
 import os
+from typing import Any
 
 import docker
 from airflow.decorators import dag, task
@@ -14,7 +15,8 @@ default_args = {
 
 # DOCKER_URL = "unix://var/run/docker.sock"
 
-def create_execution_id(notebook_name, notebook_prefix, context):
+
+def create_execution_id(notebook_name: str, notebook_prefix: str, context: dict[str, Any]) -> str:
     """Build a unique string to represent this notebook execution in logging and as spark app name etc."""
     dag_id = context["dag"].dag_id
     task_id = context["task"].task_id
@@ -22,7 +24,7 @@ def create_execution_id(notebook_name, notebook_prefix, context):
     return f"{dag_id}__{task_id}__{run_id}"
 
 
-def run_book(notebook_name: str, notebook_prefix: str, params: dict, context: dict):
+def run_book(notebook_name: str, notebook_prefix: str, params: dict[str, Any], context: dict[str, Any]) -> Any:
     """Run a notebook in a docker container using papermill.
     injecting the execution date and an execution id into the notebook params.
     """
@@ -80,8 +82,8 @@ def run_book(notebook_name: str, notebook_prefix: str, params: dict, context: di
         client.close()
 
 
-@task
-def extract_task():
+@task  # type: ignore[misc]
+def extract_task() -> None:
     notebook_params = {
         "output_bucket": "data",
         "output_root_prefix": "wikipedia_pageviews",
@@ -98,8 +100,8 @@ def extract_task():
     )
 
 
-@task
-def bronze_task():
+@task  # type: ignore[misc]
+def bronze_task() -> None:
     notebook_params = {"bronze_db": "bronze"}
     notebook_prefix = "pipe-dreams/notebooks/wikipedia_pageviews"
     notebook_name = "wikipedia_pageviews_bronze"
@@ -111,8 +113,8 @@ def bronze_task():
     )
 
 
-@task
-def silver_task():
+@task  # type: ignore[misc]
+def silver_task() -> None:
     notebook_params = {"bronze_db": "bronze", "silver_db": "silver"}
     notebook_prefix = "pipe-dreams/notebooks/wikipedia_pageviews"
     notebook_name = "wikipedia_pageviews_silver"
@@ -134,8 +136,8 @@ def silver_task():
     catchup=False,
     max_active_runs=1,
     tags=["wikipedia", "pageviews"],
-)
-def wikipedia_pageviews_dag():
+)  # type: ignore[misc]
+def wikipedia_pageviews_dag() -> None:
 
     extract = extract_task()
     bronze = bronze_task()

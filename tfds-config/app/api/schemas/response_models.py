@@ -5,13 +5,13 @@ from marshmallow import Schema, fields
 ConfigFileResponseSchema = ConfigFileSchema
 
 
-class ConfigListResponseSchema(Schema):
+class ConfigListResponseSchema(Schema):  # type: ignore[misc]
     """Schema for listing available configuration files."""
 
-    configs = fields.List(fields.Str(), metadata={"description":"List of available configuration files"})
+    configs = fields.List(fields.Str(), metadata={"description": "List of available configuration files"})
 
 
-class ErrorResponseSchema(Schema):
+class ErrorResponseSchema(Schema):  # type: ignore[misc]
     """Schema for error responses."""
 
     message = fields.Str(required=True)

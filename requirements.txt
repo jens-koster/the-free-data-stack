@@ -1,5 +1,4 @@
 --index-url http://127.0.0.1:8008/root/tfds/
-pytest
 requests
 PyYAML
 boto3
@@ -16,7 +15,6 @@ Flask
 flask-smorest
 marshmallow
 PyYAML
-pytest
 gunicorn
 requests
 

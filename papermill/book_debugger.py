@@ -1,12 +1,16 @@
 import datetime as dt
 import json
+import logging
 import os
 import sys
+from typing import Any
 
 import book_runner
 import docker
 
 import papermill as pm
+
+logging.basicConfig(level=logging.INFO)
 
 
 def run_book_dev(notebook_name: str, notebook_prefix: str, params: str) -> None:
@@ -26,7 +30,7 @@ def run_book_dev(notebook_name: str, notebook_prefix: str, params: str) -> None:
     book_runner.main()
 
 
-def run_book(notebook_name: str, notebook_prefix: str, params: dict) -> None:
+def run_book(notebook_name: str, notebook_prefix: str, params: dict[str, Any]) -> Any:
     """Run a notebook in a docker container using papermill.
     injecting the execution date and an execution id into the notebook params.
     """
@@ -77,7 +81,7 @@ def run_book(notebook_name: str, notebook_prefix: str, params: dict) -> None:
         client.close()
 
 
-def run_papermill(notebook_filename, params) -> None:
+def run_papermill(notebook_filename: str, params: dict[str, Any]) -> None:
     """Run straight in papermill, useful for debugging the notebook."""
     os.environ["TFDS_CONFIG_URL"] = "http://tfds-config:8005/api/configs"
     book_runner.redirect_logging()
@@ -90,8 +94,6 @@ def run_papermill(notebook_filename, params) -> None:
         progress_bar=False,
         parameters=params,
     )
-
-
 
 
 params_wiki_extract = {
@@ -119,7 +121,6 @@ p = params_wiki_extract
 prefix = "pipe-dreams/notebooks/wikipedia_pageviews"
 
 # run_papermill(notebook_filename=nb, params=p)
-import logging
-logging.basicConfig(level=logging.INFO)
+
 run_book(notebook_name=nb, notebook_prefix=prefix, params=p)
 # run_book(notebook_name=nb, notebook_prefix="pipe-dreams/notebooks", params=p)

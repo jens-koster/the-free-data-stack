@@ -1,8 +1,9 @@
-from marshmallow import Schema, ValidationError, fields, pre_load, validate
+from typing import Any
+
+from marshmallow import Schema, ValidationError, fields
 
 
-
-def tfds_config_validator(value):
+def tfds_config_validator(value: Any) -> Any:
     """Custom validator to ensure tfds_config has unique values and only the allowed strings."""
     allowed_set = {"noserve", "noenv"}
     value_set = set(value)
@@ -15,31 +16,31 @@ def tfds_config_validator(value):
     return value
 
 
-class ConfigFileSchema(Schema):
+class ConfigFileSchema(Schema):  # type: ignore[misc]
     """Schema for a configuration file with metadata."""
 
     doc = fields.Str(
         required=False,
         metadata={
             "description": "Config documenttion, this is where you document the config values",
-        }
+        },
     )
 
     tfds_config = fields.List(
         fields.Str(
             metadata={
-            "description": "Allowed values: 'noserve', 'noenv'",
+                "description": "Allowed values: 'noserve', 'noenv'",
             }
         ),
         validate=tfds_config_validator,
-        required=False
+        required=False,
         # this is how we get yaml fields with a dash in them
     )
 
     # The main configuration dictionary
     config = fields.Dict(
-        keys=fields.Str(metadata={"description":"Configuration key"}),
-        values=fields.Raw(metadata={"description":"Configuration value (can be any type)"}),
+        keys=fields.Str(metadata={"description": "Configuration key"}),
+        values=fields.Raw(metadata={"description": "Configuration value (can be any type)"}),
         required=True,
         metadata={"description": "A dictionary of configuration items"},
     )
