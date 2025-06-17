@@ -12,6 +12,8 @@ Airflow ELT pipeline: https://github.com/jens-koster/the-free-data-stack/blob/ma
 
 Pipeline notebooks: https://github.com/jens-koster/pipe-dreams/tree/main/notebooks/wikipedia_pageviews
 
+Note: If you let the airflow dag run on schedule the delta table will consume all your disk space.
+
 ## Rationale and description
 This lab is for learning Databricks, so it's parameterized notebooks running in docker, a proper spark cluster in docker, delta tables on S3, and a catalog service (unity is proprietary, hive catalog service works but barely).
 I wanted data with a lot of files, preferably provided more frequently than daily.
