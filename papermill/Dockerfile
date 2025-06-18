@@ -3,7 +3,7 @@ FROM tfds/spark-base:latest
 WORKDIR /app
 COPY requirements.txt /app/requirements.txt
 
-# we're installing the tfdslib package here. we need to use the local python index.
+# we're installing the freeds package here. we need to use the local python index.
 RUN python3 -m pip install --trusted-host host.docker.internal --index-url http://host.docker.internal:8008/root/tfds/ --no-cache-dir -r requirements.txt
 
 

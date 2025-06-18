@@ -6,7 +6,7 @@ The pipeline runs notebooks from airflow to download and process data in spark.
 
 Wikipedia page view data is available for download as gzipped csv, one file per hour.
 
-FreeDS stack: spark-stack
+freeds stack: spark-stack
 
 Airflow ELT pipeline: https://github.com/jens-koster/the-free-data-stack/blob/main/airflow/dags/dag_wikipedia_pageviews.py
 

@@ -1,7 +1,7 @@
 [project]
 name = "the-free-data-stack"
 version = "0.1.0"
-description = "FreeDS plugin repo"
+description = "freeds plugin repo"
 authors = [
     {name = "freeds@jensbox.se"}
 ]
@@ -10,7 +10,7 @@ readme = "README.md"
 requires-python = ">=3.11,<4.0"
 dependencies = [
     "cowsay (>=6.1,<7.0)",
-    "tfds @ file:///Users/jens/src/tfds-cli"
+    "freeds @ file:///Users/jens/src/FreeDS"
 ]
 
 [build-system]
@@ -20,6 +20,13 @@ build-backend = "poetry.core.masonry.api"
 [tool.isort]
 profile = "black"
 
+[tool.poetry]
+packages = [
+    # actually this is not needed, but poetry needs something to install or you have to put the --no-root argument allt he time.
+    # let in tinstall this. no harm...
+    { include = "app", from = "tfds-config" }
+]
+
 [tool.poetry.group.dev.dependencies]
 black = "^25.1.0"
 isort = "^6.0.1"
@@ -28,10 +35,9 @@ pytest = "^8.4.0"
 ruff = "^0.11.13"
 pre-commit = "^4.2.0"
 
-
-
 [tool.poetry.dependencies]
-tfds = {develop = true}
+freeds = {develop = true}
+
 [tool.mypy]
 python_version = "3.11"
 strict = true

@@ -4,11 +4,9 @@ papermill is a tool for running parameterized notebooks: https://papermill.readt
 papermill takes a notebook, parameters and an output filename.
 It runs the notebook and stores the resulting notebook at the specified location, i.e. the original notebook is not modified.
 
-tfds papermill plugin is intended for use with airflow DockerOperator and as a jupyter server for running your spark notebooks.
+freeds papermill plugin is intended for use with airflow DockerOperator and as a jupyter server for running your spark notebooks.
 
-Note: It seems impossible to mount a host folder through the DockerOperator while airflow itself is also running in docker. (docker-in-docker) At least in a mac. That's why notebooks must be on s3.
-
-Notebooks and output notebooks are now on S3 as is the data itself. use tfds nb deploy to copy the pipe-dreams repo to s3. (or any repo you configure)
+Notebooks and output notebooks are now on S3 as is the data itself. use freeds nb deploy to copy the pipe-dreams repo to s3. (or any repo you configure)
 
 The notebooks are maintained in the pipe-dreams repo: https://github.com/jens-koster/pipe-dreams
 
@@ -30,9 +28,9 @@ test interactively as:
 
 To test the container version, first build it:
     # in the papermill folder
-    tfds dc -s . build
-    # or from tfds folder
-    tfds dc -s papermill build
+    freeds dc -s . build
+    # or from freeds folder
+    freeds dc -s papermill build
 
 then run the helloworld notebook in a container
 
@@ -40,10 +38,10 @@ then run the helloworld notebook in a container
 
 to open a shell inside a docker for troubleshooting dependencies.
 
-    docker run --rm -it --entrypoint /bin/bash tfds/papermill-base:latest
+    docker run --rm -it --entrypoint /bin/bash freeds/papermill-base:latest
 
 To configure a venv as jupyter kernel (this is done in the Dockerfile):
     pip install ipykernel
-    python -m ipykernel install --user --name=.venv --display-name "TFDS 3.12.x"
+    python -m ipykernel install --user --name=.venv --display-name "freeds 3.12.x"
 
 The --display-name is what will appear in the Jupyter Notebook interface.

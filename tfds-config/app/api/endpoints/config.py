@@ -8,7 +8,7 @@ from app.api.schemas.response_models import (
 from flask import request
 from flask.views import MethodView
 from flask_smorest import Blueprint, abort
-from tfdslib.config_file import (
+from freeds.config.file import (
     delete_config,
     list_configs,
     read_config,

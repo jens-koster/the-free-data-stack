@@ -12,8 +12,8 @@ import sys
 from typing import Any
 
 import nbformat
-from tfdslib.s3 import get_file, put_file
-from tfdslib.utils import setup_logging
+from freeds.s3 import get_file, put_file
+from freeds.utils import setup_logging
 
 import papermill as pm
 

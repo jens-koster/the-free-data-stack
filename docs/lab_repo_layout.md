@@ -17,7 +17,7 @@ If you use airflow this is where your dags and plugins go. (currently only dags 
 ### repo/docs/
 If you have more documentation than the root README.md it goes in the docs folder.
 ### repo/notebooks/
-This is where your notebooks go, and get deployed to S# by the FreeDS CLI
+This is where your notebooks go, and get deployed to S# by the freeds CLI
 
 ### repo/plugins/
 Lab local plugins go in the plugins folder, and get referrable from stacks.yaml.

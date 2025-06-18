@@ -1,3 +1,3 @@
-from tfdslib.config_file import list_configs
+from freeds.config.file import list_configs
 
 print(list_configs())
