@@ -7,7 +7,7 @@ config:
     - tfds-config
     - s3-minio
     - postgres
-    - papermill
+    - jupyter
     - spark
     - redis
     - airflow
@@ -15,7 +15,7 @@ config:
     plugins:
     - tfds-config
     - s3-minio
-    - papermill
+    - jupyter
   spark-mini:
     plugins:
     - tfds-config

@@ -12,10 +12,9 @@ import sys
 from typing import Any
 
 import nbformat
+import papermill as pm
 from freeds.s3 import get_file, put_file
 from freeds.utils import setup_logging
-
-import papermill as pm
 
 print("book_runner.py is running...")
 setup_logging()
@@ -40,7 +39,7 @@ def download_notebook(notebook_name: str, notebook_prefix: str, bucket: str, tmp
 
 def redirect_logging() -> None:
     # Set up papermill logging to print output to both terminal and notebook
-    logger = pm.log.logger  # type: ignore[attr-defined]
+    logger = pm.log.logger
     logger.setLevel(logging.INFO)
 
     # Create a stream handler for terminal output
@@ -70,7 +69,7 @@ def execute_notebook(notebook_name: str, notebook_prefix: str, parameters: dict[
     parameters = parameters.copy()
 
     print(f"Executing papermill: {input_local_filename} -> {output_local_filename} with parameters: {parameters}")
-    pm.execute_notebook(  # type: ignore[attr-defined]
+    pm.execute_notebook(
         input_path=input_local_filename,
         output_path=output_local_filename,
         log_output=True,

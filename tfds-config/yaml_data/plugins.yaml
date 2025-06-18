@@ -50,8 +50,8 @@ config:
         - devpi
 
 
-    - name: papermill
-      description: "Papermill, to run notebooks with parameters from airflow and a jupyter server."
+    - name: jupyter
+      description: "Jupyter server to run spark notbooks and notebook runner container with papermill, intended for airflow dags."
       ports:
         - number: 8003
           description: "Papermill web UI"

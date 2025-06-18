@@ -1,3 +1,5 @@
+"""Some unsorted code to debug book_runner.py"""
+
 import datetime as dt
 import json
 import logging
@@ -7,7 +9,6 @@ from typing import Any
 
 import book_runner
 import docker
-
 import papermill as pm
 
 logging.basicConfig(level=logging.INFO)
@@ -87,7 +88,7 @@ def run_papermill(notebook_filename: str, params: dict[str, Any]) -> None:
     book_runner.redirect_logging()
     tmp_dir = "/tmp/output_notebooks"
     os.makedirs(tmp_dir, exist_ok=True)
-    pm.execute_notebook(  # type: ignore[attr-defined]
+    pm.execute_notebook(
         input_path=notebook_filename,
         output_path=f"{tmp_dir}/output.ipynb",
         log_output=True,
