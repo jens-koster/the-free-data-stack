@@ -1,4 +1,0 @@
-# the config config... services need to know the url for the config service
-config:
-    url: http://freeds-config:8005/api/configs
-    root: /opt/freeds

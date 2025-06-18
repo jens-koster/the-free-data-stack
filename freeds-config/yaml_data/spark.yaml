@@ -1,3 +1,0 @@
-config:
-  master_url: spark://spark-master:7077
-  master_host: spark-master

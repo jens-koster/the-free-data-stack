@@ -1,7 +1,0 @@
-doc: >
-  mainly for the freeds selftest to run airflow.
-
-config:
-  user: airflow
-  password: airflow
-  url: http://airflow-webserver:8001

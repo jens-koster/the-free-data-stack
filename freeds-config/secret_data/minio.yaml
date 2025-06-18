@@ -1,7 +1,0 @@
-doc: >
-  This is a configuration file for spinning up the MinIO S3 server.
-
-config:
-  user: minio
-  password: jazzword
-  data_dir: /opt/freeds/data/minio
