@@ -5,7 +5,7 @@ services:
     image: redis:7.2-bookworm
     container_name: redis
     networks:
-      - tfds-network
+      - freeds-network
     expose:
       - 6379
     healthcheck:
@@ -24,12 +24,12 @@ services:
     volumes:
       - redisinsight_data:/data
     networks:
-      - tfds-network
+      - freeds-network
 
 volumes:
   redisinsight_data:
 
 networks:
-  tfds-network:
-    name: tfds-network
+  freeds-network:
+    name: freeds-network
     external: true

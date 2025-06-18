@@ -54,7 +54,7 @@ x-airflow-common:
   build: .
   environment:
     &airflow-common-env
-    TFDS_CONFIG_URL: ${TFDS_CONFIG_URL}
+    FREEDS_CONFIG_URL: ${FREEDS_CONFIG_URL}
     AIRFLOW__WEBSERVER__WEB_SERVER_PORT: 8001
 
     AIRFLOW__CORE__EXECUTOR: CeleryExecutor
@@ -91,7 +91,7 @@ x-airflow-common:
   user: "${TFDS_AIRFLOW_UID:-50000}:0"
 
   networks:
-    - tfds-network
+    - freeds-network
 
 services:
   airflow-webserver:
@@ -231,6 +231,6 @@ services:
 
 
 networks:
-  tfds-network:
-    name: tfds-network
+  freeds-network:
+    name: freeds-network
     external: true

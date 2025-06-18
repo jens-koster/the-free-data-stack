@@ -4,7 +4,7 @@ services:
     image: quay.io/minio/minio
     container_name: s3-minio
     networks:
-      - tfds-network
+      - freeds-network
     expose:
       - 9900
     ports:
@@ -20,6 +20,6 @@ services:
 
 
 networks:
-  tfds-network:
-    name: tfds-network
+  freeds-network:
+    name: freeds-network
     external: true

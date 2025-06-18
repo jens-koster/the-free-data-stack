@@ -37,6 +37,6 @@ The API will be available at:
 
 ### secrets
 If a file has an api key or something in it, put it in the /opt/tfds/secrets folder and it stays on your disk.
-tfds-config looks in:
+freeds-config looks in:
 /opt/tfds/secrets - whihc is a regular folder
 /opt/tfds/config - which is a symlink to the yaml_data folder in the git repo.

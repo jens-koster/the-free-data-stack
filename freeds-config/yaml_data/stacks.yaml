@@ -4,7 +4,7 @@ doc: The stack definitions for tfds cli. tfds will do some magic and then iterat
 config:
   spark-stack:
     plugins:
-    - tfds-config
+    - freeds-config
     - s3-minio
     - postgres
     - jupyter
@@ -13,18 +13,18 @@ config:
     - airflow
   book-runner:
     plugins:
-    - tfds-config
+    - freeds-config
     - s3-minio
     - jupyter
   spark-mini:
     plugins:
-    - tfds-config
+    - freeds-config
     - s3-minio
     - postgres
     - spark
   airflow-mini:
     plugins:
-    - tfds-config
+    - freeds-config
     - s3-minio
     - postgres
     - redis

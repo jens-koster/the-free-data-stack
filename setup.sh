@@ -2,10 +2,10 @@
 
 # we need a common network so the containers can communicate
 # this is  persistent so no need to run this command but once.
-echo "creating docker tfds-network..."
-output=$(docker network create tfds-network 2>&1)
-if [[ "$output" == *"Error response from daemon: network with name tfds-network already exists"* ]]; then
-    echo "tfds-network already exists, if you need it recreated run "docker network rm tfds-network" and then run this script again"
+echo "creating docker freeds-network..."
+output=$(docker network create freeds-network 2>&1)
+if [[ "$output" == *"Error response from daemon: network with name freeds-network already exists"* ]]; then
+    echo "freeds-network already exists, if you need it recreated run "docker network rm freeds-network" and then run this script again"
 else
     echo "$output"
 fi
@@ -51,12 +51,12 @@ echo "linking config folder to $root/config"
 if [ -L "$root"/config ]; then
     rm "$root"/config
 fi
-ln -s "$(pwd)/tfds-config/yaml_data" "$root"/config
+ln -s "$(pwd)/freeds-config/yaml_data" "$root"/config
 
 
 echo "Creating secrets folder and copying content: $root/secrets"
 mkdir -p "$root"/secrets
-cp -rn "./tfds-config/secret_data/"* "$root"/secrets
+cp -rn "./freeds-config/secret_data/"* "$root"/secrets
 
 # Airflow
 echo "linking some airflow folders"

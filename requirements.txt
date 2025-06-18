@@ -10,7 +10,7 @@ pandas
 docker
 freeds
 
-# tfds-config
+# freeds-config
 Flask
 flask-smorest
 marshmallow

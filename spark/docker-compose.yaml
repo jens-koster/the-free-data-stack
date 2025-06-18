@@ -5,7 +5,7 @@ services:
     container_name: spark-master
     hostname: spark-master
     networks:
-      - tfds-network
+      - freeds-network
     volumes:
       # let's make sure any data we want to store is preserved over container recreates
       # we put the catalog metadata here.
@@ -32,7 +32,7 @@ services:
     container_name: spark-worker-1
     hostname: spark-worker-1
     networks:
-      - tfds-network
+      - freeds-network
     volumes:
       - /opt/tfds/data:/opt/tfds/data
     environment:
@@ -53,7 +53,7 @@ services:
     container_name: spark-worker-2
     hostname: spark-worker-2
     networks:
-      - tfds-network
+      - freeds-network
     volumes:
       - /opt/tfds/data:/opt/tfds/data
     environment:
@@ -69,6 +69,6 @@ services:
       - "127.0.0.1:8012:8012"
 
 networks:
-  tfds-network:
-    name: tfds-network
+  freeds-network:
+    name: freeds-network
     external: true

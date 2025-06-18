@@ -1,8 +1,8 @@
 services:
   api:
     build: .
-    # image: tfds/tfds-config
-    container_name: tfds-config
+    image: freeds/freeds-config:latest
+    container_name: freeds-config
     expose:
       - 8005
     ports:
@@ -13,9 +13,9 @@ services:
       - /opt/tfds/config:/opt/tfds/config
       - /opt/tfds/secrets:/opt/tfds/secrets
     networks:
-      - tfds-network
+      - freeds-network
 
 networks:
-  tfds-network:
-    name: tfds-network
+  freeds-network:
+    name: freeds-network
     external: true

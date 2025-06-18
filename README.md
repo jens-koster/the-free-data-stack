@@ -86,7 +86,7 @@ Default tfds searches the current directory and upwards to find the parent of 't
 
 # Networking
 
-All docker compose files use a common network named `tfds-network`.
+All docker compose files use a common network named `freeds-network`.
 There's no "create if not exists" for networks in docker-compose so it needs to be created stand alone before firing up anything else. It is included in `setup.sh`
 
 ## port allocations
@@ -103,7 +103,7 @@ This is the global list of who gets what port:
 - 8002 - postgres web ui on http://127.0.0.1:8002
 - 8003 - jupyter web ui on http://127.0.0.1:8003
 - 8004 - s3 ninja on http://127.0.0.1:8004/ui
-- 8005 - tfds-config on:
+- 8005 - freeds-config on:
   - http://127.0.0.1:8005/swagger-ui
   - http://127.0.0.1:8005/redoc
   - http://127.0.0.1:8005/api/configs
@@ -135,7 +135,7 @@ and add the following mappings:
     127.0.0.1 spark-worker-2
     127.0.0.1 spark-master
     127.0.0.1 s3-minio
-    127.0.0.1 tfds-config
+    127.0.0.1 freeds-config
     127.0.0.1 postgresql
     127.0.0.1 devpi
     127.0.0.1 redis

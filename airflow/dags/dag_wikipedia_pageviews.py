@@ -54,7 +54,7 @@ def run_book(notebook_name: str, notebook_prefix: str, params: dict[str, Any], c
     ]
 
     env_vars = {
-        "TFDS_CONFIG_URL": os.environ.get("TFDS_CONFIG_URL", ""),
+        "FREEDS_CONFIG_URL": os.environ.get("FREEDS_CONFIG_URL", ""),
     }
     client = docker.from_env()
     try:
@@ -63,7 +63,7 @@ def run_book(notebook_name: str, notebook_prefix: str, params: dict[str, Any], c
             name=f"nb-{notebook_name}",
             command=cmd,
             auto_remove=True,
-            network="tfds-network",
+            network="freeds-network",
             environment=env_vars,
             tty=False,  # for getting the logs, line by line rather tha char by char
             detach=True,  # for getting the logs at all

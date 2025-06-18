@@ -14,7 +14,7 @@ services:
       - postgres-db-volume:/var/lib/postgresql/data
       - /opt/tfds/postgres/init:/docker-entrypoint-initdb.d
     networks:
-      - tfds-network
+      - freeds-network
     healthcheck:
       test: ["CMD", "pg_isready", "-U", "airflow"]
       interval: 10s
@@ -26,6 +26,6 @@ volumes:
   postgres-db-volume:
 
 networks:
-  tfds-network:
-    name: tfds-network
+  freeds-network:
+    name: freeds-network
     external: true

@@ -24,7 +24,7 @@ profile = "black"
 packages = [
     # actually this is not needed, but poetry needs something to install or you have to put the --no-root argument allt he time.
     # let in tinstall this. no harm...
-    { include = "app", from = "tfds-config" }
+    { include = "app", from = "freeds-config" }
 ]
 
 [tool.poetry.group.dev.dependencies]

@@ -15,7 +15,7 @@ logging.basicConfig(level=logging.INFO)
 
 
 def run_book_dev(notebook_name: str, notebook_prefix: str, params: str) -> None:
-    os.environ["TFDS_CONFIG_URL"] = "http://tfds-config:8005/api/configs"
+    os.environ["FREEDS_CONFIG_URL"] = "http://freeds-config:8005/api/configs"
     args = [
         "book_runner.py",
         "--notebook_name",
@@ -55,7 +55,7 @@ def run_book(notebook_name: str, notebook_prefix: str, params: dict[str, Any]) -
     ]
 
     env_vars = {
-        "TFDS_CONFIG_URL": "http://tfds-config:8005/api/configs",
+        "FREEDS_CONFIG_URL": "http://freeds-config:8005/api/configs",
     }
     client = docker.from_env()
     try:
@@ -63,7 +63,7 @@ def run_book(notebook_name: str, notebook_prefix: str, params: dict[str, Any]) -
             image="freeds/jupyter-spark:latest",
             command=cmd,
             auto_remove=True,
-            network="tfds-network",
+            network="freeds-network",
             environment=env_vars,
             tty=False,  # for getting the logs, line by line rather tha char by char
             detach=True,  # for getting the logs at all
@@ -84,7 +84,7 @@ def run_book(notebook_name: str, notebook_prefix: str, params: dict[str, Any]) -
 
 def run_papermill(notebook_filename: str, params: dict[str, Any]) -> None:
     """Run straight in papermill, useful for debugging the notebook."""
-    os.environ["TFDS_CONFIG_URL"] = "http://tfds-config:8005/api/configs"
+    os.environ["FREEDS_CONFIG_URL"] = "http://freeds-config:8005/api/configs"
     book_runner.redirect_logging()
     tmp_dir = "/tmp/output_notebooks"
     os.makedirs(tmp_dir, exist_ok=True)

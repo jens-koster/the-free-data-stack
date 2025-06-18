@@ -10,8 +10,8 @@ services:
     command: devpi-server --host 0.0.0.0 --port 8008 --serverdir /data
     restart: unless-stopped
     networks:
-      - tfds-network
+      - freeds-network
 
 networks:
-  tfds-network:
-    external: true  # Use the existing tfds-network
+  freeds-network:
+    external: true  # Use the existing freeds-network

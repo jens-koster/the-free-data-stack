@@ -22,7 +22,7 @@ Find out how to edit the hostfile on your os and add these (there's more to add,
     127.0.0.1 spark-worker-2
     127.0.0.1 spark-master
     127.0.0.1 s3-minio
-    127.0.0.1 tfds-config
+    127.0.0.1 freeds-config
 
 This makes anything running on your host, like the notebooks, resolve the host names to the same service as your spark containers living in the docker network.
 It's also part of making the spark web ui work from within the container.
