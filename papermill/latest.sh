@@ -1,4 +1,4 @@
-docker tag "papermill-base" "tfds/papermill-base:latest"
+docker tag "jupyter-spark" "freeds/jupyter-spark:latest"
 
 # echo "📦 pushing version $tag"
 # docker tag "spark-base" "$tag"

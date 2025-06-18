@@ -1,4 +1,4 @@
-FROM tfds/spark-base:latest
+FROM freeds/spark-base:latest
 
 WORKDIR /app
 COPY requirements.txt /app/requirements.txt

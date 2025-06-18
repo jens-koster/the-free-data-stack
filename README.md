@@ -119,7 +119,7 @@ This is the global list of who gets what port:
 - 5555 - Celery flower(airflow thing, not tested)
 - 6379 - redis
 - 7077 - spark master
-- 9000 - minio S3 - change this! vs code sometimes start something on multiple ports around 9000 and minio allows port to be configured.
+- 9900 - minio S3 - default minio port is 9000 but that is used by vs code, so it's set to 9000.
 
 ## host mappings
 Find out how to edit the hosts file on your os;

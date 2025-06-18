@@ -56,7 +56,7 @@ config:
         - number: 8003
           description: "Papermill web UI"
       containers:
-        - jupyter
+        - jupyter-spark
 
     - name: s3-minio
       description: "Minio S3, multiple containers."

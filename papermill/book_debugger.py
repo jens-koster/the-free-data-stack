@@ -59,7 +59,7 @@ def run_book(notebook_name: str, notebook_prefix: str, params: dict[str, Any]) -
     client = docker.from_env()
     try:
         container = client.containers.run(
-            image="tfds/papermill-base:latest",
+            image="freeds/jupyter-spark:latest",
             command=cmd,
             auto_remove=True,
             network="tfds-network",

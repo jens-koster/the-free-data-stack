@@ -38,7 +38,7 @@ then run the helloworld notebook in a container
 
 to open a shell inside a docker for troubleshooting dependencies.
 
-    docker run --rm -it --entrypoint /bin/bash freeds/papermill-base:latest
+    docker run --rm -it --entrypoint /bin/bash freeds/jupyter-spark:latest
 
 To configure a venv as jupyter kernel (this is done in the Dockerfile):
     pip install ipykernel

@@ -6,9 +6,9 @@ services:
     networks:
       - tfds-network
     expose:
-      - 9000
+      - 9900
     ports:
-      - "127.0.0.1:9000:9000"
+      - "127.0.0.1:9900:9900"
       - "127.0.0.1:8006:8006"
     volumes:
       - "${TFDS_MINIO_DATA_DIR}:/data"
@@ -16,7 +16,7 @@ services:
       - MINIO_ROOT_USER=${TFDS_MINIO_USER}
       - MINIO_ROOT_PASSWORD=${TFDS_MINIO_PASSWORD}
     # use our mounted /data for storage and serve the web ui on port 8006
-    command: server /data --console-address ":8006"
+    command: server /data --console-address ":8006" --address :9900
 
 
 networks:

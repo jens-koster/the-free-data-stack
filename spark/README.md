@@ -1,37 +1,22 @@
 # Spark
 
-    docker cp spark-master:/opt/bitnami/spark/jars ./jars
-    docker exec -it spark-master /bin/bash
 
+## General learnings
+Spark is extremely finicky and expects EVERYTHING to have the exact same version, same url and same path in all places. i.e. not only in the spark nodes in the docker network but also on the driver.
+There's a jupyter server based on the same docker image as the spark cluster provided as a freeds plugin to help with this.
+Include the jupyter plugin in your stack and point your pyspark notebook kernel at the jupyter-spark server and your code will execute using the exact same spark, pyspark, java and scala versions as the cluster uses.
 
-# versions
-inside the spark-master docker you run
+For along time I attempted to run a local pyspark notebook against the cluster, I tell you, that way madness lies...! At least if you're a beginner at running spark like I am. Spark you can get aligned, but when you add s3, hive catalog and delta tables, things wuickly escalatte with mismatched jars. Mismatched log4j jars will cause spark to fail silently.
 
-    docker exec -it /bin/bash
+I'd say you either run pyspark 100% locally using local[*] as your master, or execute it on the jupyter server t use the spark cluster. It's quite easy to switch between the two, the get_saprk_connection provided in freeds has a "use_local" flag for switching to "local[*]". Eliminating the cluster comes in handy for troubleshooting, and might even be my preference for the development phase. Make sure things run on local[*] before attempting the to run on the cluster.
+Any packages you add for your notebook will of course need to be added in the jupyter server as well.
 
-    # to get spark, java and scala versions (exit using ctrl-d)
-    spark-shell
+## Networking and getting the spark ui working
 
-    # python version
-    python --version
+### Align the host names
+In general we want the same host names available on the host as in the docker network.
 
-    #pyspark verions
-    pip freeze
-
-# Troubleshooting
-
-    docker exec -it spark-master /bin/bash
-    There's also the notebooks/spark_check.ipynb to check versions of python, jars, java, spark and the lot.
-
-## general learnings
-spark is extremely finicky and exepects EVERYTHING to have the exact same version, url, path in all places. i.e. not only in the docker network but also on the host (the driver).
-
-Next step will be to include notebook functionality in the common spark image and run vs code against a jupyter server in that. That might help, or make troubleshooting even more arcane... I think it will make setting up tfds more streamlined, a lot less stuff to install on the host.
-
-
-## align the host names
-We have to get stuff like the s3 host name be exactly the same on the docker network and on localhost.
-Find out how to edit the hostfile on your os and add:
+Find out how to edit the hostfile on your os and add these (there's more to add, but these are the ones used by spark):
 
     127.0.0.1 spark-worker-1
     127.0.0.1 spark-worker-2
@@ -39,29 +24,22 @@ Find out how to edit the hostfile on your os and add:
     127.0.0.1 s3-minio
     127.0.0.1 tfds-config
 
-This makes anything running on your host, like the notebooks, resolve the host names to the same service as your spark containers living in the tfds-network on docker.
-It's also part of making the spark web ui work from within the container (I think...).
+This makes anything running on your host, like the notebooks, resolve the host names to the same service as your spark containers living in the docker network.
+It's also part of making the spark web ui work from within the container.
 
-## align the port numbers
+### Align the port numbers
 Secondly the port numbers must match up, it's not possible to re-map portnumbers inside the docker network. So all services must be configured to use a portnumber that is also free on your host.
-
-edit: after changing to minio s3 it is likely possible to use another port for s3, we probabaly should...
-Where, I found that vs code automatically start up the jupyter service on port 9000, which is also the port s3-ninja will use.
-This was the final clinch before I got spark running on s3.
-s3-ninja is very sparsely documented and seems not to honour the S3NINJA_PORT env variable.
-Vs code seems not to honour the jupyter startup command line parameters.
-
-Solution: there's a setting on the Jupyter extension to conrol automtic start up of the jupyter service. Uncheck that and make sure to start up s3-ninja before you run a notebook. The jupyter service seems to run just fine on whatever free port it can find.
 
 ### Spark ports and the spark webui
 To get the spark web ui working there's a few things to tweak.
-Spark nodes by default uses ip addresses to refer each other, also in the web ui. these ip:s are internal to the docker network and have no menaing on the host.
-To each container in the spark cluster you add this env variable set to the service name. This makes spark nodes use host names to refer each other, also in the web ui.
+Spark nodes by default uses ip addresses to refer each other, also in the web ui. these ip:s are internal to the docker network and have no meaning on the host.
+Setting this env variable set to the service name. This makes spark nodes use host names to refer each other, also in the web ui.
 
     - SPARK_LOCAL_HOSTNAME=spark-worker-1
 
-Spark workers default to 8081 for the web ui and spark master to 8080. Even if we could let spark master have 8080 we can't have the two workers on the same port.
-We can also take the opportunity to arrange the ports for the tfds setup of putting web-ui from 8000 and up. For spark master you add the `SPARK_MASTER_WEBUI_PORT` and for the workers the `SPARK_WORKER_WEBUI_PORT`
+Spark workers default to 8081 for the web ui and spark master to 8080. Even if we could let spark master have 8080 we can't have the two workers on the same port on the host.
+All webui:s in freeds are put in the 8001+port range, we put spark on spark master on 8010 and workers on 8011 and 8012.
+The env value `SPARK_MASTER_WEBUI_PORT` us used for master and  `SPARK_WORKER_WEBUI_PORT` for the workers.
 
 so for master and the workers we'd set:
 
@@ -77,68 +55,8 @@ so for master and the workers we'd set:
     ports:
       - "127.0.0.1:8011:8011"
 
-  For the webui to work you need the mapping of host names to 127.0.0.1 in your hosts file as described above in "Align the host names".
+  For the webui to work on your you need the mapping of host names to 127.0.0.1 in your hosts file as described above in "Align the host names".
 
-
-## align spark versions
-Make sure the one installed in your venv matches exactly the on in your dockers.
-how to check the version in your docker:
-
-    docker exec -it spark-master spark-submit --version
-
-and same command to check it locally:
-
-    spark-submit --version
-
-## align java versions
-Similar to how you checked the spark version you can check the java and python versions.
-
-For java it is important the the major and minor jdk versions are the same.
-
-    # in docker
-    docker exec -it spark-master java --version
-    # locally
-    java --version
-
-If major versions differ, you'll have to deal with it. In my case I simply uninstalled the java sdk I had and used brew to install the one in my spark cluster. How to support a different java version in your dev project is out of scope for tfds right now.
-
-## align the jar versions
-Easiest way to ensure you're using the same jars is to simply copy the lot out of the docker container and refere those in your notebooks.
-It's quite a lot I recommend adding `jars/` to your .gitignore and not committing them to git.
-
-    cd spark
-    docker cp spark-master:/opt/bitnami/spark/jars ./jars
-
-
-## Align python versions
-    # in docker
-    docker exec -it spark-master python3 --version
-    # locally
-    python3 --version
-
-if python versions differ I'd recommend using pyenv to get the exact same version as your spark engine.
-At the time of writing my spark was on 3.11.8
-
-    # get the python version installed
-    pyenv install 3.11.8
-
-    # get it your current "python3"
-    pyenv global 3.11.8
-
-    # create your venv
-    python3 -m venv .venv
-
-    # activate it
-    source ./.venv/bin/activate
-
-    # upgrade pip
-    pip install --upgrade pip
-    # before installing python dependencies, check out requirements.txt
-    # and ensure the pyspark versaion matches your spark version like so:
-    # pyspark==3.5.0
-
-    # install requirements
-    pip install -r requirements.txt
 
 # setup spark to use delta
 https://docs.delta.io/3.0.0/quick-start.html#set-up-apache-spark-with-delta-lake

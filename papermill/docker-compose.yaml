@@ -2,8 +2,8 @@
 services:
   base:
     build: .
-    image: tfds/papermill-base:latest
-    container_name: jupyter
+    image: freeds/jupyter-spark:latest
+    container_name: jupyter-spark
     environment:
       TFDS_CONFIG_URL: ${TFDS_CONFIG_URL}
     ports:
