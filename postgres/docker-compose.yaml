@@ -12,7 +12,7 @@ services:
       POSTGRES_DB: airflow
     volumes:
       - postgres-db-volume:/var/lib/postgresql/data
-      - /opt/tfds/postgres/init:/docker-entrypoint-initdb.d
+      - /opt/freeds/postgres/init:/docker-entrypoint-initdb.d
     networks:
       - freeds-network
     healthcheck:

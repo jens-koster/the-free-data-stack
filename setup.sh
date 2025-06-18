@@ -10,7 +10,7 @@ else
     echo "$output"
 fi
 
-root=/opt/tfds
+root=/opt/freeds
 
 mkdir -p "$root"/airflow
 mkdir -p "$root"/logs
@@ -45,7 +45,7 @@ fi
 ln -s "$(pwd)/spark/conf" "$root"/spark/conf
 
 
-# tfds
+# freeds
 echo "linking config folder to $root/config"
 
 if [ -L "$root"/config ]; then

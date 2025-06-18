@@ -1,6 +1,6 @@
 # Postgresql
 
-A common postgres server for all of tfds.
+A common postgres server for all of freeds.
 
 reserved schemas:
 

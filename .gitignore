@@ -167,7 +167,7 @@ DuckDB/data
 airflow/logs/
 _data/big/
 pmenv/
-tfds.code-workspace
+freeds.code-workspace
 cfgenv/
 s3.yaml
 temp_notebooks/

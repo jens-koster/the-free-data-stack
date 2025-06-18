@@ -1,5 +1,5 @@
 doc: >
-  mainly for the tfds selftest to run airflow.
+  mainly for the freeds selftest to run airflow.
 
 config:
   user: airflow

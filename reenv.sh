@@ -30,6 +30,6 @@ pip install -r ./spark/requirements.txt
 
 # Install Jupyter kernel with full version in display name
 echo "Installing Jupyter kernel..."
-python -m ipykernel install --user --name=.venv --display-name "TFDS $PYTHON_VERSION"
+python -m ipykernel install --user --name=.venv --display-name "FREEDS $PYTHON_VERSION"
 
 echo "✅ Setup complete with Python $PYTHON_VERSION"

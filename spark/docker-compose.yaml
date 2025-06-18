@@ -9,15 +9,15 @@ services:
     volumes:
       # let's make sure any data we want to store is preserved over container recreates
       # we put the catalog metadata here.
-      - /opt/tfds/data/spark:/opt/tfds/data/spark
+      - /opt/freeds/data/spark:/opt/freeds/data/spark
 
     environment:
         - SPARK_MODE=master
         # we need to make sure all nodes have the same hostname for the spark-master
-        - SPARK_MASTER_HOST=${TFDS_SPARK_MASTER_HOST:-spark-master}
-        - SPARK_MASTER_URL=${TFDS_SPARK_MASTER_URL:-spark://spark-master:7077}
+        - SPARK_MASTER_HOST=${FREEDS_SPARK_MASTER_HOST:-spark-master}
+        - SPARK_MASTER_URL=${FREEDS_SPARK_MASTER_URL:-spark://spark-master:7077}
         # this makes spark refer to the nodes by their hostname instead of the ip address
-        - SPARK_LOCAL_HOSTNAME=${TFDS_SPARK_MASTER_HOST:-spark-master}
+        - SPARK_LOCAL_HOSTNAME=${FREEDS_SPARK_MASTER_HOST:-spark-master}
         # change default port from 8080, it's a popular one...
         # this port number must be the same inside the docker network and on the host for the webui to work.
         - SPARK_MASTER_WEBUI_PORT=8010
@@ -34,10 +34,10 @@ services:
     networks:
       - freeds-network
     volumes:
-      - /opt/tfds/data:/opt/tfds/data
+      - /opt/freeds/data:/opt/freeds/data
     environment:
       - SPARK_MODE=worker
-      - SPARK_MASTER_URL=${TFDS_SPARK_MASTER_URL:-spark://spark-master:7077}
+      - SPARK_MASTER_URL=${FREEDS_SPARK_MASTER_URL:-spark://spark-master:7077}
       - SPARK_LOCAL_HOSTNAME=spark-worker-1
       - SPARK_WORKER_WEBUI_PORT=8011
     depends_on:
@@ -55,10 +55,10 @@ services:
     networks:
       - freeds-network
     volumes:
-      - /opt/tfds/data:/opt/tfds/data
+      - /opt/freeds/data:/opt/freeds/data
     environment:
       - SPARK_MODE=worker
-      - SPARK_MASTER_URL=${TFDS_SPARK_MASTER_URL:-spark://spark-master:7077}
+      - SPARK_MASTER_URL=${FREEDS_SPARK_MASTER_URL:-spark://spark-master:7077}
       - SPARK_LOCAL_HOSTNAME=spark-worker-2
       - SPARK_WORKER_WEBUI_PORT=8012
     depends_on:

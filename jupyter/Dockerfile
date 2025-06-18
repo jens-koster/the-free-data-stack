@@ -4,10 +4,10 @@ WORKDIR /app
 COPY requirements.txt /app/requirements.txt
 
 # we're installing the freeds package here. we need to use the local python index.
-RUN python3 -m pip install --trusted-host host.docker.internal --index-url http://host.docker.internal:8008/root/tfds/ --no-cache-dir -r requirements.txt
+RUN python3 -m pip install --trusted-host host.docker.internal --index-url http://host.docker.internal:8008/root/freeds/ --no-cache-dir -r requirements.txt
 
 
-RUN python3 -m ipykernel install --user --name=TFDS --display-name "TFDS"
+RUN python3 -m ipykernel install --user --name=FREEDS --display-name "FREEDS"
 ENV FREEDS_CONFIG_URL=http://freeds-config:8005/api/configs
 ENV PATH="/home/spark/.local/bin:${PATH}"
 

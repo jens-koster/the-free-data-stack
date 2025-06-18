@@ -112,8 +112,8 @@ def main() -> None:
         "--kernel",
         type=str,
         required=False,
-        default="TFDS",
-        help=("Kernel for running the notebook. " "If not provided, 'TFDS' kernel is used."),
+        default="FREEDS",
+        help=("Kernel for running the notebook. " "If not provided, 'FREEDS' kernel is used."),
     )
 
     args = parser.parse_args()

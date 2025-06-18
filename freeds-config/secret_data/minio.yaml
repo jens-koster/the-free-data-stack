@@ -4,5 +4,4 @@ doc: >
 config:
   user: minio
   password: jazzword
-  url: http://s3-minio:9000
-  data_dir: ~/tfds/data/minio
+  data_dir: /opt/freeds/data/minio

@@ -1,7 +1,7 @@
 
 #Airflow
 
-The docker compose is based on the official docker compose file and is a bit bloated for tfds.
+The docker compose is based on the official docker compose file and is a bit bloated for freeds.
 https://airflow.apache.org/docs/apache-airflow/stable/howto/docker-compose/index.html#fetching-docker-compose-yaml
 
 It is intended that we use only builtin operators and the DockerOperator to keep the airflow dependencies small.

@@ -8,7 +8,7 @@ def create_app() -> Any:
     app = Flask(__name__)
 
     # Configure OpenAPI documentation
-    app.config["API_TITLE"] = "TFDS-Config API"
+    app.config["API_TITLE"] = "FREEDS-Config API"
     app.config["API_VERSION"] = "v1"
     app.config["OPENAPI_VERSION"] = "3.0.2"
     app.config["OPENAPI_URL_PREFIX"] = "/"

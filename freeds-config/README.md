@@ -1,4 +1,4 @@
-# TFDS-Config Service
+# FREEDS-Config Service
 
 A simple API server for managing YAML-based configuration files.
 
@@ -12,7 +12,7 @@ Using env values is an alternative but that's cumbersome, any new config for wha
 
 ## Overview
 
-TFDS-Config provides a RESTful API for creating, reading, updating, and deleting configuration files stored in YAML format. It's built using Flask and OpenAPI/Swagger for documentation.
+FREEDS-Config provides a RESTful API for creating, reading, updating, and deleting configuration files stored in YAML format. It's built using Flask and OpenAPI/Swagger for documentation.
 
 ## Features
 
@@ -36,7 +36,7 @@ The API will be available at:
 - `DELETE /api/configs/{config_name}` - Delete a configuration
 
 ### secrets
-If a file has an api key or something in it, put it in the /opt/tfds/secrets folder and it stays on your disk.
+If a file has an api key or something in it, put it in the /opt/freeds/secrets folder and it stays on your disk.
 freeds-config looks in:
-/opt/tfds/secrets - whihc is a regular folder
-/opt/tfds/config - which is a symlink to the yaml_data folder in the git repo.
+/opt/freeds/secrets - whihc is a regular folder
+/opt/freeds/config - which is a symlink to the yaml_data folder in the git repo.

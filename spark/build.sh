@@ -17,7 +17,7 @@ pip install -r requirements.txt
 
 echo "🔄 Auto incrementing version number..."
 
-# IMAGE_PREFIX="tfds/spark-base:1.0."
+# IMAGE_PREFIX="freeds/spark-base:1.0."
 # FILE="docker-compose.yaml"
 
 # # Extract the current version number

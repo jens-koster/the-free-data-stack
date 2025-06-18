@@ -3,8 +3,8 @@ from typing import Any
 from marshmallow import Schema, ValidationError, fields
 
 
-def tfds_config_validator(value: Any) -> Any:
-    """Custom validator to ensure tfds_config has unique values and only the allowed strings."""
+def freeds_config_validator(value: Any) -> Any:
+    """Custom validator to ensure freeds_config has unique values and only the allowed strings."""
     allowed_set = {"noserve", "noenv"}
     value_set = set(value)
 
@@ -26,13 +26,13 @@ class ConfigFileSchema(Schema):  # type: ignore[misc]
         },
     )
 
-    tfds_config = fields.List(
+    freeds_config = fields.List(
         fields.Str(
             metadata={
                 "description": "Allowed values: 'noserve', 'noenv'",
             }
         ),
-        validate=tfds_config_validator,
+        validate=freeds_config_validator,
         required=False,
         # this is how we get yaml fields with a dash in them
     )

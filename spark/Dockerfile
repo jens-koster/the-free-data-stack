@@ -27,16 +27,16 @@ RUN python3.11 -m pip install --no-cache-dir -r requirements.txt
 
 EXPOSE 7077 8010 8011 8012
 # for some reason papermill build needs the saprk home folder...
-RUN mkdir -p /opt/spark/jars /opt/spark/conf /opt/tfds/data /opt/tfds/spark/jars /home/spark
+RUN mkdir -p /opt/spark/jars /opt/spark/conf /opt/freeds/data /opt/freeds/spark/jars /home/spark
 RUN chown -R spark:spark /home/spark
 
-ENV SPARK_CLASSPATH="/opt/tfds/spark/jars/*"
+ENV SPARK_CLASSPATH="/opt/freeds/spark/jars/*"
 
 COPY requirements.txt requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY package_jars/*.jar /opt/tfds/spark/jars/
-# COPY jars/*.jar /opt/tfds/spark/jars/
+COPY package_jars/*.jar /opt/freeds/spark/jars/
+# COPY jars/*.jar /opt/freeds/spark/jars/
 
 # Clean out stuff we want to upgrade
 RUN find /opt/spark/jars/ -name "guava-*.jar" -delete
@@ -47,10 +47,10 @@ RUN find /opt/spark/jars/ -name "datanucleus*.jar" -delete
 
 # we're using this conf folder in local development,
 # let's make it the same in master, worker and driver dockers.
-COPY ./conf/ /opt/tfds/spark/conf/
-ENV SPARK_CONF_DIR=/opt/tfds/spark/conf
+COPY ./conf/ /opt/freeds/spark/conf/
+ENV SPARK_CONF_DIR=/opt/freeds/spark/conf
 
-VOLUME /opt/tfds/data
+VOLUME /opt/freeds/data
 
 COPY entrypoint.sh /app/entrypoint.sh
 RUN chmod +x /app/entrypoint.sh

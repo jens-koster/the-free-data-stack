@@ -1,5 +1,5 @@
 # minio S3 service
-A common object store for tfds.
+A common object store for freeds.
 docs: https://min.io/docs/minio/container/index.html
 
 Normally you'd be on cloud but that's not "free". So we spin up our own S3 object store.

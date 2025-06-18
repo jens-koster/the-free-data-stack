@@ -18,7 +18,7 @@ from freeds.config.file import (
 blp = Blueprint(
     "Configurations",
     __name__,
-    description="Operations on TFDS configurations",
+    description="Operations on FREEDS configurations",
     url_prefix="/api/configs",
 )
 
@@ -27,7 +27,7 @@ def is_served(config_name: str) -> bool:
     data = read_config(config_name)
     if data is None:
         return True
-    return "noserve" not in data.get("tfds_config", [])
+    return "noserve" not in data.get("freeds_config", [])
 
 
 def printlog() -> None:
@@ -65,7 +65,7 @@ class ConfigResource(MethodView):  # type: ignore[misc]
         printlog()
         if not is_served(config_name):
             abort(400, message=f"Permission denied, '{config_name}' is not served through the api.")
-        if "noserve" in config_data.get("tfds_config", []):
+        if "noserve" in config_data.get("freeds_config", []):
             abort(
                 400,
                 message="Permission denied, can't save 'noserve' configs thourgh the api, that would be non reversible.",

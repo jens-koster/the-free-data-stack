@@ -112,16 +112,16 @@ config:
         - spark-worker-2
 
     - name: freeds-config
-      description: "TFDS config, the tfds config server"
+      description: "FREEDS config, the freeds config server"
       ports:
         - number: 8005
-          description: "TFDS config web UI"
+          description: "FREEDS config web UI"
       namespaces:
         - name: swagger-ui
-          description: "Swagger UI for TFDS config"
+          description: "Swagger UI for FREEDS config"
         - name: redoc
-          description: "Redoc ui for TFDS config"
+          description: "Redoc ui for FREEDS config"
         - name: api/configs
-          description: "API endpoint for TFDS configs"
+          description: "API endpoint for FREEDS configs"
       containers:
         - freeds-config
