@@ -1,6 +1,5 @@
 from typing import Any
 
-from app.api.schemas.request_models import ConfigFileSchema
 from app.api.schemas.response_models import (
     ConfigFileResponseSchema,
     ConfigListResponseSchema,
@@ -9,10 +8,8 @@ from flask import request
 from flask.views import MethodView
 from flask_smorest import Blueprint, abort
 from freeds.config.file import (
-    delete_config,
-    list_configs,
-    read_config,
-    write_config_to_file,
+    get_config,
+    get_current_config_set,
 )
 
 blp = Blueprint(
@@ -23,13 +20,6 @@ blp = Blueprint(
 )
 
 
-def is_served(config_name: str) -> bool:
-    data = read_config(config_name)
-    if data is None:
-        return True
-    return "noserve" not in data.get("freeds_config", [])
-
-
 def printlog() -> None:
     print("#" * 20, request.method, request.path)
 
@@ -37,11 +27,10 @@ def printlog() -> None:
 @blp.route("/")
 class ConfigList(MethodView):  # type: ignore[misc]
     @blp.response(200, ConfigListResponseSchema)  # type: ignore[misc]
-    def get(self) -> dict[str, Any]:
+    def get(self) -> list[str]:
         printlog()
         """List all served configuration files"""
-        config_files = [c for c in list_configs() if is_served(c)]
-        return {"configs": config_files}
+        return list([str(key) for key in get_current_config_set().config_set().keys()])
 
 
 @blp.route("/<string:config_name>")
@@ -51,33 +40,7 @@ class ConfigResource(MethodView):  # type: ignore[misc]
     def get(self, config_name: str) -> tuple[dict[str, Any], int]:
         """Retrieve a configuration file"""
         printlog()
-        if not is_served(config_name):
+        cfg = get_config(config_name)
+        if cfg is None:
             abort(404, message=f"Configuration '{config_name}' not found")
-        data = read_config(config_name)
-        if data is None:
-            abort(404, message=f"Configuration '{config_name}' not found")
-        return data, 200
-
-    @blp.arguments(ConfigFileSchema)  # type: ignore[misc]
-    @blp.response(201, ConfigFileResponseSchema)  # type: ignore[misc]
-    def post(self, config_data: dict[str, Any], config_name: str) -> tuple[dict[str, Any], int]:
-        """Create or update a configuration file"""
-        printlog()
-        if not is_served(config_name):
-            abort(400, message=f"Permission denied, '{config_name}' is not served through the api.")
-        if "noserve" in config_data.get("freeds_config", []):
-            abort(
-                400,
-                message="Permission denied, can't save 'noserve' configs thourgh the api, that would be non reversible.",
-            )
-        write_config_to_file(config_name=config_name, config_data=config_data)
-        return read_config(config_name), 201
-
-    @blp.response(204)  # type: ignore[misc]
-    def delete(self, config_name: str) -> tuple[str, int]:
-        """Delete a configuration file"""
-        printlog()
-        if not is_served(config_name):
-            abort(400, message=f"Permission denied, '{config_name}' is not served through the api.")
-        delete_config(config_name)
-        return "", 204
+        return cfg.data, 200

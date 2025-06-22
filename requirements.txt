@@ -1,4 +1,4 @@
---index-url http://127.0.0.1:8008/root/freeds/
+# --index-url http://127.0.0.1:8008/root/freeds/
 requests
 PyYAML
 boto3

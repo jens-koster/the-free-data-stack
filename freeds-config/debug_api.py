@@ -1,3 +1,3 @@
-from freeds.config.file import list_configs
+from freeds.config.file import get_current_config_set
 
-print(list_configs())
+print(list(get_current_config_set().config_set().keys()))

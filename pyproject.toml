@@ -10,7 +10,10 @@ readme = "README.md"
 requires-python = ">=3.11,<4.0"
 dependencies = [
     "cowsay (>=6.1,<7.0)",
-    "freeds @ file:///Users/jens/src/FreeDS"
+    "freeds @ file:///Users/jens/src/FreeDS",
+    "flask (>=3.1.1,<4.0.0)",
+    "flask-smorest (>=0.46.1,<0.47.0)",
+    "marshmallow (>=4.0.0,<5.0.0)"
 ]
 
 [build-system]

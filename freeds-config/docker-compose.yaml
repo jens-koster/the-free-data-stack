@@ -9,9 +9,9 @@ services:
       - "127.0.0.1:8005:8005"
     environment:
       - FLASK_ENV=development
+      - FREEDS_ROOT_PATH=/opt/freeds
     volumes:
-      - /opt/freeds/config:/opt/freeds/config
-      - /opt/freeds/secrets:/opt/freeds/secrets
+      - ${FREEDS_ROOT_PATH}:/opt/freeds
     networks:
       - freeds-network
 
