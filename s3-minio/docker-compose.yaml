@@ -11,7 +11,7 @@ services:
       - "127.0.0.1:9900:9900"
       - "127.0.0.1:8006:8006"
     volumes:
-      - "${FREEDS_MINIO_DATA_DIR}:/data"
+      - "${FREEDS_ROOT_PATH}/data/minio:/data"
     environment:
       - MINIO_ROOT_USER=${FREEDS_MINIO_USER}
       - MINIO_ROOT_PASSWORD=${FREEDS_MINIO_PASSWORD}
