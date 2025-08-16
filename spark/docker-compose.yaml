@@ -9,7 +9,7 @@ services:
     volumes:
       # let's make sure any data we want to store is preserved over container recreates
       # we put the catalog metadata here.
-      - /opt/freeds/data/spark:/opt/freeds/data/spark
+      - ${FREEDS_ROOT_PATH}/data/spark:/opt/freeds/data/spark
 
     environment:
         - SPARK_MODE=master
@@ -34,7 +34,7 @@ services:
     networks:
       - freeds-network
     volumes:
-      - /opt/freeds/data:/opt/freeds/data
+      - ${FREEDS_ROOT_PATH}/data:/opt/freeds/data
     environment:
       - SPARK_MODE=worker
       - SPARK_MASTER_URL=${FREEDS_SPARK_MASTER_URL:-spark://spark-master:7077}
@@ -55,7 +55,7 @@ services:
     networks:
       - freeds-network
     volumes:
-      - /opt/freeds/data:/opt/freeds/data
+      - ${FREEDS_ROOT_PATH}/data:/opt/freeds/data
     environment:
       - SPARK_MODE=worker
       - SPARK_MASTER_URL=${FREEDS_SPARK_MASTER_URL:-spark://spark-master:7077}

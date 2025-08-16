@@ -11,7 +11,8 @@ services:
       - FLASK_ENV=development
       - FREEDS_ROOT_PATH=/opt/freeds
     volumes:
-      - ${FREEDS_ROOT_PATH}:/opt/freeds
+      - ${FREEDS_ROOT_PATH}/freeds-config/configs:/opt/freeds/configs
+      - ${FREEDS_ROOT_PATH}/local_configs:/opt/freeds/locals
     networks:
       - freeds-network
 
