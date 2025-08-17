@@ -9,16 +9,12 @@ echo "| building the spark cluster                 |"
 echo "==============================================\n"
 
 echo "stopping cluster"
-docker compose down
-
-echo "re-installing spark requirements for this venv"
-pip uninstall -r requirements.txt -y
-pip install -r requirements.txt
+freeds dc -s spark down
 
 source jar.sh
 
 echo building docker image
-freeds dc -s . build
+freeds dc -s spark build
 
 echo 'tagging docker image "freeds/spark-base:latest"'
 docker tag "freeds/spark-base" "freeds/spark-base:latest"
@@ -28,11 +24,10 @@ mkdir -p jars
 cp docker_jars/*.jar jars/
 cp package_jars/*.jar jars/
 
-
 echo "starting cluster"
-freeds docker compose up -d --remove-orphans
+freeds dc -s spark up --remove-orphans
 
-echo "building papermill"
+echo "building jupyter"
 
 cd ../jupyter
 source build.sh

@@ -14,6 +14,7 @@ RUN apt-get update && apt-get install -y software-properties-common \
     && add-apt-repository ppa:deadsnakes/ppa \
     && apt-get update \
     && apt-get install -y python3.11 python3.11-venv python3.11-dev python3-pip \
+    && apt-get install -y gettext \
     && update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.11 1 \
     && update-alternatives --install /usr/bin/python python /usr/bin/python3.11 1 \
     && apt-get clean \
@@ -26,7 +27,7 @@ RUN python3.11 -m ensurepip --upgrade \
 RUN python3.11 -m pip install --no-cache-dir -r requirements.txt
 
 EXPOSE 7077 8010 8011 8012
-# for some reason papermill build needs the saprk home folder...
+# for some reason the jupyter build needs the spark home folder, we create tbhere right away ...
 RUN mkdir -p /opt/spark/jars /opt/spark/conf /opt/freeds/data /opt/freeds/spark/jars /home/spark
 RUN chown -R spark:spark /home/spark
 

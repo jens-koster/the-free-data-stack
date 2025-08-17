@@ -27,14 +27,14 @@ spark.executor.memory                   2g
 spark.sql.catalogImplementation                          hive
 spark.hadoop.javax.jdo.option.ConnectionURL             jdbc:postgresql://postgres:5432/spark_metastore
 spark.hadoop.javax.jdo.option.ConnectionDriverName      org.postgresql.Driver
-spark.hadoop.javax.jdo.option.ConnectionUserName        airflow
-spark.hadoop.javax.jdo.option.ConnectionPassword        airflow
+spark.hadoop.javax.jdo.option.ConnectionUserName        ${FREEDS_POSTGRES_USER}
+spark.hadoop.javax.jdo.option.ConnectionPassword        ${FREEDS_POSTGRES_PASSWORD}
 spark.hadoop.datanucleus.schema.autoCreateAll           true
 
 spark.hadoop.hive.metastore.db.type                     postgresql
 spark.hadoop.hive.metastore.db.uri                      jdbc:postgresql://postgres:5432/spark_metastore
-spark.hadoop.hive.metastore.db.username                 airflow
-spark.hadoop.hive.metastore.db.password                 airflow
+spark.hadoop.hive.metastore.db.username                 ${FREEDS_POSTGRES_USER}
+spark.hadoop.hive.metastore.db.password                 ${FREEDS_POSTGRES_PASSWORD}
 
 spark.hadoop.hive.metastore.warehouse.dir               s3a://dwh/warehouse/
 spark.hadoop.hive.metastore.db.driver                   org.postgresql.Driver

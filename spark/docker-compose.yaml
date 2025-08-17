@@ -9,7 +9,7 @@ services:
     volumes:
       # let's make sure any data we want to store is preserved over container recreates
       # we put the catalog metadata here.
-      - ${FREEDS_ROOT_PATH}/data/spark:/opt/freeds/data/spark
+      - ${FREEDS_ROOT_PATH}/data/spark:/opt/freeds/data/
 
     environment:
         - SPARK_MODE=master
@@ -21,6 +21,8 @@ services:
         # change default port from 8080, it's a popular one...
         # this port number must be the same inside the docker network and on the host for the webui to work.
         - SPARK_MASTER_WEBUI_PORT=8010
+        - FREEDS_POSTGRES_USER=${FREEDS_POSTGRES_USER}
+        - FREEDS_POSTGRES_PASSWORD=${FREEDS_POSTGRES_PASSWORD}
     ports:
       # spark service port, we need it to call spark from the notebooks in development
       - "127.0.0.1:7077:7077"
@@ -34,12 +36,14 @@ services:
     networks:
       - freeds-network
     volumes:
-      - ${FREEDS_ROOT_PATH}/data:/opt/freeds/data
+      - ${FREEDS_ROOT_PATH}/data/spark:/opt/freeds/data/
     environment:
       - SPARK_MODE=worker
       - SPARK_MASTER_URL=${FREEDS_SPARK_MASTER_URL:-spark://spark-master:7077}
       - SPARK_LOCAL_HOSTNAME=spark-worker-1
       - SPARK_WORKER_WEBUI_PORT=8011
+      - FREEDS_POSTGRES_USER=${FREEDS_POSTGRES_USER}
+      - FREEDS_POSTGRES_PASSWORD=${FREEDS_POSTGRES_PASSWORD}
     depends_on:
       - spark-master
     expose:
@@ -55,12 +59,14 @@ services:
     networks:
       - freeds-network
     volumes:
-      - ${FREEDS_ROOT_PATH}/data:/opt/freeds/data
+      - ${FREEDS_ROOT_PATH}/data/spark:/opt/freeds/data
     environment:
       - SPARK_MODE=worker
       - SPARK_MASTER_URL=${FREEDS_SPARK_MASTER_URL:-spark://spark-master:7077}
       - SPARK_LOCAL_HOSTNAME=spark-worker-2
       - SPARK_WORKER_WEBUI_PORT=8012
+      - FREEDS_POSTGRES_USER=${FREEDS_POSTGRES_USER}
+      - FREEDS_POSTGRES_PASSWORD=${FREEDS_POSTGRES_PASSWORD}
     depends_on:
       - spark-master
     expose:
