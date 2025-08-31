@@ -56,10 +56,7 @@ x-airflow-common:
     &airflow-common-env
     FREEDS_CONFIG_URL: ${FREEDS_CONFIG_URL}
     AIRFLOW__WEBSERVER__WEB_SERVER_PORT: 8001
-
     AIRFLOW__CORE__EXECUTOR: CeleryExecutor
-
-
     # todo:
     # AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://${FREEDS_POSTGRES_USER}:${FREEDS_POSTGRES_PASSWORD}@postgres/airflow
     AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres/airflow
@@ -226,8 +223,8 @@ services:
       <<: *airflow-common-env
       _AIRFLOW_DB_MIGRATE: 'true'
       _AIRFLOW_WWW_USER_CREATE: 'true'
-      _AIRFLOW_WWW_USER_USERNAME: ${_AIRFLOW_WWW_USER_USERNAME:-airflow}
-      _AIRFLOW_WWW_USER_PASSWORD: ${_AIRFLOW_WWW_USER_PASSWORD:-airflow}
+      _AIRFLOW_WWW_USER_USERNAME: ${FREEDS_AIRFLOW_USER:-airflow}
+      _AIRFLOW_WWW_USER_PASSWORD: ${FREEDS_AIRFLOW_PASSWORD:-airflow}
       _PIP_ADDITIONAL_REQUIREMENTS: ''
     user: "0:0"
     volumes:
