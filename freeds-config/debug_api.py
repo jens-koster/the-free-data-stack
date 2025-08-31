@@ -1,3 +1,4 @@
-from freeds.config.file import get_current_config_set
+from freeds.config.file import get_current_config_set, get_config
 
-print(list(get_current_config_set().config_set().keys()))
+print(get_config('s3').data)
+print(get_current_config_set().config_set.keys())

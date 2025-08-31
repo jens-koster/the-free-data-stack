@@ -4,4 +4,4 @@ marshmallow
 PyYAML
 gunicorn
 requests
-freeds
+freeds==0.2.17

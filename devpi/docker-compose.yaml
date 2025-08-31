@@ -6,7 +6,7 @@ services:
     ports:
       - "127.0.0.1:8008:8008"
     volumes:
-      - ${FREEDS_ROOT_PATH}/local-pypi:/data
+      - ${FREEDS_ROOT_PATH}/data/local-pypi:/data
     command: devpi-server --host 0.0.0.0 --port 8008 --serverdir /data
     restart: unless-stopped
     networks:

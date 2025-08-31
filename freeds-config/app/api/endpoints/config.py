@@ -1,5 +1,5 @@
 from typing import Any
-
+from flask import jsonify
 from app.api.schemas.response_models import (
     ConfigFileResponseSchema,
     ConfigListResponseSchema,
@@ -29,8 +29,13 @@ class ConfigList(MethodView):  # type: ignore[misc]
     @blp.response(200, ConfigListResponseSchema)  # type: ignore[misc]
     def get(self) -> list[str]:
         printlog()
+        print(get_current_config_set().config_set)
         """List all served configuration files"""
-        return list([str(key) for key in get_current_config_set().config_set().keys()])
+        ls = []
+        for key in get_current_config_set().config_set.keys():
+            print(key)
+            ls.append(str(key))
+        return jsonify(ls)
 
 
 @blp.route("/<string:config_name>")

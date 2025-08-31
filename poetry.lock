@@ -681,7 +681,7 @@ tests = ["PyYAML (==6.0.2)", "apispec (==6.8.1)", "coverage (==7.8.0)", "flask (
 
 [[package]]
 name = "freeds"
-version = "0.2.4"
+version = "0.2.16"
 description = "The free data stack CLI"
 optional = false
 python-versions = ">=3.11,<4.0"
@@ -703,7 +703,7 @@ typer = {version = ">=0.10.0", extras = ["all"]}
 
 [package.source]
 type = "directory"
-url = "../FreeDS"
+url = "../../FreeDS"
 
 [[package]]
 name = "frozenlist"

@@ -32,11 +32,13 @@ The API will be available at:
 
 - `GET /api/configs/` - List all configuration files
 - `GET /api/configs/{config_name}` - Get a specific configuration
-- `POST /api/configs/{config_name}` - Create or update a configuration
-- `DELETE /api/configs/{config_name}` - Delete a configuration
 
 ### secrets
-If a file has an api key or something in it, put it in the /opt/freeds/secrets folder and it stays on your disk.
+If a file has an api key or something in it, put it in the local_configs folder and it stays on your disk.
 freeds-config looks in:
-/opt/freeds/secrets - whihc is a regular folder
-/opt/freeds/config - which is a symlink to the yaml_data folder in the git repo.
+freeds-config/configs/ (which is a git repo)
+freeds-config/local_configs/ (which only lives on your machine)
+
+### troubleshooting
+
+    source <(freeds env) && docker compose exec api bash

@@ -10,9 +10,11 @@ services:
     environment:
       - FLASK_ENV=development
       - FREEDS_ROOT_PATH=/opt/freeds
+      - FREEDS_CONFIGS_PATH=/opt/freeds/config/configs
+      - FREEDS_LOCALS_PATH=/opt/freeds/config/locals
     volumes:
-      - ${FREEDS_ROOT_PATH}/freeds-config/configs:/opt/freeds/configs
-      - ${FREEDS_ROOT_PATH}/local_configs:/opt/freeds/locals
+      - ${FREEDS_CONFIGS_PATH}:/opt/freeds/config/configs
+      - ${FREEDS_LOCALS_PATH}:/opt/freeds/config/locals
     networks:
       - freeds-network
 
