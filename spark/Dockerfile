@@ -1,4 +1,4 @@
-FROM apache/spark:3.5.5
+FROM apache/spark:3.5.6
 
 ENV SPARK_MODE=master \
     SPARK_MASTER_WEBUI_PORT=8010 \
@@ -27,24 +27,13 @@ RUN python3.11 -m ensurepip --upgrade \
 RUN python3.11 -m pip install --no-cache-dir -r requirements.txt
 
 EXPOSE 7077 8010 8011 8012
-# for some reason the jupyter build needs the spark home folder, we create tbhere right away ...
+# create the spark folders
+# for some reason the jupyter build (next step) needs that spark folder in home.
+# let's just create it now...
 RUN mkdir -p /opt/spark/jars /opt/spark/conf /opt/freeds/data /opt/freeds/spark/jars /home/spark
 RUN chown -R spark:spark /home/spark
 
-ENV SPARK_CLASSPATH="/opt/freeds/spark/jars/*"
-
-COPY requirements.txt requirements.txt
-RUN pip install --no-cache-dir -r requirements.txt
-
-COPY package_jars/*.jar /opt/freeds/spark/jars/
-# COPY jars/*.jar /opt/freeds/spark/jars/
-
-# Clean out stuff we want to upgrade
-RUN find /opt/spark/jars/ -name "guava-*.jar" -delete
-RUN find /opt/spark/jars/ -name "datanucleus*.jar" -delete
-
-# for spark master/workers to find it
-# COPY ./conf/ /opt/spark/conf/
+COPY ./package_jars/*.jar /opt/freeds/spark/jars/
 
 # we're using this conf folder in local development,
 # let's make it the same in master, worker and driver dockers.

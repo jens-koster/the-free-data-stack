@@ -2,23 +2,21 @@
 echo "downloading jar packages to package_jars"
 rm -rf package_jars
 mkdir -p package_jars
+# org.apache.iceberg:iceberg-common:1.9.2 \
+# org.apache.iceberg:iceberg-api:1.9.2 \
+# org.apache.iceberg:iceberg-core:1.9.2 \
+
+
 coursier fetch \
-    io.delta:delta-spark_2.12:3.2.0 \
+    org.apache.iceberg:iceberg-spark-runtime-3.5_2.12:1.9.2 \
     org.apache.hadoop:hadoop-aws:3.3.4 \
     org.apache.hadoop:hadoop-common:3.3.4 \
     com.amazonaws:aws-java-sdk-bundle:1.12.262 \
-    org.postgresql:postgresql:42.6.0 \
-    org.apache.hive:hive-metastore:2.3.9 \
-    org.datanucleus:datanucleus-core:4.1.17 \
-    org.datanucleus:datanucleus-api-jdo:4.2.4 \
-    org.datanucleus:datanucleus-rdbms:4.1.19 \
-    javax.jdo:jdo-api:3.0.1 \
-    com.google.guava:guava:30.1.1-jre \
+    org.postgresql:postgresql:42.7.3 \
     --exclude org.pentaho:pentaho-aggdesigner-algorithm \
     --exclude log4j:log4j \
     --exclude org.apache.parquet:parquet-hadoop-bundle \
     | tr ':' '\n' | while read jar; do cp "$jar" package_jars/; done
-
 
 rm -rf docker_jars
 echo "copying spark jars from apache image"
@@ -35,15 +33,9 @@ rm ./package_jars/slf4j*
 rm ~/src/the-free-data-stack/.venv/lib/python3.8/site-packages/pyspark/jars/log4j-1.2-api-2.20.0.jar
 rm ./jars/log4j-1.2-api-2.20.0.jar
 
-
 echo "legacy jar not used: parquet-hadoop-bundle-1.8.1.jar"
 rm ./package_jars/parquet-hadoop-bundle-1.8.1.jar
 
-echo "datanucleus from packages is used"
-rm ./docker_jars/datanucleus*
-
-echo "guava from packages is used"
-rm ./docker_jars/guava*
 
 echo "remove some conflicting jars we got in the package dependecies"
 rm ./package_jars/javax.servlet*.jar
@@ -52,10 +44,5 @@ rm ./package_jars/jetty-*.jar
 rm ./package_jars/netty-*.jar
 
 python3 fix_jars.py
-rm -rf jars
-mkdir jars
-
-cp docker_jars/*.jar jars/
-cp package_jars/*.jar jars/
 
 echo "jars done!"

@@ -84,9 +84,9 @@ x-airflow-common:
     #- ./plugins:/opt/airflow/plugins
 
     - ${FREEDS_ROOT_PATH}/logs/airflow:/opt/airflow/logs
-    - ${FREEDS_ROOT_PATH}/airflow/dags:/opt/airflow/dags
-    - ${FREEDS_ROOT_PATH}/airflow/config
-    - ${FREEDS_ROOT_PATH}/airflow/plugins
+    - ${FREEDS_ROOT_PATH}/plugins/airflow/dags:/opt/airflow/dags
+    - ${FREEDS_ROOT_PATH}/plugins/airflow/config:/opt/airflow/config
+    - ${FREEDS_ROOT_PATH}/plugins/airflow/plugins:/opt/airflow/plugins
     - /var/run/docker.sock:/var/run/docker.sock
 
   user: "${FREEDS_AIRFLOW_UID:-50000}:0"

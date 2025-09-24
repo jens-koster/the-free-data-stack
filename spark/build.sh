@@ -19,6 +19,7 @@ freeds dc -s spark build
 echo 'tagging docker image "freeds/spark-base:latest"'
 docker tag "freeds/spark-base" "freeds/spark-base:latest"
 
+# note to self: is this still needed?
 echo "merging docker_jars and package_jars to jars folder"
 mkdir -p jars
 cp docker_jars/*.jar jars/
