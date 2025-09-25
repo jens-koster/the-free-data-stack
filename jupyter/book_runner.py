@@ -17,7 +17,7 @@ from freeds.s3 import get_file, put_file
 from freeds.utils import setup_logging
 
 print("book_runner.py is running...")
-setup_logging()
+setup_logging(__name__)
 
 
 def set_kernel(notebook_path: str, kernel_name: str) -> None:
