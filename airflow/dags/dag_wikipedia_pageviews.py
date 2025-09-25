@@ -90,7 +90,7 @@ def extract_task() -> None:
         "overlap_hours": 8,
         "force_reupload": False,
     }
-    notebook_prefix = "pipe-dreams/notebooks/wikipedia_pageviews"
+    notebook_prefix = "freeds-lab-databrickish/notebooks/wikipedia_pageviews"
     notebook_name = "wikipedia_pageviews_extract"
     run_book(
         notebook_name=notebook_name,
@@ -102,8 +102,8 @@ def extract_task() -> None:
 
 @task  # type: ignore[misc]
 def bronze_task() -> None:
-    notebook_params = {"bronze_db": "bronze"}
-    notebook_prefix = "pipe-dreams/notebooks/wikipedia_pageviews"
+    notebook_params = {"bronze_db": "freeds_cat.bronze"}
+    notebook_prefix = "freeds-lab-databrickish/notebooks/wikipedia_pageviews"
     notebook_name = "wikipedia_pageviews_bronze"
     run_book(
         notebook_name=notebook_name,
@@ -115,8 +115,8 @@ def bronze_task() -> None:
 
 @task  # type: ignore[misc]
 def silver_task() -> None:
-    notebook_params = {"bronze_db": "bronze", "silver_db": "silver"}
-    notebook_prefix = "pipe-dreams/notebooks/wikipedia_pageviews"
+    notebook_params = {"bronze_db": "freeds_cat.bronze", "silver_db": "freeds_cat.silver"}
+    notebook_prefix = "freeds-lab-databrickish/notebooks/wikipedia_pageviews"
     notebook_name = "wikipedia_pageviews_silver"
     run_book(
         notebook_name=notebook_name,
