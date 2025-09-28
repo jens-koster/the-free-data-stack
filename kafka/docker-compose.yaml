@@ -1,0 +1,130 @@
+version: "3.9"
+
+# KRaft mode Kafka setup with 1 pure controller, 1 pure broker, 2 hybrid broker+controllers.
+# Only essential host ports exposed. Controller ports are internal.
+# No ports are mapped for access directly from vs code, might have to change that.
+# The jupyter server has access to the kafka cluster, I expect to run from there.
+
+
+x-kafka-common: &kafka-common
+  image: apache/kafka:4.1.0
+  networks:
+    - freeds-network
+  environment: &kafka-common-env
+    KAFKA_INTER_BROKER_LISTENER_NAME: "PLAINTEXT"
+    KAFKA_CONTROLLER_LISTENER_NAMES: "CONTROLLER"
+    KAFKA_CONTROLLER_QUORUM_VOTERS: "1@kafka-con-1:9093,3@kafka-brocon-3:9093,4@kafka-brocon-4:9093"
+    KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: "0"
+
+# Pure Controller
+x-kafka-controller: &kafka-controller
+  <<: *kafka-common
+  environment: &kafka-controller-env
+    <<: *kafka-common-env
+    KAFKA_PROCESS_ROLES: "controller"
+    KAFKA_LISTENERS: "CONTROLLER://:9093"
+
+# Pure Broker
+x-kafka-broker: &kafka-broker
+  <<: *kafka-common
+  depends_on:
+    - kafka-con-1
+  environment: &kafka-broker-env
+    <<: *kafka-common-env
+    KAFKA_PROCESS_ROLES: "broker"
+    KAFKA_LISTENERS: "PLAINTEXT://:19092"
+    KAFKA_ADVERTISED_LISTENERS: ""  # overridden per container
+    KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: "CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT"
+
+# Hybrid Broker+Controller
+x-kafka-brocon: &kafka-brocon
+  <<: *kafka-common
+  depends_on:
+    - kafka-con-1
+  environment: &kafka-brocon-env
+    <<: *kafka-common-env
+    KAFKA_PROCESS_ROLES: "broker,controller"
+    KAFKA_LISTENERS: "PLAINTEXT://:19092,CONTROLLER://:9093"
+    KAFKA_ADVERTISED_LISTENERS: ""  # overridden per container
+    KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: "CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT"
+
+services:
+
+  kafka-con-1:
+    # This is the only controller that is not also a broker.
+    # All others are depending on this,
+    # with the intention to avoid a race in the leader election.
+    <<: *kafka-controller
+    container_name: kafka-con-1
+    environment:
+      <<: *kafka-controller-env
+      KAFKA_NODE_ID: 1
+    volumes:
+      - kafka_1_data:/var/lib/kafka/data
+
+  kafka-bro-2:
+    # This is the only broker that is not also a controller.
+    <<: *kafka-broker
+    container_name: kafka-bro-2
+    environment:
+      <<: *kafka-broker-env
+      KAFKA_NODE_ID: 2
+      KAFKA_ADVERTISED_LISTENERS: "PLAINTEXT://kafka-bro-2:19092"
+    volumes:
+      - kafka_2_data:/var/lib/kafka/data
+
+  kafka-brocon-3:
+    # Then two work horses of consolidated broker+controller.
+    <<: *kafka-brocon
+    container_name: kafka-brocon-3
+    environment:
+      <<: *kafka-brocon-env
+      KAFKA_NODE_ID: 3
+      KAFKA_ADVERTISED_LISTENERS: "PLAINTEXT://kafka-brocon-3:19092"
+    volumes:
+      - kafka_3_data:/var/lib/kafka/data
+
+  kafka-brocon-4:
+    <<: *kafka-brocon
+    container_name: kafka-brocon-4
+    environment:
+      <<: *kafka-brocon-env
+      KAFKA_NODE_ID: 4
+      KAFKA_ADVERTISED_LISTENERS: "PLAINTEXT://kafka-brocon-4:19092"
+    volumes:
+      - kafka_4_data:/var/lib/kafka/data
+
+  kafdrop:
+    image: obsidiandynamics/kafdrop:4.2.0
+    container_name: kafdrop
+    environment:
+      KAFKA_BROKERCONNECT: "kafka-bro-2:19092"
+    ports:
+      - "127.0.0.1:8015:9000"
+    depends_on:
+      - kafka-bro-2
+    networks:
+      - freeds-network
+
+  akhq:
+    image: tchiotludo/akhq:0.25.1
+    container_name: akhq
+    ports:
+      - "127.0.0.1:8016:8080"
+    depends_on:
+      - kafka-brocon-3
+    networks:
+      - freeds-network
+    volumes:
+      - ./application.yml:/app/application.yml:ro
+
+volumes:
+  kafka_1_data:
+  kafka_2_data:
+  kafka_3_data:
+  kafka_4_data:
+
+networks:
+  freeds-network:
+    name: freeds-network
+    external: true

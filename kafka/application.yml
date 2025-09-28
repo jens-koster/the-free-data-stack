@@ -1,0 +1,14 @@
+akhq:
+  connections:
+    freeds-kafka-cluster:
+      properties:
+        bootstrap.servers: "kafka-bro-2:19092"
+        security.protocol: PLAINTEXT
+#      schema-registry:
+#        url: "http://schema-registry:8085"
+      # connect:
+      #   - name: "connect"
+      #     url: "http://connect:8083"
+      # ksqldb:
+      #   - name: "ksqldb"
+      #     url: "http://connect:8088"
