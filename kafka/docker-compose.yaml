@@ -1,10 +1,7 @@
-version: "3.9"
-
 # KRaft mode Kafka setup with 1 pure controller, 1 pure broker, 2 hybrid broker+controllers.
 # Only essential host ports exposed. Controller ports are internal.
 # No ports are mapped for access directly from vs code, might have to change that.
 # The jupyter server has access to the kafka cluster, I expect to run from there.
-
 
 x-kafka-common: &kafka-common
   image: apache/kafka:4.1.0
