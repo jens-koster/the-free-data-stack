@@ -1,59 +1,61 @@
 # The Free Datastack (fds)
-My various tinkering with open source data tools. I'm aiming at a open source pluggable lab stack, it's still a bit rough a round the edges, but I had it working!
+My various tinkering with open source data tools. I'm aiming at a open source pluggable lab stack, it's still a bit rough a round the edges.
+Check out the readme in freeds CLI to get it up and working(sorry, I'll align the docs out at some point in time.): https://github.com/jens-koster/FreeDS#
 
-* Supported on mac, possibly Linux, will not work on Windows.
+* Supported on mac, possibly Linux, will likely not work on Windows.
 
 I am maintaining a list in notion of free stack tools, might be of interest:
 https://ambitious-bowl-f63.notion.site/Free-Datastack-Catalogue-1bc65454dd3f80f4a8e7cfda2edcb4a9?pvs=4
 
+# tl:dr
+To set it up, go here: https://github.com/jens-koster/FreeDS
 
 # Rationale
-A data stack is a collection of services, like spark, postgresql, airflow, redis, S3 storage, dbt and so on. When you want try out for example airflow you'll find a docker compose file firing up the entire stack needed to run airflow, with no connectivity to other local services. Many stacks depend on basic services like postgres and redis, I want to break the stacks up and re-use the same postgres for all services depending on it. I want all services on the same docker network with unique and consistent hostnames.
+A data stack is a collection of services, like spark, postgresql, airflow, redis, S3 storage, dbt and so on.
+
+My problem has alwyas been to spend one evening getting a certain tool up and running, the I never return to actually try it out, I just fight setup issues all night. Or I get it setup and spend the rest of the night getting a decent data set into the service to..just do something.
+
+So, now I'm going to configure each service once and for all.
+
+There will be data to start playing eith, on S3 and kafka topics etc. My expectatio is to add one or two dockers in a already bubbling data stack and start playing with them in an hour or two.
+
+Ideally, we'd start sharing these pluggable stack items so I can just clone a repo and start fiddling with a new tech in the stack and datasets I already know. Or the ones I chose to add my stack. Reduce cognitive load and effort to start learning a new tech.
+
+# some tech stuff
 Most services come with a web ui on a typical web port, that I want to map to localhost. Let's make those ports unique in the entire fds. Actually, we generalize that to say all services should be able to run in parallel without conflicts.
 In development it really helps if services are callable using the same hostname on the host as in the docker network. It doesn't solve every situation, but it really makes it easier. That's easily accomplished by mapping them in the hosts file.
 After dealing with spark it becomes clear we need the ability to define storage on the exact same location on the host and the containers, realtive paths and "user" paths have proven unreliable. We require a known root folder where freeds can create any folder needed. The containers will create the exact same folder structure, most folders will are mounted from parallel structure on the host.
 The "production" way of doing this is to use an object storage. So, we'll provide an S3 service which will be used for for data, notebooks and other things it works well for.
 
 # Architecture
-Each service has a docker compose file starting up only that service.
+Each stack item has a docker compose file starting up only that item.
 A docker network is created outside the docker compose files and all containers simply refer it.
 A list of all ports used by different services is maintained here, as services are added ports are configured and re-mapped to make every hostname and port used globally unique.
 Each stack is given a name defined in configuration file, specifying the folder names of services in the stack. A python CLI is created to run docker compose in each folder, it changes the current directory before calling docker compose so relative paths can be used.
 
-# Pipeline notebooks
-The notebooks making up the pipelines (extract, bronze, silver, gold, etc) go in a separate repo; https://github.com/jens-koster/pipe-dreams.
-This keeps freeds clean and is also the lab for doing things by the book, there's a ton of commit hooks linting and sorting things. That gets a bit tedious for the freeds repo, I know, I should have that here as well ...mea culpa.
-
-There's the papermill service to execute these parameterized notebooks form s3 and deliver the result on s3.
-Might require some love and attention but it all worked nicely from airflow DockerOperator at one point...
-
 # Labs
+Some stuff go into the central the-free-dat-stack repo for re-use. Other thing go into lab repos. Like the bunch of notebooks to do the wikipedia pageviews analysis.
+There will be more info on how to make your own labs and, yes, the plugin thingy needs a bit more work before you can add your own repos, but it's very close and do make pull request.
+
+
+# Included Labs
 ## Wikipedia Pageviews
 Currently considered "done".
 Documentation: https://github.com/jens-koster/the-free-data-stack/blob/main/docs/labs/wikipedia_pageviews.md
 
+## JafKafe
+In progress.
+dbt jaffle shop generator as real time kafka event producer. Figuring the dbt models already provided will provide free wrok at the end of the pipeline.
+
+Close, but not yet there
+
+
 ## Øresund Train Spotter
-In exploration phase.
+I've mothballed this to work on the JafKafe lab.
 
 Repo: https://github.com/jens-koster/freeds-train-spotter
 
 Project: https://github.com/users/jens-koster/projects/3
-
-
-# Setup - getting started
-
-    git clone https://github.com/jens-koster/the-free-data-stack.git
-    cd the-free-data-stack
-    # setup folders, docker network and python venv
-    source setup.sh
-
-    # ... TBD
-
-    # fire it up!
-    python3 ./freeds-cli/freeds.py up
-
-    # to shut everything down:
-    python3 ./freeds-cli/freeds.py down
 
 
 # create the root freeds folder
@@ -153,18 +155,3 @@ We'll see what to do with DuckDB, you can create a readonly connection to it on 
 
 postgreSQL uses a docker managed volume for storage.
 
-### Prerequisite software
-### pipx
-
-it is recommended to use your os packagemanager (see the [realpython installation guide](https://realpython.com/python-pipx/#install-pipx-as-a-standalone-tool)
-)
-
-This will also do the trick:
-
-    python -m pip install pipx
-
-### pyenv
-You'll probably need to adjust your python version to match whatever you have in spark, it's insanely picky about those things.
-
-### java
-You definitely need to adjust your java version to spark. see more in the spark readme.
