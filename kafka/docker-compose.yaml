@@ -101,6 +101,34 @@ services:
       KAFKA_ADVERTISED_LISTENERS: "PLAINTEXT://kafka-brocon-4:19094"
     volumes:
       - kafka_4_data:/var/lib/kafka/data
+  kafka-connect:
+    build:
+      context: .
+    container_name: kafka-connect
+    hostname: kafka-connect
+    ports:
+      - "127.0.0.1:8083:8083" # Kafka Connect REST API
+    environment:
+      CONNECT_BOOTSTRAP_SERVERS: "kafka-bro-2:19092"
+      CONNECT_REST_PORT: 8083
+      CONNECT_GROUP_ID: "kafka-connect-group"
+      CONNECT_CONFIG_STORAGE_TOPIC: "connect-configs"
+      CONNECT_OFFSET_STORAGE_TOPIC: "connect-offsets"
+      CONNECT_STATUS_STORAGE_TOPIC: "connect-status"
+      CONNECT_KEY_CONVERTER: "org.apache.kafka.connect.json.JsonConverter"
+      CONNECT_VALUE_CONVERTER: "org.apache.kafka.connect.json.JsonConverter"
+      CONNECT_INTERNAL_KEY_CONVERTER: "org.apache.kafka.connect.json.JsonConverter"
+      CONNECT_INTERNAL_VALUE_CONVERTER: "org.apache.kafka.connect.json.JsonConverter"
+      CONNECT_PLUGIN_PATH: "/usr/share/java"
+      CONNECT_LOG4J_LOGGERS: "org.apache.kafka.connect.runtime.rest=WARN,org.reflections=WARN"
+      POSTGRES_USER: "${FREEDS_KAFKA_CONNECT_POSTGRES_USER}"
+      POSTGRES_PASSWORD: "${FREEDS_KAFKA_CONNECT_POSTGRES_PASSWORD}"
+    depends_on:
+      - kafka-bro-2
+    networks:
+      - freeds-network
+    volumes:
+      - ./kafka-connect-plugins:/usr/share/java
 
   kafdrop:
     image: obsidiandynamics/kafdrop:4.2.0
