@@ -29,9 +29,10 @@ x-kafka-broker: &kafka-broker
   environment: &kafka-broker-env
     <<: *kafka-common-env
     KAFKA_PROCESS_ROLES: "broker"
-    KAFKA_LISTENERS: "PLAINTEXT://:19092"
+    KAFKA_LISTENERS: ""  # overridden per container
     KAFKA_ADVERTISED_LISTENERS: ""  # overridden per container
     KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: "CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT"
+    KAFKA_LOG_RETENTION_MS: "-1"
 
 # Hybrid Broker+Controller
 x-kafka-brocon: &kafka-brocon
@@ -41,9 +42,10 @@ x-kafka-brocon: &kafka-brocon
   environment: &kafka-brocon-env
     <<: *kafka-common-env
     KAFKA_PROCESS_ROLES: "broker,controller"
-    KAFKA_LISTENERS: "PLAINTEXT://:19092,CONTROLLER://:9093"
+    KAFKA_LISTENERS: ""  # overridden per container
     KAFKA_ADVERTISED_LISTENERS: ""  # overridden per container
     KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: "CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT"
+    KAFKA_LOG_RETENTION_MS: "-1"
 
 services:
 
@@ -63,9 +65,12 @@ services:
     # This is the only broker that is not also a controller.
     <<: *kafka-broker
     container_name: kafka-bro-2
+    ports:
+      - "127.0.0.1:19092:19092"
     environment:
       <<: *kafka-broker-env
       KAFKA_NODE_ID: 2
+      KAFKA_LISTENERS: "PLAINTEXT://:19092"
       KAFKA_ADVERTISED_LISTENERS: "PLAINTEXT://kafka-bro-2:19092"
     volumes:
       - kafka_2_data:/var/lib/kafka/data
@@ -74,20 +79,26 @@ services:
     # Then two work horses of consolidated broker+controller.
     <<: *kafka-brocon
     container_name: kafka-brocon-3
+    ports:
+      - "127.0.0.1:19093:19093"
     environment:
       <<: *kafka-brocon-env
       KAFKA_NODE_ID: 3
-      KAFKA_ADVERTISED_LISTENERS: "PLAINTEXT://kafka-brocon-3:19092"
+      KAFKA_LISTENERS: "PLAINTEXT://:19093,CONTROLLER://:9093"
+      KAFKA_ADVERTISED_LISTENERS: "PLAINTEXT://kafka-brocon-3:19093"
     volumes:
       - kafka_3_data:/var/lib/kafka/data
 
   kafka-brocon-4:
     <<: *kafka-brocon
     container_name: kafka-brocon-4
+    ports:
+      - "127.0.0.1:19094:19094"
     environment:
       <<: *kafka-brocon-env
       KAFKA_NODE_ID: 4
-      KAFKA_ADVERTISED_LISTENERS: "PLAINTEXT://kafka-brocon-4:19092"
+      KAFKA_LISTENERS: "PLAINTEXT://:19094,CONTROLLER://:9093"
+      KAFKA_ADVERTISED_LISTENERS: "PLAINTEXT://kafka-brocon-4:19094"
     volumes:
       - kafka_4_data:/var/lib/kafka/data
 

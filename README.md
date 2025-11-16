@@ -93,35 +93,9 @@ There's no "create if not exists" for networks in docker-compose so it needs to 
 
 ## port allocations
 Port number mappings are kept globally unique, allowing us to run any ports of the stack together without port clashes.
-All ports in odcker shoud be explicitly mapped to 127.0.0.1 on the host, to avoid exposing anything outside the local host.
+All ports in docker shouare mapped to 127.0.0.1 on the host, to avoid exposing anything outside the local host.
 
-Web ui:s are put on 8000+ ports, even if their standard port is free. There's a point in moving everything away from 80 and 8080.
 
-Services keep their standard port as far as possible.
-
-This is the global list of who gets what port:
-
-- 8001 - airflow web ui on http://127.0.0.1:8001
-- 8002 - postgres web ui on http://127.0.0.1:8002
-- 8003 - jupyter web ui on http://127.0.0.1:8003
-- 8004 - s3 ninja on http://127.0.0.1:8004/ui
-- 8005 - freeds-config on:
-  - http://127.0.0.1:8005/swagger-ui
-  - http://127.0.0.1:8005/redoc
-  - http://127.0.0.1:8005/api/configs
-- 8006 - minio S3 on http://127.0.0.1:8006
-- 8007 - redis insight on http://127.0.0.1:8007
-- 8008 - devpi python package index
-
-- 8010 - spark master on http://127.0.0.1:8010
-- 8011 - spark worker 1 on http://127.0.0.1:8011
-- 8012 - spark worker 2 on http://127.0.0.1:8012
-- 5432 - postgreSQL, reserved schemas:
-  - airflow
-- 5555 - Celery flower(airflow thing, not tested)
-- 6379 - redis
-- 7077 - spark master
-- 9900 - minio S3 - default minio port is 9000 but that is used by vs code, so it's set to 9000.
 
 ## host mappings
 Find out how to edit the hosts file on your os;
@@ -133,15 +107,22 @@ Find out how to edit the hosts file on your os;
 
 and add the following mappings:
 
+    127.0.0.1 spark-master
     127.0.0.1 spark-worker-1
     127.0.0.1 spark-worker-2
-    127.0.0.1 spark-master
     127.0.0.1 s3-minio
     127.0.0.1 freeds-config
-    127.0.0.1 postgresql
+    127.0.0.1 postgres
     127.0.0.1 devpi
-    127.0.0.1 redis
     127.0.0.1 redisinsight
+    127.0.0.1 redis
+    127.0.0.1 airflow-webserver
+    127.0.0.1 akhq
+    127.0.0.1 kafdrop
+    127.0.0.1 kafka-con-1
+    127.0.0.1 kafka-bro-2
+    127.0.0.1 kafka-brocon-3
+    127.0.0.1 kafka-brocon-4
 
 # Storage
 Anything that can reasonably go on S3 shoud do so, we use minio S3 to provide a local (and free) S3 storage.
@@ -154,4 +135,3 @@ S3 is first choice for any data shared between stack service.
 We'll see what to do with DuckDB, you can create a readonly connection to it on s3. We could setup a duckdb container that performs the loading of the database and then publish it to s3 for readonly access...
 
 postgreSQL uses a docker managed volume for storage.
-
