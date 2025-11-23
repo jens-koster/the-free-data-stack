@@ -1,0 +1,27 @@
+services:
+  vault:
+    image: openbao/openbao:latest
+    container_name: vault
+    hostname: vault
+    ports:
+      - "127.0.0.1:8200:8200"
+    environment:
+      VAULT_LOCAL_CONFIG: |
+        {
+          "listener": [{ "tcp": { "address": "0.0.0.0:8200", "tls_disable": 1 } }],
+          "storage": { "raft": { "path": "/vault/data", "node_id": "node1" } },
+          "disable_mlock": true,
+
+          "seal": {
+            "file": { "path": "/vault/data/auto-unseal.key" }
+          },
+
+          "default_lease_ttl": "876000h",
+          "max_lease_ttl":     "876000h",
+          "token_max_ttl":     "876000h"
+        }
+    volumes:
+      - bao-data:/vault/data
+
+volumes:
+  bao-data: {}
