@@ -1,0 +1,11 @@
+plugin:
+  resources:
+    admin_user:
+      type: AdminAccount
+      description: Username and password for postgres administrator
+
+    listening_port:
+      type: KnownPort
+      description: postgres listening port.
+      params:
+        number: 5432

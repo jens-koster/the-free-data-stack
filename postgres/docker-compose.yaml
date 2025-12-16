@@ -7,20 +7,18 @@ services:
     ports:
       - "127.0.0.1:5432:5432"
     environment:
-      POSTGRES_USER: airflow
-      POSTGRES_PASSWORD: airflow
-      POSTGRES_DB: airflow
+      POSTGRES_USER: ${FDS_POSTGRES_USER}
+      POSTGRES_PASSWORD: ${FDS_POSTGRES_PASSWORD}
     volumes:
       - postgres-db-volume:/var/lib/postgresql/data
-      - ${FREEDS_ROOT_PATH}/postgres/init:/docker-entrypoint-initdb.d
+      - ${FDS_POSTGRES_PATH}/init:/docker-entrypoint-initdb.d
     networks:
       - freeds-network
     healthcheck:
-      test: ["CMD", "pg_isready", "-U", "airflow"]
+      test: ["CMD", "pg_isready", "-U", "${FDS_POSTGRES_USER}"]
       interval: 10s
       retries: 5
       start_period: 5s
-    restart: always
 
 volumes:
   postgres-db-volume:
