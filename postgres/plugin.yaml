@@ -13,5 +13,3 @@ plugin:
     data_dir:
       type: DataDir
       description: Directory for postgres database files
-      params:
-        name: db
