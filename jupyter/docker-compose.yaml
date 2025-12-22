@@ -5,7 +5,7 @@ services:
     image: freeds/jupyter-spark:latest
     container_name: jupyter-spark
     environment:
-      FREEDS_CONFIG_URL: ${FREEDS_CONFIG_URL}
+      FDS_CONFIG_URL: ${FDS_CONFIG_URL}
     ports:
       - "127.0.0.1:8888:8888"
     networks:

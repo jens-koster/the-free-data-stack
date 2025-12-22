@@ -122,8 +122,8 @@ services:
       CONNECT_PLUGIN_PATH: "/usr/share/java"
       CONNECT_REST_ADVERTISED_HOST_NAME: "kafka-connect"
       CONNECT_LOG4J_LOGGERS: "org.apache.kafka.connect.runtime.rest=WARN,org.reflections=WARN"
-      POSTGRES_USER: "${FREEDS_KAFKA_CONNECT_POSTGRES_USER}"
-      POSTGRES_PASSWORD: "${FREEDS_KAFKA_CONNECT_POSTGRES_PASSWORD}"
+      POSTGRES_USER: "${FDS_KAFKA_CONNECT_POSTGRES_USER}"
+      POSTGRES_PASSWORD: "${FDS_KAFKA_CONNECT_POSTGRES_PASSWORD}"
 
     depends_on:
       - kafka-bro-2

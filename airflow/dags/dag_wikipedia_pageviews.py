@@ -54,7 +54,7 @@ def run_book(notebook_name: str, notebook_prefix: str, params: dict[str, Any], c
     ]
 
     env_vars = {
-        "FREEDS_CONFIG_URL": os.environ.get("FREEDS_CONFIG_URL", ""),
+        "FDS_CONFIG_URL": os.environ.get("FDS_CONFIG_URL", ""),
     }
     client = docker.from_env()
     try:

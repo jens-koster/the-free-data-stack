@@ -1,0 +1,12 @@
+plugin:
+  resources:
+
+    vault_dir:
+      type: "DataDir"
+      description: "Vault data store"
+
+    vault_port:
+      type: "KnownPort"
+      description: "Vault listening port"
+      params:
+        number: 8200

@@ -11,10 +11,10 @@ services:
       - "127.0.0.1:9900:9900"
       - "127.0.0.1:8006:8006"
     volumes:
-      - "${FREEDS_ROOT_PATH}/data/minio:/data"
+      - "${FDS_ROOT_PATH}/data/minio:/data"
     environment:
-      - MINIO_ROOT_USER=${FREEDS_MINIO_USER}
-      - MINIO_ROOT_PASSWORD=${FREEDS_MINIO_PASSWORD}
+      - MINIO_ROOT_USER=${FDS_MINIO_USER}
+      - MINIO_ROOT_PASSWORD=${FDS_MINIO_PASSWORD}
     # use our mounted /data for storage and serve the web ui on port 8006
     command: server /data --console-address ":8006" --address :9900
 

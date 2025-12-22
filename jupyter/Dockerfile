@@ -9,7 +9,7 @@ RUN python3 -m pip install --no-cache-dir -r requirements.txt
 
 
 RUN python3 -m ipykernel install --user --name=FREEDS --display-name "FREEDS"
-ENV FREEDS_CONFIG_URL=http://freeds-config:8005/api/configs
+ENV FDS_CONFIG_URL=http://freeds-config:8005/api/configs
 ENV PATH="/home/spark/.local/bin:${PATH}"
 
 COPY book_runner.py /app/book_runner.py

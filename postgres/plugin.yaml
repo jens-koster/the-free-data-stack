@@ -9,3 +9,9 @@ plugin:
       description: postgres listening port.
       params:
         number: 5432
+
+    data_dir:
+      type: DataDir
+      description: Directory for postgres database files
+      params:
+        name: db

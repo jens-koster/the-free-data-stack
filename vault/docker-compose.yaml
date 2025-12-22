@@ -21,7 +21,7 @@ services:
           "token_max_ttl":     "876000h"
         }
     volumes:
-      - bao-data:/vault/data
+      - ${FDS_VAULT_DATADIR}:/vault/data
     networks:
       - freeds-network
 

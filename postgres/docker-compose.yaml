@@ -10,8 +10,8 @@ services:
       POSTGRES_USER: ${FDS_POSTGRES_USER}
       POSTGRES_PASSWORD: ${FDS_POSTGRES_PASSWORD}
     volumes:
-      - postgres-db-volume:/var/lib/postgresql/data
-      - ${FDS_POSTGRES_PATH}/init:/docker-entrypoint-initdb.d
+      - ${FDS_POSTGRES_DATADIR}:/var/lib/postgresql/data
+      # - ${FDS_POSTGRES_PATH}/init:/docker-entrypoint-initdb.d
     networks:
       - freeds-network
     healthcheck:
@@ -19,9 +19,6 @@ services:
       interval: 10s
       retries: 5
       start_period: 5s
-
-volumes:
-  postgres-db-volume:
 
 networks:
   freeds-network:
