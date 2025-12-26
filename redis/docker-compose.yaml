@@ -14,20 +14,18 @@ services:
       timeout: 30s
       retries: 50
       start_period: 30s
-    restart: always
 
   redisinsight:
     image: redislabs/redisinsight:latest
     container_name: redisinsight
+    expose:
+      - 5540
     ports:
-      - "127.0.0.1:8007:5540"
+      - "127.0.0.1:${FDS_REDIS_UI_PORT_REDISINSIGHT}:5540"
     volumes:
-      - redisinsight_data:/data
+      - ${FDS_REDIS_DATADIR_REDISINSIGHT}:/data
     networks:
       - freeds-network
-
-volumes:
-  redisinsight_data:
 
 networks:
   freeds-network:

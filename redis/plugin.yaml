@@ -1,0 +1,21 @@
+plugin:
+  resources:
+    redis_port:
+      type: KnownPort
+      description: Redis listening port
+      params:
+        number: 6379
+
+    data_dir:
+      type: DataDir
+      description: Directory for redis insight data files
+      params:
+        name: "redisinsight"
+
+
+    redis_ui:
+        type: UI
+        description: Redis insight ui
+        params:
+          name: "redisinsight"
+          uri: "https://127.0.0.1:{{FDS_REDIS_UI_PORT}}"

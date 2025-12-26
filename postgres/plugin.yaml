@@ -10,6 +10,6 @@ plugin:
       params:
         number: 5432
 
-    data_dir:
+    redisinsight_dir:
       type: DataDir
       description: Directory for postgres database files

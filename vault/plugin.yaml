@@ -10,3 +10,10 @@ plugin:
       description: "Vault listening port"
       params:
         number: 8200
+
+    vault_ui:
+        type: UI
+        description: OpenBao web interface
+        params:
+          known_port: vault_port
+          uri: "https://127.0.0.1:8200"
