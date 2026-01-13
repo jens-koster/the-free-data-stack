@@ -1,0 +1,21 @@
+plugin:
+  dependencies:
+    - S3
+
+  resources:
+    S3_user:
+      # FDS_JUPYTER_S3_PASSWORD
+      type: UserAccount
+      description: Username and password for S3
+      params:
+        name: s3
+
+    listening_port:
+      type: KnownPort
+      description: postgres listening port.
+      params:
+        number: 5432
+
+    redisinsight_dir:
+      type: DataDir
+      description: Directory for postgres database files

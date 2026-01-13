@@ -1,0 +1,30 @@
+plugin:
+  config:
+    s3_url: FDS_JUPYTER_S3_URL
+  resources:
+    admin_user:
+      type: AdminAccount
+      description: Username and password for s3 admin
+
+    s3_port:
+      type: KnownPort
+      description: s3 listening port.
+      params:
+        number: 9900
+
+    s3_url:
+      type: SharedConfig
+      description: s3 url.
+      params:
+        name: url # FDS_JUPYTER_S3_URL
+        value: "http://s3-minio:9900"
+
+    s3_dir:
+      type: DataDir
+      description: S3 physical data store
+
+    s3_ui:
+      type: UI
+      description: Minio S3 web interface
+      params:
+        url: "http://s3-minio:${FDS_S3_UI_PORT}/browser"

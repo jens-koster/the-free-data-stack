@@ -1,22 +1,22 @@
 ---
 services:
-  s3-minio:
+  s3:
     image: quay.io/minio/minio
-    container_name: s3-minio
+    container_name: s3
     networks:
       - freeds-network
     expose:
       - 9900
     ports:
       - "127.0.0.1:9900:9900"
-      - "127.0.0.1:8006:8006"
+      - "127.0.0.1:${FDS_S3_UI_PORT}:${FDS_S3_UI_PORT}"
     volumes:
-      - "${FDS_ROOT_PATH}/data/minio:/data"
+      - "${FDS_S3_DATADIR}:/data"
     environment:
-      - MINIO_ROOT_USER=${FDS_MINIO_USER}
-      - MINIO_ROOT_PASSWORD=${FDS_MINIO_PASSWORD}
+      - MINIO_ROOT_USER=${FDS_S3_USER}
+      - MINIO_ROOT_PASSWORD=${FDS_S3_PASSWORD}
     # use our mounted /data for storage and serve the web ui on port 8006
-    command: server /data --console-address ":8006" --address :9900
+    command: server /data --console-address ":${FDS_S3_UI_PORT}" --address :9900
 
 
 networks:
